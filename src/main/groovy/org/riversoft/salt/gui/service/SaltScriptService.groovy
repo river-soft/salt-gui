@@ -2,16 +2,16 @@ package org.riversoft.salt.gui.service
 
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.SaltScript
-import org.riversoft.salt.gui.repository.ScriptRepository
+import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Slf4j
 @Service
-class ScriptService {
+class SaltScriptService {
 
     @Autowired
-    ScriptRepository scriptRepository
+    SaltScriptRepository scriptRepository
 
     /**
      * Получение списка всех скриптов salt
