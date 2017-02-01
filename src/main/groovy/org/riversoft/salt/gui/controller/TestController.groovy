@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.Glob
 import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.results.Result
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -16,9 +17,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class TestController {
 
-    private static final String SALT_API_URL = "http://192.168.2.66:8000";
-    private static final String USER = "vagrant";
-    private static final String PASSWORD = "vagrant";
+    @Value('${salt.api.url}')
+    private final String SALT_API_URL
+
+    @Value('${salt.user}')
+    private final String USER
+
+    @Value('${salt.password}')
+    private final String PASSWORD
 
     @RequestMapping('/test')
     def findScriptByName() {
