@@ -4,6 +4,7 @@ import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
 import TreeView from './tree/TreeView';
+import Input from 'muicss/lib/react/input';
 
 export class FilesTree extends Component {
 
@@ -12,7 +13,9 @@ export class FilesTree extends Component {
 
         this.state = {
             showFileDescription: false,
-            content: ''
+            content: '',
+            filterScripts: [],
+            rerender: false
         };
         this.showContent = this.showContent.bind(this);
     }
@@ -28,6 +31,29 @@ export class FilesTree extends Component {
         })
     }
 
+    filterTree(e) {
+        let obj = [];
+
+        for (let i = 0; i < this.props.files.length; i++) {
+
+            let scripts = this.props.files[i].scripts.filter((item) => {
+                return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+            });
+
+            if (scripts.length > 0) {
+                obj.push({
+                    group: this.props.files[i].group,
+                    scripts: scripts
+                })
+            }
+        }
+
+        this.setState({
+            filterScripts: obj,
+            rerender: true
+        });
+    }
+
     render() {
 
         let _this = this, template, fileDescription;
@@ -37,20 +63,23 @@ export class FilesTree extends Component {
             fileDescription = <FileDescription description={this.state.content}/>;
         }
 
-        if(!this.props.files) {
+        if (!this.props.files) {
             template = <div>Данных нету</div>
+        } else if (this.state.rerender) {
+            template = <TreeView groups={this.state.filterScripts} showContent={this.showContent}/>;
         } else {
-            template = <TreeView groups={this.props.files} showContent={this.showContent} />;
+            template = <TreeView groups={this.props.files} showContent={this.showContent}/>;
         }
 
         return <Container>
             <Row>
-                <Col md='2' xs='2' lg='2'>
+                <Col md='3' xs='6' lg='3'>
+                    <Input label='Поиск' floatingLabel={true} onChange={this.filterTree.bind(this)}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
                 </Col>
-                <Col md='10' xs='10' lg='10'>
+                <Col md='9' xs='6' lg='9'>
                     <div className=''>
                         {fileDescription || ''}
                     </div>
@@ -64,69 +93,3 @@ FilesTree.propTypes = {
     filesRequest: PropTypes.func.isRequired,
     // error: PropTypes.string.isRequired
 };
-
-// let data = [
-//     {
-//         name: 'riversoft',
-//         files: [
-//             {
-//                 name: 'name1',
-//                 content: 'content1'
-//             },
-//             {
-//                 name: 'name2',
-//                 content: 'content2'
-//             },
-//             {
-//                 name: 'name3',
-//                 content: 'content3'
-//             }
-//         ]
-//     },
-//     {
-//         name: 'hrenznaetchosoft',
-//         files: [
-//             {
-//                 name: 'name21',
-//                 content: 'content21'
-//             },
-//             {
-//                 name: 'name22',
-//                 content: 'content22'
-//             },
-//             {
-//                 name: 'name23',
-//                 content: 'content23'
-//             }
-//         ]
-//     },
-//     {
-//         name: 'esheodinspisok',
-//         files: [
-//             {
-//                 name: 'name21',
-//                 content: 'content21'
-//             },
-//             {
-//                 name: 'name22',
-//                 content: 'content22'
-//             },
-//             {
-//                 name: 'name23',
-//                 content: 'content23'
-//             },
-//             {
-//                 name: 'name25',
-//                 content: 'gdfsavn klsd flgasfasdhgkgn dfg jhdsgfl h'
-//             },
-//             {
-//                 name: 'name28',
-//                 content: 'dg;fakjldkjas asdfgk hds kks dds ghfksbvk'
-//             },
-//             {
-//                 name: 'name20',
-//                 content: 'ds;fgkjs;lkjas; asdf lasgf a asdfasgf lasfkas'
-//             }
-//         ]
-//     },
-// ];
