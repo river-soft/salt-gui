@@ -13,7 +13,7 @@ class SaltScriptGroupViewModel {
         this.group = saltScriptGroup.name
 
         for (SaltScript saltScript : saltScriptGroup.scriptList) {
-            this.scripts.add(new SaltScriptViewModel(name: saltScript.name, content: saltScript.content))
+            this.scripts.add(new SaltScriptViewModel(saltScript))
         }
     }
 }
