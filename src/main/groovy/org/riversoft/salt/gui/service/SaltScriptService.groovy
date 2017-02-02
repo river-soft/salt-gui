@@ -3,7 +3,9 @@ package org.riversoft.salt.gui.service
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.domain.SaltScriptGroup
+import org.riversoft.salt.gui.exception.SaltScriptNotFoundException
 import org.riversoft.salt.gui.model.SaltScriptGroupViewModel
+import org.riversoft.salt.gui.model.SaltScriptViewModel
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,13 +23,18 @@ class SaltScriptService {
 
     /**
      * Получение списка всех скриптов salt
-     * @return список объектов SaltScript
-     * @see SaltScript
+     * @return список объектов SaltScriptViewModel
+     * @see SaltScriptViewModel
      */
-    List<SaltScript> findAllScripts() {
+    List<SaltScriptViewModel> findAllScripts() {
 
-        //TODO переделать на view model
-        scriptRepository.findAll()
+        log.debug("Start searching all script.")
+
+        List<SaltScript> saltScripts = scriptRepository.findAll()
+
+        log.debug("Found [${saltScripts.size()}] script.")
+
+        saltScripts.collect { new SaltScriptViewModel(it) }
     }
 
     /**
@@ -37,7 +44,11 @@ class SaltScriptService {
      */
     List<SaltScriptGroupViewModel> findAllGroupedScripts() {
 
+        log.debug("Start searching grouped script.")
+
         List<SaltScriptGroup> saltScriptGroups = saltScriptGroupRepository.findAll()
+
+        log.debug("Found [${saltScriptGroups.size()}] groups and [${saltScriptGroups.sum { it.scriptList.size() }}] script.")
 
         saltScriptGroups.collect { new SaltScriptGroupViewModel(it) }
     }
@@ -45,13 +56,23 @@ class SaltScriptService {
     /**
      * Поиск скрипта по его имени
      * @param name - название скрипта
-     * @return объект SaltScript
-     * @see SaltScript
+     * @return объект SaltScriptViewModel
+     * @see SaltScriptViewModel
      */
-    SaltScript findScriptByName(String name) {
+    SaltScriptViewModel findScriptByName(String name) {
 
-        //TODO переделать на view model
-        scriptRepository.findOne(name)
+        log.debug("Start searching script with name [${name}].")
+
+        SaltScript saltScript = scriptRepository.findOne(name)
+
+        if (!saltScript) {
+            log.error("SaltScript with name [${name}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript with name [${name}] not found.")
+        }
+
+        log.debug("Found script with name [${name}].")
+
+        new SaltScriptViewModel(saltScript)
     }
 
 }
