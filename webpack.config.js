@@ -18,10 +18,10 @@ module.exports = {
         path: path.join(__dirname, '/src/main/resources/static/'),
         filename: '/js/bundle.js'
     },
-    watch: NODE_ENV == 'develop',
-    watchOptions: {
-        aggregateTimeout: 100
-    },
+    // watch: NODE_ENV == 'develop',
+    // watchOptions: {
+    //     aggregateTimeout: 100
+    // },
     plugins: [
         new webpack.EnvironmentPlugin('NODE_ENV'),
         new webpack.optimize.OccurrenceOrderPlugin(),

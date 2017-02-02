@@ -1,0 +1,53 @@
+html {
+  height: 100%;
+}
+
+body {
+  background: #eee;
+  height: 100%;
+}
+
+.header {
+  background-color: mui-color('blue-grey', '400');
+  margin-bottom: 10px;
+}
+
+.list {
+  border: 1px solid black;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+
+  &__child {
+    margin-left: 10px;
+  }
+
+  &__header {
+    display: block;
+    cursor: pointer;
+  }
+  
+  &__item {
+    cursor: pointer;
+
+    &.active {
+      background: #78909C;
+      color: #fff;
+    }
+
+    &:hover {
+      background: #78909C;
+      color: #fff;
+    }
+  }
+}
+
+.file-description {
+  font-family: Arial, Verdana, Tahoma, sans-serif;
+  margin: 0;
+  background: #f8f8f8;
+}
+
+.hidden {
+  display: none;
+}
