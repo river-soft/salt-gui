@@ -1,34 +1,10 @@
-group 'org.riversoft'
-version '0.0.1'
-
 apply plugin: 'java'
 
-buildscript {
-    ext {
-        springBootVersion = '1.4.4.RELEASE'
-    }
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-apply plugin: 'org.springframework.boot'
-
 dependencies {
-
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-websocket'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.apache.httpcomponents:httpclient:4.5'
+    compile 'javax.websocket:javax.websocket-api:1.1'
 }
