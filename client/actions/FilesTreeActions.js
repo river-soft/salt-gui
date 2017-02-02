@@ -14,7 +14,7 @@ export function filesRequest() {
         });
 
         $.ajax({
-            url: '/scripts',
+            url: '/grouped-scripts',
             type: 'get',
             success: function(data) {
 

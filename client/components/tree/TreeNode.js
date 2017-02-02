@@ -34,7 +34,7 @@ export default class TreeNode extends Component {
         }, this);
 
         return <li>
-            <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={this.toggle.bind(this)}>{this.props.group.name}</span>
+            <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={this.toggle.bind(this)}>{this.props.group.group}</span>
             <Divider />
             <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}>{nodes}</ul>
         </li>

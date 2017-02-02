@@ -30,14 +30,18 @@ export class FilesTree extends Component {
 
     render() {
 
-        let _this = this, fileDescription;
+        let _this = this, template, fileDescription;
 
         if (_this.state.showFileDescription) {
 
             fileDescription = <FileDescription description={this.state.content}/>;
         }
 
-        let template = <TreeView groups={data} showContent={this.showContent} />;
+        if(!this.props.files) {
+            template = <div>Данных нету</div>
+        } else {
+            template = <TreeView groups={this.props.files} showContent={this.showContent} />;
+        }
 
         return <Container>
             <Row>
@@ -61,68 +65,68 @@ FilesTree.propTypes = {
     // error: PropTypes.string.isRequired
 };
 
-let data = [
-    {
-        name: 'riversoft',
-        files: [
-            {
-                name: 'name1',
-                content: 'content1'
-            },
-            {
-                name: 'name2',
-                content: 'content2'
-            },
-            {
-                name: 'name3',
-                content: 'content3'
-            }
-        ]
-    },
-    {
-        name: 'hrenznaetchosoft',
-        files: [
-            {
-                name: 'name21',
-                content: 'content21'
-            },
-            {
-                name: 'name22',
-                content: 'content22'
-            },
-            {
-                name: 'name23',
-                content: 'content23'
-            }
-        ]
-    },
-    {
-        name: 'esheodinspisok',
-        files: [
-            {
-                name: 'name21',
-                content: 'content21'
-            },
-            {
-                name: 'name22',
-                content: 'content22'
-            },
-            {
-                name: 'name23',
-                content: 'content23'
-            },
-            {
-                name: 'name25',
-                content: 'gdfsavn klsd flgasfasdhgkgn dfg jhdsgfl h'
-            },
-            {
-                name: 'name28',
-                content: 'dg;fakjldkjas asdfgk hds kks dds ghfksbvk'
-            },
-            {
-                name: 'name20',
-                content: 'ds;fgkjs;lkjas; asdf lasgf a asdfasgf lasfkas'
-            }
-        ]
-    },
-];
+// let data = [
+//     {
+//         name: 'riversoft',
+//         files: [
+//             {
+//                 name: 'name1',
+//                 content: 'content1'
+//             },
+//             {
+//                 name: 'name2',
+//                 content: 'content2'
+//             },
+//             {
+//                 name: 'name3',
+//                 content: 'content3'
+//             }
+//         ]
+//     },
+//     {
+//         name: 'hrenznaetchosoft',
+//         files: [
+//             {
+//                 name: 'name21',
+//                 content: 'content21'
+//             },
+//             {
+//                 name: 'name22',
+//                 content: 'content22'
+//             },
+//             {
+//                 name: 'name23',
+//                 content: 'content23'
+//             }
+//         ]
+//     },
+//     {
+//         name: 'esheodinspisok',
+//         files: [
+//             {
+//                 name: 'name21',
+//                 content: 'content21'
+//             },
+//             {
+//                 name: 'name22',
+//                 content: 'content22'
+//             },
+//             {
+//                 name: 'name23',
+//                 content: 'content23'
+//             },
+//             {
+//                 name: 'name25',
+//                 content: 'gdfsavn klsd flgasfasdhgkgn dfg jhdsgfl h'
+//             },
+//             {
+//                 name: 'name28',
+//                 content: 'dg;fakjldkjas asdfgk hds kks dds ghfksbvk'
+//             },
+//             {
+//                 name: 'name20',
+//                 content: 'ds;fgkjs;lkjas; asdf lasgf a asdfasgf lasfkas'
+//             }
+//         ]
+//     },
+// ];

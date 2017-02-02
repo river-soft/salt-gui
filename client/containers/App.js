@@ -10,7 +10,6 @@ class App extends Component {
     render() {
 
         const {filesRequest} = this.props.filesTreeActions;
-
         let filesTree = <FilesTree filesRequest={filesRequest} files={this.props.filesTree.files}/>;
 
         return (<div className='wrapper'>
