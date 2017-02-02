@@ -1,0 +1,55 @@
+package org.riversoft.salt.gui.calls.modules;
+
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import org.riversoft.salt.gui.calls.LocalCall;
+import org.riversoft.salt.gui.parser.JsonParser;
+import org.riversoft.salt.gui.results.StateApplyResult;
+
+import java.util.*;
+
+/**
+ * salt.modules.state
+ */
+public class State {
+
+    /**
+     * Result type for state.apply
+     */
+    public static class ApplyResult extends StateApplyResult<JsonElement> {
+
+        public <R> R getChanges(Class<R> dataType) {
+            return JsonParser.GSON.fromJson(changes, dataType);
+        }
+
+        public <R> R getChanges(TypeToken<R> dataType) {
+            return JsonParser.GSON.fromJson(changes, dataType.getType());
+        }
+    }
+
+    private State() { }
+
+    public static LocalCall<Map<String, ApplyResult>> apply(List<String> mods) {
+        return apply(mods, Optional.empty(), Optional.empty());
+    }
+
+    public static LocalCall<Map<String, ApplyResult>> apply(String... mods) {
+        return apply(Arrays.asList(mods), Optional.empty(), Optional.empty());
+    }
+
+    public static LocalCall<Map<String, ApplyResult>> apply(List<String> mods,
+            Optional<Map<String, Object>> pillar, Optional<Boolean> queue) {
+        Map<String, Object> kwargs = new LinkedHashMap<>();
+        kwargs.put("mods", mods);
+        pillar.ifPresent(p -> kwargs.put("pillar", p));
+        queue.ifPresent(q -> kwargs.put("queue", q));
+        return new LocalCall<>("state.apply", Optional.empty(), Optional.of(kwargs),
+                new TypeToken<Map<String, ApplyResult>>(){});
+    }
+
+    public static LocalCall<Object> showHighstate() {
+        return new LocalCall<>("state.show_highstate", Optional.empty(), Optional.empty(),
+                new TypeToken<Object>(){});
+    }
+
+}

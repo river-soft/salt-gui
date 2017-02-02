@@ -20,6 +20,12 @@ class SaltScriptController {
         scriptService.findAllScripts()
     }
 
+    @RequestMapping('/grouped-scripts')
+    def findGroupedScripts() {
+
+        scriptService.findAllGroupedScripts()
+    }
+
     @RequestMapping('/script-by-name')
     def findScriptByName(@RequestParam(value = "name", required = true) String name) {
 
