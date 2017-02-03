@@ -5,6 +5,8 @@ import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
 import TreeView from './tree/TreeView';
 import Input from 'muicss/lib/react/input';
+import CreateGroup from './CreateGroup';
+import Modal from 'react-modal';
 
 export class FilesTree extends Component {
 
@@ -15,9 +17,11 @@ export class FilesTree extends Component {
             showFileDescription: false,
             content: '',
             filterScripts: [],
-            rerender: false
+            rerender: false,
+            showModal: false
         };
         this.showContent = this.showContent.bind(this);
+        this.showModal = this.showModal.bind(this);
     }
 
     componentDidMount() {
@@ -29,6 +33,10 @@ export class FilesTree extends Component {
             showFileDescription: true,
             content: content
         })
+    }
+
+    showModal() {
+        this.setState({showModal: true});
     }
 
     filterTree(e) {
@@ -52,6 +60,10 @@ export class FilesTree extends Component {
             filterScripts: obj,
             rerender: true
         });
+    }
+
+    onRequestClose() {
+        this.setState({showModal: false});
     }
 
     render() {
@@ -78,6 +90,7 @@ export class FilesTree extends Component {
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
+                    <button className='mui-btn button' onClick={this.showModal}>добавить</button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
                     <div className=''>
@@ -85,6 +98,10 @@ export class FilesTree extends Component {
                     </div>
                 </Col>
             </Row>
+            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal' onRequestClose={this.onRequestClose.bind(this)}
+                   parentSelector={() => document.body} ariaHideApp={false}>
+                <CreateGroup createGroup={this.props.createGroup} />
+            </Modal>
         </Container>
     }
 }

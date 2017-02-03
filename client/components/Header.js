@@ -5,8 +5,6 @@ export class Header extends Component {
 
     render() {
 
-        return (
-            <AppBar className='header'/>
-        )
+        return <AppBar className='header'/>
     }
 }

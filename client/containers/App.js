@@ -4,13 +4,15 @@ import {bindActionCreators} from 'redux';
 import {FilesTree} from '../components/FilesTree';
 import {Header} from '../components/Header';
 import * as filesTreeActions from '../actions/FilesTreeActions';
+import * as createGroupActions from '../actions/GroupCreateActions';
 
 class App extends Component {
 
     render() {
 
         const {filesRequest} = this.props.filesTreeActions;
-        let filesTree = <FilesTree filesRequest={filesRequest} files={this.props.filesTree.files}/>;
+        const {createGroup} = this.props.createGroupActions;
+        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest} files={this.props.filesTree.files}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -23,13 +25,15 @@ class App extends Component {
 
 function mapStateToProps(state) {
     return {
-        filesTree: state.filesTree
+        filesTree: state.filesTree,
+        createGroup: state.createGroup
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        filesTreeActions: bindActionCreators(filesTreeActions, dispatch)
+        filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
+        createGroupActions: bindActionCreators(createGroupActions, dispatch)
     }
 }
 

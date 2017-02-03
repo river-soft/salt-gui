@@ -51,3 +51,31 @@ body {
 .hidden {
   display: none;
 }
+
+.button {
+  background: #78909C;
+  color: #fff;
+
+  &:hover {
+    background: #78909C;
+    color: #fff;
+  }
+
+  &:focus {
+    background: #78909C;
+    color: #fff;
+  }
+}
+
+.modal {
+  display: block;
+  width: 500px;
+  min-height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -250px;
+  z-index: 9999;
+  background: yellow;
+}
