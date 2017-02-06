@@ -6,8 +6,8 @@ import org.riversoft.salt.gui.domain.SaltScriptGroup
 import org.riversoft.salt.gui.exception.SaltScriptNotFoundException
 import org.riversoft.salt.gui.model.CreateSaltScript
 import org.riversoft.salt.gui.model.CreateSaltScriptGroup
-import org.riversoft.salt.gui.model.SaltScriptGroupViewModel
-import org.riversoft.salt.gui.model.SaltScriptViewModel
+import org.riversoft.salt.gui.model.view.SaltScriptGroupViewModel
+import org.riversoft.salt.gui.model.view.SaltScriptViewModel
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,13 +19,19 @@ import org.springframework.stereotype.Service
 class SaltScriptGroupService {
 
     @Autowired
-    SaltScriptRepository saltScriptRepository
+    private SaltScriptService saltScriptService
 
     @Autowired
-    SaltScriptGroupRepository saltScriptGroupRepository
+    private SaltScriptFileService saltScriptFileService
+
+    @Autowired
+    private SaltScriptRepository saltScriptRepository
+
+    @Autowired
+    private SaltScriptGroupRepository saltScriptGroupRepository
 
     @Value('${salt.scripts.default_group}')
-    String defaultGroup
+    private String defaultGroup
 
     /**
      * Получение списка всех скриптов salt
@@ -122,9 +128,19 @@ class SaltScriptGroupService {
 
         for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
 
+            //TODO проверка существует ли такой файл уже в БД
+            SaltScript saltScript = saltScriptRepository.findOne(createSaltScript.name)
+            if (saltScript) {
+                log.error("Salt script with name [${createSaltScript.name}] already exist.")
+                throw new SaltScriptNotFoundException("Salt script with name [${createSaltScript.name}] already exist.")
+            }
+
+            //создание sls файла на сервере salt
+            String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
+
             log.trace("Start creating salt script with name [${createSaltScript.name}].")
 
-            SaltScript saltScript = new SaltScript(name: createSaltScript.name, content: createSaltScript.content, group: saltScriptGroup)
+            saltScript = new SaltScript(name: createSaltScript.name, filePath: filePath, group: saltScriptGroup)
             saltScriptRepository.save(saltScript)
 
             log.trace("Successfully created salt script with name [${createSaltScript.name}].")

@@ -13,7 +13,6 @@ import java.util.*;
 
 import static org.riversoft.salt.gui.utils.ClientUtils.parameterizedType;
 
-
 /**
  * salt.runners.jobs
  */

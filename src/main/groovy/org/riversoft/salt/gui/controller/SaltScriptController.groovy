@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 class SaltScriptController extends BaseRestController {
 
     @Autowired
-    SaltScriptService scriptService
+    private SaltScriptService scriptService
 
     @RequestMapping('/scripts')
     def findScripts() {

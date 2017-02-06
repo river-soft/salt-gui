@@ -4,11 +4,12 @@ import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.domain.SaltScriptGroup
 import org.riversoft.salt.gui.exception.SaltScriptNotFoundException
-import org.riversoft.salt.gui.model.SaltScriptGroupViewModel
-import org.riversoft.salt.gui.model.SaltScriptViewModel
+import org.riversoft.salt.gui.model.view.SaltScriptGroupViewModel
+import org.riversoft.salt.gui.model.view.SaltScriptViewModel
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Slf4j
@@ -16,10 +17,16 @@ import org.springframework.stereotype.Service
 class SaltScriptService {
 
     @Autowired
-    SaltScriptRepository scriptRepository
+    private SaltScriptRepository scriptRepository
 
     @Autowired
-    SaltScriptGroupRepository saltScriptGroupRepository
+    private SaltScriptFileService saltScriptFileService
+
+    @Autowired
+    private SaltScriptGroupRepository saltScriptGroupRepository
+
+    @Value('${salt.scripts.directory}')
+    private String scriptsDirectory
 
     /**
      * Получение списка всех скриптов salt
@@ -34,7 +41,7 @@ class SaltScriptService {
 
         log.debug("Found [${saltScripts.size()}] script.")
 
-        saltScripts.collect { new SaltScriptViewModel(it) }
+        saltScripts.collect { new SaltScriptViewModel(it.name) }
     }
 
     /**
@@ -64,7 +71,6 @@ class SaltScriptService {
         log.debug("Start searching script with name [${name}].")
 
         SaltScript saltScript = scriptRepository.findOne(name)
-
         if (!saltScript) {
             log.error("SaltScript with name [${name}] not found.")
             throw new SaltScriptNotFoundException("SaltScript with name [${name}] not found.")
@@ -72,7 +78,8 @@ class SaltScriptService {
 
         log.debug("Found script with name [${name}].")
 
-        new SaltScriptViewModel(saltScript)
-    }
+        String fileContent = saltScriptFileService.readSaltScriptSlsFile(saltScript.filePath)
 
+        new SaltScriptViewModel(saltScript.name, fileContent)
+    }
 }

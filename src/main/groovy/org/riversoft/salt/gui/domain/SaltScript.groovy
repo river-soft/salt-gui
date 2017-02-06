@@ -16,14 +16,13 @@ class SaltScript implements Serializable {
     String name
 
     /**
-     * Содержимое/текст скрипта
+     * Полный путь к файлу скрипта
      */
-    String content
+    String filePath
 
     /**
      * Группа скрипта
      */
     @DBRef
     SaltScriptGroup group
-
 }
