@@ -16,16 +16,17 @@ export function createGroup(model) {
         $.ajax({
             url: '/salt-script-group',
             type: 'post',
-            data: model,
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(model),
             success: function (data) {
-                console.log(data);
+
                 dispatch({
                     type: GROUP_CREATE_SUCCESS,
                     payload: data
                 });
             },
-            error: function(data) {
-                console.log(data);
+            error: function (data) {
+
                 dispatch({
                     type: GROUP_CREATE_FAIL,
                     error: new Error(data)

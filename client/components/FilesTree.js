@@ -22,6 +22,7 @@ export class FilesTree extends Component {
         };
         this.showContent = this.showContent.bind(this);
         this.showModal = this.showModal.bind(this);
+        this.onRequestClose = this.onRequestClose.bind(this);
     }
 
     componentDidMount() {
@@ -98,9 +99,10 @@ export class FilesTree extends Component {
                     </div>
                 </Col>
             </Row>
-            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal' onRequestClose={this.onRequestClose.bind(this)}
+            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
+                   onRequestClose={this.onRequestClose.bind(this)} overlayClassName='overlay'
                    parentSelector={() => document.body} ariaHideApp={false}>
-                <CreateGroup createGroup={this.props.createGroup} />
+                <CreateGroup createGroup={this.props.createGroup} groups={this.props.files} closeModal={this.onRequestClose} />
             </Modal>
         </Container>
     }
