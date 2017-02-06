@@ -21,9 +21,8 @@ class SaltScriptFileService {
         String fileContents = ""
 
         //TODO logs
-        //TODo заменить на полный путь к файлу
+        new File(filePath).eachLine { fileContents += "${it}\n" }
 
-        new File("${scriptsDirectory}/${filePath}.sls").eachLine { fileContents += "${it}\n" }
         //TODO FileNotFoundException выбрасывается еслил файл не найден
 
         return fileContents
