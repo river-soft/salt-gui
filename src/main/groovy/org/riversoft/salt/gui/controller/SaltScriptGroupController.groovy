@@ -19,7 +19,7 @@ class SaltScriptGroupController extends BaseRestController {
     @RequestMapping(value = '/salt-script-group', method = RequestMethod.POST)
     def createSaltScriptGroup(@RequestBody CreateSaltScriptGroup createSaltScriptGroup) {
 
-        saltScriptGroupService.createSaltScriptGroup(createSaltScriptGroup)
+        saltScriptGroupService.createSaltScriptGroupAndScripts(createSaltScriptGroup)
     }
 
 }
