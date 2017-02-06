@@ -16,8 +16,10 @@ export default class TreeNode extends Component {
     }
 
     setFilter(filter) {
-        $('.list__child .list__item').removeClass('active');
-        this.setState({selected: filter});
+        if(this.state.selected != filter) {
+            $('.list__child .list__item').removeClass('active');
+            this.setState({selected: filter});
+        }
     }
 
     isActive(value) {
@@ -26,7 +28,7 @@ export default class TreeNode extends Component {
 
     render() {
 
-        let nodes = this.props.files.map((file, index) => {
+        let nodes = this.props.group.scripts.map((file, index) => {
             return <li className={this.isActive(file.name)} key={index} onClick={() => {
                 this.props.showContent(file.content);
                 this.setFilter(file.name);

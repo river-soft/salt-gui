@@ -5,10 +5,20 @@ html {
 body {
   background: #eee;
   height: 100%;
+
+  .mui-textfield > input:focus ~ label,
+  .mui-textfield > textarea:focus ~ label {
+    color: $blue-background;
+  }
+
+  .mui-textfield > input:focus,
+  .mui-textfield > textarea:focus {
+    border-color: $blue-background;
+  }
 }
 
 .header {
-  background-color: mui-color('blue-grey', '400');
+  background-color: $blue-background;
   margin-bottom: 10px;
 }
 
@@ -26,17 +36,17 @@ body {
     display: block;
     cursor: pointer;
   }
-  
+
   &__item {
     cursor: pointer;
 
     &.active {
-      background: #78909C;
+      background: $blue-background;
       color: #fff;
     }
 
     &:hover {
-      background: #78909C;
+      background: $blue-background;
       color: #fff;
     }
   }
@@ -50,4 +60,166 @@ body {
 
 .hidden {
   display: none;
+}
+
+.button {
+  background: $blue-background;
+  color: #fff;
+
+  &:hover {
+    background: $blue-background;
+    color: #fff;
+  }
+
+  &:focus {
+    background: $blue-background;
+    color: #fff;
+  }
+}
+
+.modal {
+  display: block;
+  width: 500px;
+  min-height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -250px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  z-index: 9999;
+  background: #eee;
+  @include transition();
+
+  &__content {
+    padding: 10px;
+  }
+
+  &__header {
+    padding: 10px 0;
+    margin: 0;
+    color: #eee;
+    background: $blue-background;
+  }
+
+  &__form {
+    display: block;
+
+    &_group {
+      position: relative;
+    }
+  }
+
+  &__textarea textarea {
+    resize: vertical;
+  }
+
+  &__footer {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    left: 0;
+    width: 100%;
+    @include clearfix();
+  }
+
+  &__close_btn {
+    border: 2px solid $blue-background;
+    color: $blue-background;
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    border-radius: 50%;
+    font-weight: bold;
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    background: #eee;
+    text-align: center;
+    @include transition();
+
+    &:hover {
+      background: $blue-background;
+      color: #eee;
+      border-color: #eee;
+    }
+  }
+
+  &__btn {
+    color: $blue-background !important;
+    background: #eee !important;
+    margin-right: 10px;
+
+    &:hover {
+      color: #eee !important;
+      background: $blue-background !important;
+    }
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  @include transition();
+}
+
+.group__list {
+  position: absolute;
+  top: 48px;
+  width: 100%;
+  background: #eee;
+  z-index: 2;
+  border: 1px solid $blue-background;
+  -webkit-border-radius: 0 0 3px 3px;
+  -moz-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 400px;
+
+  &_item {
+    cursor: pointer;
+    
+    &:hover {
+      background: $blue-background;
+      color: #eee;
+    }
+  }
+}
+
+.modal__content_scripts {
+  @include clearfix();
+}
+
+.scripts__list {
+  width: 65%;
+  float: left;
+  &_item {
+    border: 1px solid #ccc;
+    background: #fff;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin: 0 0 5px 5px;
+  }
+}
+
+.dropdown-btn {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
 }
