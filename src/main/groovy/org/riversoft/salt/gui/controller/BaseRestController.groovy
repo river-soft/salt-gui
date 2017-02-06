@@ -2,6 +2,7 @@ package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.exception.BasicSaltGuiException
+import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus

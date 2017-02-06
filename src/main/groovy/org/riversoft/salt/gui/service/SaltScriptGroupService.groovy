@@ -73,22 +73,22 @@ class SaltScriptGroupService {
 
         for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
 
-            //TODO проверка существует ли такой файл уже в БД
             SaltScript saltScript = saltScriptRepository.findOne(createSaltScript.name)
             if (saltScript) {
                 log.error("Salt script with name [${createSaltScript.name}] already exist.")
-                throw new SaltScriptAlreadyExistException("Salt script with name [${createSaltScript.name}] already exist.")
+                throw new SaltScriptAlreadyExistException("Salt script with name [${createSaltScript.name}] already exist.",
+                        412, "Salt script with name [${createSaltScript.name}] already exist.")
             }
 
             //создание sls файла на сервере salt
             String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
 
-            log.trace("Start creating salt script with name [${createSaltScript.name}].")
+            log.debug("Start creating salt script with name [${createSaltScript.name}].")
 
             saltScript = new SaltScript(name: createSaltScript.name, filePath: filePath, group: saltScriptGroup)
             saltScriptRepository.save(saltScript)
 
-            log.trace("Successfully created salt script with name [${createSaltScript.name}].")
+            log.debug("Successfully created salt script with name [${createSaltScript.name}].")
 
             saltScriptGroup.scriptList.add(saltScript)
         }

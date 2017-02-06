@@ -45,11 +45,15 @@ class SaltScriptFileService {
 
         //TODO проверять существует ли файл с таким именем?
 
+        log.debug("Start creating script file with name [${fileName}].")
+
         File file = new File("${scriptsDirectory}/${fileName}.sls")
 
         String filePath = file.canonicalPath
 
         file.write(fileContent)
+
+        log.debug("Successfully created script file with full path [${filePath}].")
 
         return filePath
     }
