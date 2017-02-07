@@ -9,9 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 class SaltScript implements Serializable {
 
     /**
-     * Название скрипта
+     * Уникальный номер скрипта
      */
     @Id
+    String id
+
+    /**
+     * Название скрипта
+     */
     @Indexed(unique = true)
     String name
 
