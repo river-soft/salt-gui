@@ -36,15 +36,15 @@ class SaltScriptService {
 
         SaltScript saltScript = saltScriptRepository.findOne(id)
         if (!saltScript) {
-            log.error("SaltScript with name [${id}] not found.")
-            throw new SaltScriptNotFoundException("SaltScript with name [${id}] not found.")
+            log.error("SaltScript with id [${id}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript with id [${id}] not found.")
         }
 
         log.debug("Found script with name [${saltScript.name}].")
 
         String fileContent = saltScriptFileService.readSaltScriptSlsFile(saltScript.filePath)
 
-        new SaltScriptViewModel(saltScript.name, fileContent)
+        new SaltScriptViewModel(saltScript, fileContent)
     }
 
     /**
