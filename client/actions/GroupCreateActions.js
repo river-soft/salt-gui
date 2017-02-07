@@ -29,7 +29,8 @@ export function createGroup(model) {
 
                 dispatch({
                     type: GROUP_CREATE_FAIL,
-                    error: new Error(data)
+                    error: true,
+                    payload: data.responseJSON
                 });
             }
 

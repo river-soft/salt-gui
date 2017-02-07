@@ -5,25 +5,44 @@ import {FilesTree} from '../components/FilesTree';
 import {Header} from '../components/Header';
 import * as filesTreeActions from '../actions/FilesTreeActions';
 import * as createGroupActions from '../actions/GroupCreateActions';
+import * as getScriptContent from '../actions/GetScriptContentAction';
 
 class App extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            createSuccess: false
+        };
+    }
+
+    componentDidUpdate() {
+        if(this.props.createGroup.group) {
+            this.setState({createSuccess: true});
+            delete this.props.createGroup.group;
+        } else if (this.state.createSuccess) {
+            this.setState({createSuccess: false});
+        }
+    }
+
     render() {
 
-        const _this = this;
-        const {filesRequest} = _this.props.filesTreeActions;
-        const {createGroup} = _this.props.createGroupActions;
+        const _this = this,
+            {filesRequest} = _this.props.filesTreeActions,
+            {createGroup} = _this.props.createGroupActions,
+            {getScriptContent} = _this.props.getScriptContent;
 
         if (_this.props.createGroup.group) {
 
-            let i;
+            let i = -1;
             _this.props.filesTree.files.filter((item, index) => {
-                if(item.group.toLowerCase().search(_this.props.createGroup.group.group.toLowerCase()) !== -1) {
+                if (item.group.toLowerCase().search(_this.props.createGroup.group.group.toLowerCase()) !== -1) {
                     i = index;
                 }
             });
 
-            if (i) {
+            if (i >= 0) {
                 _this.props.filesTree.files[i].scripts = _this.props.createGroup.group.scripts;
             } else {
                 _this.props.filesTree.files.push(_this.props.createGroup.group);
@@ -31,7 +50,9 @@ class App extends Component {
         }
 
         let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest}
-                                   files={_this.props.filesTree.files}/>;
+                                   scriptContent={_this.props.scriptContent}
+                                   getScriptContent={getScriptContent} files={_this.props.filesTree.files}
+                                   error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -45,14 +66,16 @@ class App extends Component {
 function mapStateToProps(state) {
     return {
         filesTree: state.filesTree,
-        createGroup: state.createGroup
+        createGroup: state.createGroup,
+        scriptContent: state.getScriptContent
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
-        createGroupActions: bindActionCreators(createGroupActions, dispatch)
+        createGroupActions: bindActionCreators(createGroupActions, dispatch),
+        getScriptContent: bindActionCreators(getScriptContent, dispatch)
     }
 }
 

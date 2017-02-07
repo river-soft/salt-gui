@@ -30,7 +30,7 @@ export default class TreeNode extends Component {
 
         let nodes = this.props.group.scripts.map((file, index) => {
             return <li className={this.isActive(file.name)} key={index} onClick={() => {
-                this.props.showContent(file.content);
+                this.props.showContent(file.name);
                 this.setFilter(file.name);
             }}>{file.name}</li>
         }, this);

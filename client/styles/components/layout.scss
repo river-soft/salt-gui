@@ -212,6 +212,12 @@ body {
     -moz-border-radius: 10px;
     border-radius: 10px;
     margin: 0 0 5px 5px;
+    cursor: pointer;
+    
+    &:hover {
+      background: $blue-background;
+      color: #fff
+    }
   }
 }
 
@@ -222,4 +228,18 @@ body {
   cursor: pointer;
   width: 20px;
   height: 20px;
+}
+
+.input_error {
+  color: $error-text-color;
+  font-size: 1.2rem;
+}
+
+.file-name {
+  padding: 5px;
+  background: #ccc;
+}
+
+.file-description {
+  padding: 5px;
 }

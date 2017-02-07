@@ -18,17 +18,52 @@ export default class CreateGroup extends Component {
             scripts: [],
             showDropdown: false,
             rerenderList: [],
-            rerenderDropdown: false
+            rerenderDropdown: false,
+            scriptExist: false,
+            closeModal: false
         };
 
         this.addScript = this.addScript.bind(this);
         this.createModel = this.createModel.bind(this);
     }
 
+    componentDidUpdate() {
+        if(this.props.createSuccess && !this.state.closeModal) {
+            this.setState({
+                addScript: false,
+                groupName: '',
+                scriptName: '',
+                scriptContent: '',
+                scripts: [],
+                showDropdown: false,
+                rerenderList: [],
+                rerenderDropdown: false,
+                closeModal: true
+            });
+
+            this.props.closeModal();
+        }
+    }
+
     addScript() {
         this.setState({
             addScript: true
         });
+    }
+
+    editScript(scriptName, scriptContent) {
+
+        this.state.scripts.forEach((el, index) => {
+            if (el.name === scriptName) {
+                delete this.state.scripts[index];
+            }
+        });
+
+        this.setState({
+            addScript: true,
+            scriptName: scriptName,
+            scriptContent: scriptContent
+        })
     }
 
     setScriptName(name) {
@@ -44,8 +79,8 @@ export default class CreateGroup extends Component {
         let input = document.getElementById('group'),
             _this = this;
 
-        document.onclick = function(e) {
-            if(e.target.className != input.className && _this.state.showDropdown) {
+        document.onclick = function (e) {
+            if (e.target.className != input.className && _this.state.showDropdown) {
                 _this.setState({showDropdown: false});
             }
         };
@@ -66,6 +101,24 @@ export default class CreateGroup extends Component {
             scriptName: '',
             scriptContent: '',
         })
+    }
+
+    validateScript(scriptName) {
+
+        const groups = this.props.groups;
+        let exist = false;
+
+        for (let i = 0; i < groups.length; i++) {
+            groups[i].scripts.filter((script) => {
+                if (script.name.toLowerCase() === scriptName.toLowerCase()) {
+                    exist = true;
+                }
+            })
+        }
+
+        this.setState({
+            scriptExist: exist
+        });
     }
 
     selectGroup(group) {
@@ -95,22 +148,24 @@ export default class CreateGroup extends Component {
             rerenderList: obj,
             rerenderDropdown: true
         });
-
     }
 
-    addScriptForm(id) {
-        return <div className={id}><Input label='Название скрипта' floatingLabel={true} onChange={(e) => {
+    addScriptForm() {
+
+        return <div><Input label='Название скрипта' floatingLabel={true} onChange={(e) => {
             this.setScriptName(e.target.value);
-        }}/>
+            this.validateScript(e.target.value);
+        }} defaultValue={this.state.scriptName || ''}/>
+            {this.state.scriptExist ? <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
             <TextArea label='Текст скрипта' floatingLabel={true} onChange={(e) => {
                 this.setScriptContent(e.target.value)
-            }} className='modal__textarea'/>
+            }} className='modal__textarea' defaultValue={this.state.scriptContent || ''}/>
             <Button size='small' color='primary' variant='flat'
                     onClick={() => {
                         this.addScript();
                         this.createScriptStore();
                     }} className='modal__btn'
-                    disabled={!this.state.scriptName.length || !this.state.scriptContent}>Добавить</Button>
+                    disabled={!this.state.scriptName.length || !this.state.scriptContent || this.state.scriptExist}>Добавить</Button>
             <Button size='small' color='primary' variant='flat' onClick={() => {
                 this.cancelAddScript();
             }} className='modal__btn'>Отмена</Button>
@@ -143,26 +198,7 @@ export default class CreateGroup extends Component {
             })
         });
 
-        try {
-
-            this.props.createGroup(obj);
-            this.props.closeModal();
-
-            this.setState({
-                addScript: false,
-                groupName: '',
-                scriptName: '',
-                scriptContent: '',
-                scripts: [],
-                showDropdown: false,
-                rerenderList: [],
-                rerenderDropdown: false
-            });
-
-        } catch (e) {
-            console.error(new Error(e));
-        }
-
+        this.props.createGroup(obj);
     }
 
     render() {
@@ -180,7 +216,7 @@ export default class CreateGroup extends Component {
                 <ul className='group__list mui-list--unstyled' ref='dropdown'>
                     {this.state.rerenderList.map((group, index) => {
                         return <li className='group__list_item' key={index} onClick={() => {
-                            this.selectGroup(group.group)
+                            this.selectGroup(group.group);
                         }}>{group.group}</li>
                     })}
                 </ul> : null;
@@ -196,14 +232,18 @@ export default class CreateGroup extends Component {
                     }} onFocus={(e) => {
                         this.setGroupName(e.target.value)
                     }}/>
+                    {this.props.error ? <span className='input_error'>{this.props.error.message}</span> : null}
                     <div className='dropdown-btn' onClick={this.showDropdown.bind(this)}><span
-                        className='mui-caret'></span></div>
+                        className='mui-caret'> </span></div>
                     {this.state.showDropdown ? dropdownList : null}
                 </div>
                 <div className='modal__content_scripts'>
                     <ul className='mui-list--inline scripts__list'>
                         {this.state.scripts.length > 0 ? this.state.scripts.map((script, index) => {
-                                return <li key={index} className='scripts__list_item'>{script.name}</li>
+                                return <li key={index} className='scripts__list_item'
+                                           onClick={() => {
+                                               this.editScript(script.name, script.content);
+                                           }}>{script.name}</li>
                             }) : null}
                     </ul>
                     {this.state.addScript ? null :
@@ -212,7 +252,7 @@ export default class CreateGroup extends Component {
                             Добавить скрипт
                         </Button>}
                 </div>
-                {this.state.addScript ? this.addScriptForm(new Date().getTime()) : null}
+                {this.state.addScript ? this.addScriptForm() : null}
             </Form>
             {!this.state.addScript ?
                 <div className='modal__footer'>

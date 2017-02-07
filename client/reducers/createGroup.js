@@ -14,7 +14,7 @@ export default (state = initialState, action) => {
         case GROUP_CREATE_SUCCESS:
             return {...state, group: action.payload, error: ''};
         case GROUP_CREATE_FAIL:
-            return {...state, error: action.payload.message};
+            return {...state, error: action.payload};
         default:
             return state;
     }

@@ -15,7 +15,7 @@ export class FilesTree extends Component {
 
         this.state = {
             showFileDescription: false,
-            content: '',
+            scriptName: '',
             filterScripts: [],
             rerender: false,
             showModal: false
@@ -29,10 +29,11 @@ export class FilesTree extends Component {
         this.props.filesRequest();
     }
 
-    showContent(content) {
+    showContent(scriptName) {
+        this.props.getScriptContent(scriptName);
+
         this.setState({
             showFileDescription: true,
-            content: content
         })
     }
 
@@ -73,10 +74,11 @@ export class FilesTree extends Component {
 
         if (_this.state.showFileDescription) {
 
-            fileDescription = <FileDescription description={this.state.content}/>;
+            fileDescription = <FileDescription scriptContent={this.props.scriptContent}
+                                               script={this.props.script}/>;
         }
 
-        if (!this.props.files) {
+        if (this.props.files.length === 0) {
             template = <div>Данных нету</div>
         } else if (this.state.rerender) {
             template = <TreeView groups={this.state.filterScripts} showContent={this.showContent}/>;
@@ -102,7 +104,8 @@ export class FilesTree extends Component {
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
                    onRequestClose={this.onRequestClose.bind(this)} overlayClassName='overlay'
                    parentSelector={() => document.body} ariaHideApp={false}>
-                <CreateGroup createGroup={this.props.createGroup} groups={this.props.files} closeModal={this.onRequestClose} />
+                <CreateGroup createGroup={this.props.createGroup} groups={this.props.files}
+                             closeModal={this.onRequestClose} error={this.props.error} createSuccess={this.props.createSuccess}/>
             </Modal>
         </Container>
     }

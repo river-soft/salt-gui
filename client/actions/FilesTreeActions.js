@@ -28,7 +28,7 @@ export function filesRequest() {
                 dispatch({
                     type: FILES_FAIL,
                     error: true,
-                    payload: new Error(data)
+                    payload: data.responseJSON
                 });
             }
         })
