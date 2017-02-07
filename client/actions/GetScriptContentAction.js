@@ -5,7 +5,7 @@ import {
 } from '../constants/GetScriptContent';
 import $ from 'jquery'
 
-export function getScriptContent(scriptName) {
+export function getScriptContent(scriptId) {
 
     return (dispatch) => {
 
@@ -14,8 +14,8 @@ export function getScriptContent(scriptName) {
         });
 
         $.ajax({
-            url: '/script-by-name',
-            data: {name: scriptName},
+            url: '/script-by-id',
+            data: {id: scriptId},
             type: 'get',
             success: function(data) {
                 dispatch({

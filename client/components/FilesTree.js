@@ -29,8 +29,8 @@ export class FilesTree extends Component {
         this.props.filesRequest();
     }
 
-    showContent(scriptName) {
-        this.props.getScriptContent(scriptName);
+    showContent(scriptId) {
+        this.props.getScriptContent(scriptId);
 
         this.setState({
             showFileDescription: true,

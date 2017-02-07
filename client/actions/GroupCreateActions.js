@@ -14,7 +14,7 @@ export function createGroup(model) {
         });
 
         $.ajax({
-            url: '/salt-script-group',
+            url: '/salt-script',
             type: 'post',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(model),
