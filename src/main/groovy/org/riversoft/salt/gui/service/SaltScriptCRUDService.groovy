@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.model.CreateSaltScript
 import org.riversoft.salt.gui.model.CreateSaltScriptGroup
 import org.riversoft.salt.gui.model.EditSaltScript
 import org.riversoft.salt.gui.model.view.SaltScriptGroupViewModel
+import org.riversoft.salt.gui.model.view.SaltScriptViewModel
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,10 +18,9 @@ import org.springframework.stereotype.Service
 
 @Slf4j
 @Service
-class SaltScriptGroupService {
+class SaltScriptCRUDService {
 
-    @Autowired
-    private SaltScriptService saltScriptService
+    //region injection
 
     @Autowired
     private SaltScriptRepository saltScriptRepository
@@ -34,6 +34,8 @@ class SaltScriptGroupService {
     @Value('${salt.scripts.default_group}')
     private String defaultGroup
 
+    //endregion
+
     /**
      * Создание группы для скриптов
      * @param groupName - название группы
@@ -41,6 +43,30 @@ class SaltScriptGroupService {
      * @see SaltScriptGroupViewModel
      */
     SaltScriptGroupViewModel createSaltScriptGroupAndScripts(CreateSaltScriptGroup createSaltScriptGroup) {
+
+
+        //region проверка на наличие скриптов с одинаковыми названиями
+
+        //TODO подумать как улучшить или потом уберем?
+
+        boolean isEqualsScripts = false
+
+        for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
+
+            int equalsScriptsCount = createSaltScriptGroup.scripts.findAll { it.name == createSaltScript.name }.size()
+            //todo может вытаскивтаь имена одинаковых названий?
+            if (equalsScriptsCount > 1) {
+                isEqualsScripts = true
+            }
+        }
+
+        if (isEqualsScripts) {
+            log.error("The are scripts with equals names in list.")
+            throw new SaltScriptAlreadyExistException("The are scripts with equals names in list.")
+        }
+
+        //endregion
+
 
         SaltScriptGroup saltScriptGroup = null
 
@@ -101,6 +127,29 @@ class SaltScriptGroupService {
     }
 
     /**
+     * Поиск скрипта по его id
+     * @param id - уникальный номер скрипта
+     * @return объект SaltScriptViewModel
+     * @see org.riversoft.salt.gui.model.view.SaltScriptViewModel
+     */
+    SaltScriptViewModel findScriptById(String id) {
+
+        log.debug("Start searching script with id [${id}].")
+
+        SaltScript saltScript = saltScriptRepository.findOne(id)
+        if (!saltScript) {
+            log.error("SaltScript with id [${id}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript with id [${id}] not found.")
+        }
+
+        log.debug("Found script with name [${saltScript.name}].")
+
+        String fileContent = saltScriptFileService.readSaltScriptSlsFile(saltScript.filePath)
+
+        new SaltScriptViewModel(saltScript, fileContent)
+    }
+
+    /**
      * Обновление скрипта и группы скрипта
      * @param editSaltScript - объект модели EditSaltScript
      * @return объект модели SaltScriptGroupViewModel
@@ -109,9 +158,12 @@ class SaltScriptGroupService {
     SaltScriptGroupViewModel updateSaltScript(EditSaltScript editSaltScript) {
 
         SaltScript saltScript = saltScriptRepository.findOne(editSaltScript.id)
-        //TODO
+        if (!saltScript) {
+            log.error("SaltScript by id [${editSaltScript.id}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript by id [${editSaltScript.id}] not found.")
+        }
 
-        if (editSaltScript.group != saltScript?.group?.name) {
+        if (editSaltScript.group != saltScript.group?.name) {
 
             SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name)
 
