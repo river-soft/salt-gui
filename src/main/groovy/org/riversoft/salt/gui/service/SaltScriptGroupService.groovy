@@ -4,8 +4,10 @@ import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.domain.SaltScriptGroup
 import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
+import org.riversoft.salt.gui.exception.SaltScriptNotFoundException
 import org.riversoft.salt.gui.model.CreateSaltScript
 import org.riversoft.salt.gui.model.CreateSaltScriptGroup
+import org.riversoft.salt.gui.model.EditSaltScript
 import org.riversoft.salt.gui.model.view.SaltScriptGroupViewModel
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
@@ -73,7 +75,7 @@ class SaltScriptGroupService {
 
         for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
 
-            SaltScript saltScript = saltScriptRepository.findOne(createSaltScript.name)
+            SaltScript saltScript = saltScriptRepository.findByName(createSaltScript.name)
             if (saltScript) {
                 log.error("Salt script with name [${createSaltScript.name}] already exist.")
                 throw new SaltScriptAlreadyExistException("Salt script with name [${createSaltScript.name}] already exist.",
@@ -96,6 +98,94 @@ class SaltScriptGroupService {
         saltScriptGroupRepository.save(saltScriptGroup)
 
         new SaltScriptGroupViewModel(saltScriptGroup)
+    }
+
+    /**
+     * Обновление скрипта и группы скрипта
+     * @param editSaltScript - объект модели EditSaltScript
+     * @return объект модели SaltScriptGroupViewModel
+     * @see SaltScriptGroupViewModel
+     */
+    SaltScriptGroupViewModel updateSaltScript(EditSaltScript editSaltScript) {
+
+        SaltScript saltScript = saltScriptRepository.findOne(editSaltScript.id)
+        //TODO
+
+        if (editSaltScript.group != saltScript?.group?.name) {
+
+            SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name)
+
+            saltScriptGroup.scriptList.removeAll { it.id == saltScript.id }
+
+            saltScriptGroupRepository.save(saltScriptGroup)
+
+            SaltScriptGroup newSaltScriptGroup = saltScriptGroupRepository.findOne(editSaltScript.group)
+
+            if (!newSaltScriptGroup) {
+
+                log.debug("Start creating salt script group wiht name [${editSaltScript.group}].")
+
+                newSaltScriptGroup = new SaltScriptGroup(name: editSaltScript.group)
+                saltScriptGroupRepository.save(saltScriptGroup)
+
+                log.debug("Successfully created salt script group with name [${editSaltScript.group}].")
+            }
+
+            saltScript.group = newSaltScriptGroup
+
+            saltScriptRepository.save(saltScript)
+
+            newSaltScriptGroup.scriptList.add(saltScript)
+            saltScriptGroupRepository.save(newSaltScriptGroup)
+        }
+
+        String newFileName = null
+
+        if (saltScript.name != editSaltScript.name) {
+
+            saltScript.name = editSaltScript.name
+            saltScriptRepository.save(saltScript)
+
+            newFileName = editSaltScript.name
+        }
+
+        saltScript.filePath = saltScriptFileService.updateSaltScriptSlsFile(saltScript.filePath, editSaltScript.content, newFileName)
+        saltScriptRepository.save(saltScript)
+
+        new SaltScriptGroupViewModel(saltScript.group)
+    }
+
+    /**
+     * Удаление сприпта
+     * @param scriptId - уникальный идентификатор скрипта
+     */
+    def deleteSaltScript(String scriptId) {
+
+        SaltScript saltScript = saltScriptRepository.findOne(scriptId)
+        if (!saltScript) {
+            log.error("SaltScript by id [${scriptId}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript by id [${scriptId}] not found.")
+        }
+
+        saltScriptFileService.deleteSaltScriptSlsFile(saltScript.filePath)
+
+        SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name)
+
+        log.debug("Start deleting script with name [${saltScript.name}] from group [${saltScriptGroup.name}].")
+
+        saltScriptGroup.scriptList.removeAll { it.id == saltScript.id }
+
+        saltScriptGroupRepository.save(saltScriptGroup)
+
+        log.debug("Successfully deleted script with name [${saltScript.name}] from group [${saltScriptGroup.name}].")
+
+        log.debug("Start deleting script with name [${saltScript.name}].")
+
+        String deletedScriptName = saltScript.name
+
+        saltScriptRepository.delete(saltScript.id)
+
+        log.debug("Successfully deleted script with name [${deletedScriptName}].")
     }
 
 }

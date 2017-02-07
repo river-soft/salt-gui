@@ -15,6 +15,9 @@ class SaltScriptGroup implements Serializable {
     @Indexed(unique = true)
     String name
 
+    /**
+     * Список скриптов группы
+     */
     @DBRef
     List<SaltScript> scriptList = []
 }

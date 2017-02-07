@@ -14,11 +14,11 @@ class SaltScriptController extends BaseRestController {
     @Autowired
     private SaltScriptService scriptService
 
-    @RequestMapping('/scripts')
-    def findScripts() {
-
-        scriptService.findAllScripts()
-    }
+//    @RequestMapping('/scripts')
+//    def findScripts() {
+//
+//        scriptService.findAllScripts()
+//    }
 
     @RequestMapping('/grouped-scripts')
     def findGroupedScripts() {
@@ -26,10 +26,10 @@ class SaltScriptController extends BaseRestController {
         scriptService.findAllGroupedScripts()
     }
 
-    @RequestMapping('/script-by-name')
-    def findScriptByName(@RequestParam(value = "name", required = true) String name) {
+    @RequestMapping('/script-by-id')
+    def findScriptByName(@RequestParam(value = "id", required = true) String id) {
 
-        scriptService.findScriptByName(name)
+        scriptService.findScriptById(id)
     }
 
 }

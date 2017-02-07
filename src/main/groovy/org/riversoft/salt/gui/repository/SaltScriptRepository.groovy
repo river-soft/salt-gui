@@ -6,4 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository
 interface SaltScriptRepository extends MongoRepository<SaltScript, String> {
 
     List<SaltScript> findAllByGroupName(String group)
+
+    SaltScript findByName(String name)
+
 }

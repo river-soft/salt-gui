@@ -25,22 +25,22 @@ class SaltScriptService {
     private SaltScriptGroupRepository saltScriptGroupRepository
 
     /**
-     * Поиск скрипта по его имени
-     * @param name - название скрипта
+     * Поиск скрипта по его id
+     * @param id - уникальный номер скрипта
      * @return объект SaltScriptViewModel
      * @see SaltScriptViewModel
      */
-    SaltScriptViewModel findScriptByName(String name) {
+    SaltScriptViewModel findScriptById(String id) {
 
-        log.debug("Start searching script with name [${name}].")
+        log.debug("Start searching script with name [${id}].")
 
-        SaltScript saltScript = saltScriptRepository.findOne(name)
+        SaltScript saltScript = saltScriptRepository.findOne(id)
         if (!saltScript) {
-            log.error("SaltScript with name [${name}] not found.")
-            throw new SaltScriptNotFoundException("SaltScript with name [${name}] not found.")
+            log.error("SaltScript with name [${id}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript with name [${id}] not found.")
         }
 
-        log.debug("Found script with name [${name}].")
+        log.debug("Found script with name [${saltScript.name}].")
 
         String fileContent = saltScriptFileService.readSaltScriptSlsFile(saltScript.filePath)
 
@@ -52,16 +52,16 @@ class SaltScriptService {
      * @return список объектов SaltScriptViewModel
      * @see SaltScriptViewModel
      */
-    List<SaltScriptViewModel> findAllScripts() {
-
-        log.debug("Start searching all script.")
-
-        List<SaltScript> saltScripts = saltScriptRepository.findAll()
-
-        log.debug("Found [${saltScripts.size()}] script.")
-
-        saltScripts.collect { new SaltScriptViewModel(it.name) }
-    }
+//    List<SaltScriptViewModel> findAllScripts() {
+//
+//        log.debug("Start searching all script.")
+//
+//        List<SaltScript> saltScripts = saltScriptRepository.findAll()
+//
+//        log.debug("Found [${saltScripts.size()}] script.")
+//
+//        saltScripts.collect { new SaltScriptViewModel(it.name) }
+//    }
 
     /**
      * Получение списка скриптов сгрупированных по группам

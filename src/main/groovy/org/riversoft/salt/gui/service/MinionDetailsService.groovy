@@ -23,7 +23,10 @@ class MinionDetailsService {
     @Value('${salt.password}')
     private String PASSWORD
 
-    def findMinionDetails(List<String> minionsNames){
+    @Value('${minion.details.properties}')
+    private String[] properties
+
+    def findMinionDetails(List<String> minionsNames) {
 
         // Init the client TODO подумать может клиент где то создавтать один раз ?
         SaltClient client = new SaltClient(URI.create(SALT_API_URL));
@@ -32,8 +35,7 @@ class MinionDetailsService {
         Target<List<String>> minionList = new MinionList(minionsNames);
 
         // call Grains.item
-        //todo может вынести в настройки параметров перечень items
-        Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, "cpu_model", "ipv4", "os", "osfinger")
+        Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, properties)
                 .callSync(client, minionList, USER, PASSWORD, AuthModule.PAM);
 
         // get result of Grains.item
