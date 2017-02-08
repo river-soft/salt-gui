@@ -37,7 +37,7 @@ class SaltScriptFileService {
      * @param fileContent - содержимое файла скрипта
      * @return полный путь к файлу
      */
-    static createSaltScriptSlsFile(String fileName, String fileContent) {
+    String createSaltScriptSlsFile(String fileName, String fileContent) {
 
         def dir = new File("${scriptsDirectory}")
 
@@ -68,7 +68,7 @@ class SaltScriptFileService {
      * @param newFileName - новое имя файла
      * @return полный путь к обновленному файлу
      */
-    static String updateSaltScriptSlsFile(String filePath, String fileContent, String newFileName) {
+    String updateSaltScriptSlsFile(String filePath, String fileContent, String newFileName) {
 
         File file = new File(filePath)
 
