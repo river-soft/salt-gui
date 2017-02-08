@@ -80,21 +80,26 @@ body {
 .modal {
   display: block;
   width: 500px;
-  min-height: 300px;
+  min-height: 100px;
   position: absolute;
   top: 50%;
   left: 50%;
   margin-top: -150px;
   margin-left: -250px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 3px 3px 0 0;
+  -moz-border-radius: 3px 3px 0 0;
+  border-radius: 3px 3px 0 0;
   z-index: 9999;
   background: #eee;
   @include transition();
 
   &__content {
     padding: 10px;
+
+    &_question {
+      font-weight: bold;
+      padding: 20px 10px;
+    }
   }
 
   &__header {
@@ -118,11 +123,15 @@ body {
 
   &__footer {
     position: absolute;
-    bottom: 0;
+    bottom: -44px;
+    background: #eee;
     right: 10px;
     left: 0;
     width: 100%;
     @include clearfix();
+    -webkit-border-radius: 0 0 3px 3px;
+    -moz-border-radius: 0 0 3px 3px;
+    border-radius: 0 0 3px 3px;
   }
 
   &__close_btn {
@@ -235,11 +244,32 @@ body {
   font-size: 1.2rem;
 }
 
-.file-name {
-  padding: 5px;
-  background: #ccc;
-}
+.file {
+  position: relative;
 
-.file-description {
-  padding: 5px;
+  &__name {
+    padding: 5px;
+    background: #ccc;
+  }
+
+  &__description {
+    padding: 5px;
+  }
+
+  &__actions {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 1.8rem;
+    color: $blue-background;
+    
+    &_item {
+      cursor: pointer;
+    }
+  }
+
+  &-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
 }

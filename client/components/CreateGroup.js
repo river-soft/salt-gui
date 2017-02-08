@@ -28,7 +28,7 @@ export default class CreateGroup extends Component {
     }
 
     componentDidUpdate() {
-        if(this.props.createSuccess && !this.state.closeModal) {
+        if (this.props.createSuccess && !this.state.closeModal) {
             this.setState({
                 addScript: false,
                 groupName: '',
@@ -107,13 +107,19 @@ export default class CreateGroup extends Component {
 
         const groups = this.props.groups;
         let exist = false;
-
-        for (let i = 0; i < groups.length; i++) {
+        let i;
+        for (i = 0; i < groups.length; i++) {
             groups[i].scripts.filter((script) => {
                 if (script.name.toLowerCase() === scriptName.toLowerCase()) {
                     exist = true;
                 }
             })
+        }
+
+        for (i = 0; i < this.state.scripts.length; i++) {
+            if (this.state.scripts[i].name.toLowerCase() === scriptName.toLowerCase()) {
+                exist = true;
+            }
         }
 
         this.setState({
@@ -128,7 +134,7 @@ export default class CreateGroup extends Component {
         input.focus();
         input.className.replace('mui--is-empty', '');
         input.className += ' mui--is-not-empty';
-        this.setState({showDropdown: false})
+        this.setState({showDropdown: false});
     }
 
     rerenderGroupList(groupName) {

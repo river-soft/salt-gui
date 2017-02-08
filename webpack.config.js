@@ -59,6 +59,10 @@ module.exports = {
                 plugins: ['transform-runtime']
             },
             {
+                test: /\.(woff|eot|ttf|woff2)$/,
+                loader: 'file?name=/fonts/[name].[ext]'
+            },
+            {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract('css!sass!autoprefixer')
             }

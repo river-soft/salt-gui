@@ -6,6 +6,8 @@ import {Header} from '../components/Header';
 import * as filesTreeActions from '../actions/FilesTreeActions';
 import * as createGroupActions from '../actions/GroupCreateActions';
 import * as getScriptContent from '../actions/GetScriptContentAction';
+import * as scriptRemoveAction from '../actions/ScriptRemoveAction';
+import * as editScriptAction from '../actions/EditScriptAction';
 
 class App extends Component {
 
@@ -13,16 +15,32 @@ class App extends Component {
         super(props);
 
         this.state = {
-            createSuccess: false
+            createSuccess: false,
+            removeSuccess: false,
+            editSuccess: false
         };
     }
 
     componentDidUpdate() {
-        if(this.props.createGroup.group) {
+        if (this.props.createGroup.group) {
             this.setState({createSuccess: true});
             delete this.props.createGroup.group;
         } else if (this.state.createSuccess) {
             this.setState({createSuccess: false});
+        }
+
+        if(this.props.editScript.edit) {
+            this.setState({editSuccess: true});
+            delete this.props.editScript.edit;
+        } else if(this.state.editSuccess) {
+            this.setState({editSuccess: false});
+        }
+
+        if(this.props.scriptRemove.removed) {
+            this.setState({removeSuccess: true});
+            delete this.props.scriptRemove.removed;
+        } else if(this.state.removeSuccess) {
+            this.setState({removeSuccess: false});
         }
     }
 
@@ -31,28 +49,34 @@ class App extends Component {
         const _this = this,
             {filesRequest} = _this.props.filesTreeActions,
             {createGroup} = _this.props.createGroupActions,
-            {getScriptContent} = _this.props.getScriptContent;
+            {getScriptContent} = _this.props.getScriptContent,
+            {scriptRemove} = _this.props.scriptRemoveAction,
+            {editScript} = _this.props.editScriptAction;
 
         if (_this.props.createGroup.group) {
 
-            let i = -1;
-            _this.props.filesTree.files.filter((item, index) => {
-                if (item.group.toLowerCase().search(_this.props.createGroup.group.group.toLowerCase()) !== -1) {
-                    i = index;
-                }
-            });
+            let position = -1;
+            for(let i = 0; i < _this.props.filesTree.files.length; i++) {
 
-            if (i >= 0) {
-                _this.props.filesTree.files[i].scripts = _this.props.createGroup.group.scripts;
+                if(_this.props.filesTree.files[i].group === _this.props.createGroup.group.group) {
+                    position = i;
+                }
+            }
+
+
+            if (position >= 0) {
+                _this.props.filesTree.files[position].scripts = _this.props.createGroup.group.scripts;
             } else {
                 _this.props.filesTree.files.push(_this.props.createGroup.group);
             }
         }
 
         let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest}
-                                   scriptContent={_this.props.scriptContent}
+                                   removeSuccess={this.state.removeSuccess}
+                                   scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
-                                   error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}/>;
+                                   error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}
+                                   editScript={editScript} editSuccess={this.state.editSuccess}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -67,7 +91,9 @@ function mapStateToProps(state) {
     return {
         filesTree: state.filesTree,
         createGroup: state.createGroup,
-        scriptContent: state.getScriptContent
+        scriptContent: state.getScriptContent,
+        scriptRemove: state.scriptRemove,
+        editScript: state.editScript
     }
 }
 
@@ -75,7 +101,9 @@ function mapDispatchToProps(dispatch) {
     return {
         filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
         createGroupActions: bindActionCreators(createGroupActions, dispatch),
-        getScriptContent: bindActionCreators(getScriptContent, dispatch)
+        getScriptContent: bindActionCreators(getScriptContent, dispatch),
+        scriptRemoveAction: bindActionCreators(scriptRemoveAction, dispatch),
+        editScriptAction: bindActionCreators(editScriptAction, dispatch)
     }
 }
 
