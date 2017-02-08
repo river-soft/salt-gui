@@ -139,7 +139,7 @@ export class FilesTree extends Component {
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={this.props.filesRequest}
-                                  script={_this.state.editingScript} removed={_this.props.removed}
+                                  script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
                                   hideContent={this.hideContent}/>
         } else {
             modal = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}

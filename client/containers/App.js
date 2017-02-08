@@ -35,6 +35,13 @@ class App extends Component {
         } else if(this.state.editSuccess) {
             this.setState({editSuccess: false});
         }
+
+        if(this.props.scriptRemove.removed) {
+            this.setState({removeSuccess: true});
+            delete this.props.scriptRemove.removed;
+        } else if(this.state.removeSuccess) {
+            this.setState({removeSuccess: false});
+        }
     }
 
     render() {
@@ -48,22 +55,24 @@ class App extends Component {
 
         if (_this.props.createGroup.group) {
 
-            let i = -1;
-            _this.props.filesTree.files.filter((item, index) => {
-                if (item.group.toLowerCase().search(_this.props.createGroup.group.group.toLowerCase()) !== -1) {
-                    i = index;
-                }
-            });
+            let position = -1;
+            for(let i = 0; i < _this.props.filesTree.files.length; i++) {
 
-            if (i >= 0) {
-                _this.props.filesTree.files[i].scripts = _this.props.createGroup.group.scripts;
+                if(_this.props.filesTree.files[i].group === _this.props.createGroup.group.group) {
+                    position = i;
+                }
+            }
+
+
+            if (position >= 0) {
+                _this.props.filesTree.files[position].scripts = _this.props.createGroup.group.scripts;
             } else {
                 _this.props.filesTree.files.push(_this.props.createGroup.group);
             }
         }
 
         let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest}
-                                   removed={this.props.scriptRemove.removed}
+                                   removeSuccess={this.state.removeSuccess}
                                    scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
                                    error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}

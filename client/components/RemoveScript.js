@@ -8,14 +8,18 @@ export default class RemoveScript extends Component {
         super(props);
 
         this.state = {
-            showModal: true
+            showModal: false
         };
 
         this.removeScript = this.removeScript.bind(this);
     }
 
     componentDidUpdate() {
-        if (this.props.removed && !this.state.showModal) {
+        if (this.props.removeSuccess && !this.state.showModal) {
+            this.setState({
+                closeModal: true
+            });
+
             this.props.closeModal();
             this.props.hideContent();
         }
@@ -23,7 +27,6 @@ export default class RemoveScript extends Component {
 
     removeScript(script) {
         this.props.scriptRemove(script);
-        this.setState({showModal: false});
     }
 
     render() {
