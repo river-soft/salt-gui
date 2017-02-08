@@ -13,17 +13,20 @@ class SaltScriptFileService {
 
     /**
      * Чтение sls файла скрипта
-     * @param filePath - полный путь файла
-     * @return содержимое файла
+     * @param filePath - полный путь к файлу
+     * @return содержимое файла в виде строки
      */
-    static def readSaltScriptSlsFile(String filePath) {
+    static readSaltScriptSlsFile(String filePath) {
 
         String fileContents = ""
 
-        //TODO logs
+        log.debug("Start reading script file [${filePath}].")
+
         new File(filePath).eachLine { fileContents += "${it}\n" }
 
         //TODO FileNotFoundException выбрасывается еслил файл не найден
+
+        log.debug("End reading script file [${filePath}].")
 
         return fileContents
     }
@@ -32,9 +35,9 @@ class SaltScriptFileService {
      * Создание sls файла скрипта
      * @param fileName - название файла
      * @param fileContent - содержимое файла скрипта
-     * @return полный путь файла
+     * @return полный путь к файлу
      */
-    def createSaltScriptSlsFile(String fileName, String fileContent) {
+    String createSaltScriptSlsFile(String fileName, String fileContent) {
 
         def dir = new File("${scriptsDirectory}")
 
@@ -62,8 +65,10 @@ class SaltScriptFileService {
      * Редактирование/обновление sls файла скрипта
      * @param filePath - полный путь файла
      * @param fileContent - содержимое файла
+     * @param newFileName - новое имя файла
+     * @return полный путь к обновленному файлу
      */
-    def updateSaltScriptSlsFile(String filePath, String fileContent, String newFileName) {
+    String updateSaltScriptSlsFile(String filePath, String fileContent, String newFileName) {
 
         File file = new File(filePath)
 
@@ -93,7 +98,7 @@ class SaltScriptFileService {
 
     /**
      * Удаление sls файла скрипта
-     * @param filePath - полный путь файла
+     * @param filePath - полный путь к файлу
      */
     static boolean deleteSaltScriptSlsFile(String filePath) {
 

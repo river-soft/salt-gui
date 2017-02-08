@@ -39,7 +39,7 @@ class MinionDetailsService {
                 .callSync(client, minionList, USER, PASSWORD, AuthModule.PAM);
 
         // get result of Grains.item
-        def result = grainResults.collect { ["${it.key}": it.value.xor.right().value] }
+        def result = grainResults.collect { ["${it.key}": it.value?.xor?.right()?.value] }
 
         return result
     }

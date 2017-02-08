@@ -7,6 +7,7 @@ class SaltScriptViewModel {
     String id
     String name
     String content
+    String group
 
     SaltScriptViewModel(SaltScript saltScript) {
         this.id = saltScript.id
@@ -17,5 +18,6 @@ class SaltScriptViewModel {
         this.id = saltScript.id
         this.name = saltScript.name
         this.content = fileContent
+        this.group = saltScript.group.name
     }
 }
