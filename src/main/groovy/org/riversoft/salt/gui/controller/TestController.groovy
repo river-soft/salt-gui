@@ -18,7 +18,6 @@ import org.riversoft.salt.gui.service.SaltScriptService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 
@@ -108,12 +107,6 @@ class TestController {
 
         return test
         //["accepted": keys.getMinions(), "unaccepted": keys.getUnacceptedMinions()/*, "testping" : results.find()*/]
-    }
-
-    @RequestMapping('/get-file')
-    @ResponseBody
-    def findScriptByName(@RequestParam(value = "fileName", required = true) String fileName) {
-        saltScriptService.readSaltScriptSlsFile(fileName)
     }
 
     @RequestMapping('/generate')
