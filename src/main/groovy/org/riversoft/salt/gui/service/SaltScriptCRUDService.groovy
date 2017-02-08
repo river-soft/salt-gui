@@ -4,6 +4,7 @@ import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.domain.SaltScriptGroup
 import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
+import org.riversoft.salt.gui.exception.SaltScriptGroupNotFoundException
 import org.riversoft.salt.gui.exception.SaltScriptNotFoundException
 import org.riversoft.salt.gui.model.CreateSaltScript
 import org.riversoft.salt.gui.model.CreateSaltScriptGroup
@@ -37,48 +38,60 @@ class SaltScriptCRUDService {
     //endregion
 
     /**
-     * Создание группы для скриптов
-     * @param groupName - название группы
-     * @return объект SaltScriptGroupViewModel
-     * @see SaltScriptGroupViewModel
+     * Создание скрипта
+     * @param createSaltScript - модель создания скрипта
+     * @param saltScriptGroup - объект группы скрипта
+     * @return объект модели SaltScriptGroup
+     * @see SaltScriptGroup
      */
-    SaltScriptGroupViewModel createSaltScriptGroupAndScripts(CreateSaltScriptGroup createSaltScriptGroup) {
+    SaltScriptGroup createScript(CreateSaltScript createSaltScript, SaltScriptGroup saltScriptGroup) {
 
-
-        //region проверка на наличие скриптов с одинаковыми названиями
-
-        //TODO подумать как улучшить или потом уберем?
-
-        boolean isEqualsScripts = false
-
-        for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
-
-            int equalsScriptsCount = createSaltScriptGroup.scripts.findAll { it.name == createSaltScript.name }.size()
-            //todo может вытаскивтаь имена одинаковых названий?
-            if (equalsScriptsCount > 1) {
-                isEqualsScripts = true
-            }
+        SaltScript saltScript = saltScriptRepository.findByName(createSaltScript.name)
+        if (saltScript) {
+            log.error("Salt script with name [${createSaltScript.name}] already exist.")
+            throw new SaltScriptAlreadyExistException("Salt script with name [${createSaltScript.name}] already exist.",
+                    412, "Salt script with name [${createSaltScript.name}] already exist.")
         }
 
-        if (isEqualsScripts) {
-            log.error("The are scripts with equals names in list.")
-            throw new SaltScriptAlreadyExistException("The are scripts with equals names in list.")
-        }
+        //создание sls файла на сервере salt
+        String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
 
-        //endregion
+        log.debug("Start creating salt script with name [${createSaltScript.name}].")
 
+        saltScript = new SaltScript(name: createSaltScript.name, filePath: filePath, group: saltScriptGroup)
+        saltScriptRepository.save(saltScript)
+
+        log.debug("Successfully created salt script with name [${createSaltScript.name}].")
+
+        log.debug("Adding script [${saltScript.name}] to group [${saltScriptGroup.name}].")
+
+        saltScriptGroup.scriptList.add(saltScript)
+        saltScriptGroupRepository.save(saltScriptGroup)
+
+        log.debug("Successfully added script [${saltScript.name}] to group [${saltScriptGroup.name}].")
+
+        return saltScriptGroup
+    }
+
+    /**
+     * Создание группы скриптов
+     * @param groupName - название группы скриптов
+     * @return объект модели SaltScriptGroup
+     * @see SaltScriptGroup
+     */
+    SaltScriptGroup createScriptGroup(String groupName) {
 
         SaltScriptGroup saltScriptGroup = null
 
-        if (createSaltScriptGroup.group) {
+        if (groupName) {
 
-            saltScriptGroup = saltScriptGroupRepository.findOne(createSaltScriptGroup.group)
+            saltScriptGroup = saltScriptGroupRepository.findOne(groupName)
 
             if (!saltScriptGroup) {
 
-                log.debug("Start creating salt script group wiht name [${createSaltScriptGroup.group}].")
+                log.debug("Start creating salt script group wiht name [${groupName}].")
 
-                saltScriptGroup = new SaltScriptGroup(name: createSaltScriptGroup.group)
+                saltScriptGroup = new SaltScriptGroup(name: groupName)
                 saltScriptGroupRepository.save(saltScriptGroup)
 
                 log.debug("Successfully created salt script group with name [${saltScriptGroup.name}].")
@@ -99,29 +112,54 @@ class SaltScriptCRUDService {
             }
         }
 
+        return saltScriptGroup
+    }
+
+    /**
+     * Создание группы для скриптов и скриптов
+     * @param createSaltScriptGroup - модель создания группы и скриптов группы
+     * @return объект модели SaltScriptGroupViewModel
+     * @see SaltScriptGroupViewModel
+     */
+    SaltScriptGroupViewModel createSaltScriptGroupAndScripts(CreateSaltScriptGroup createSaltScriptGroup) {
+
+        log.debug("Start creating salt script group and scripts.")
+
+        //region проверка на наличие скриптов с одинаковыми названиями
+
+        //TODO подумать как улучшить или потом уберем?
+
+        boolean isEqualsScripts = false
+        String equalsScriptsString = ""
+
         for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
 
-            SaltScript saltScript = saltScriptRepository.findByName(createSaltScript.name)
-            if (saltScript) {
-                log.error("Salt script with name [${createSaltScript.name}] already exist.")
-                throw new SaltScriptAlreadyExistException("Salt script with name [${createSaltScript.name}] already exist.",
-                        412, "Salt script with name [${createSaltScript.name}] already exist.")
+            List<CreateSaltScript> equalsScripts = createSaltScriptGroup.scripts.findAll {
+                it.name == createSaltScript.name
             }
 
-            //создание sls файла на сервере salt
-            String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
-
-            log.debug("Start creating salt script with name [${createSaltScript.name}].")
-
-            saltScript = new SaltScript(name: createSaltScript.name, filePath: filePath, group: saltScriptGroup)
-            saltScriptRepository.save(saltScript)
-
-            log.debug("Successfully created salt script with name [${createSaltScript.name}].")
-
-            saltScriptGroup.scriptList.add(saltScript)
+            if (equalsScripts.size() > 1) {
+                isEqualsScripts = true
+                equalsScriptsString += createSaltScript.name + ","
+            }
         }
 
-        saltScriptGroupRepository.save(saltScriptGroup)
+        if (isEqualsScripts) {
+            log.error("The are scripts with equals names [${equalsScriptsString}] in list.")
+            throw new SaltScriptAlreadyExistException("The are scripts with equals names [${equalsScriptsString}] in list.")
+        }
+
+        //endregion
+
+        SaltScriptGroup saltScriptGroup = createScriptGroup(createSaltScriptGroup.group)
+
+        for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
+
+            saltScriptGroup = createScript(createSaltScript, saltScriptGroup)
+        }
+
+        log.debug("Successfully created salt script group [${saltScriptGroup.name}] " +
+                "and [${saltScriptGroup.scriptList.size()}] scripts.")
 
         new SaltScriptGroupViewModel(saltScriptGroup)
     }
@@ -130,7 +168,7 @@ class SaltScriptCRUDService {
      * Поиск скрипта по его id
      * @param id - уникальный номер скрипта
      * @return объект SaltScriptViewModel
-     * @see org.riversoft.salt.gui.model.view.SaltScriptViewModel
+     * @see SaltScriptViewModel
      */
     SaltScriptViewModel findScriptById(String id) {
 
@@ -165,44 +203,47 @@ class SaltScriptCRUDService {
 
         if (editSaltScript.group != saltScript.group?.name) {
 
+            // удаление скрипта из его предыдущей группы
             SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name)
+            if (!saltScriptGroup) {
+                log.error("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
+                throw new SaltScriptGroupNotFoundException("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
+            }
 
             saltScriptGroup.scriptList.removeAll { it.id == saltScript.id }
 
             saltScriptGroupRepository.save(saltScriptGroup)
 
-            SaltScriptGroup newSaltScriptGroup = saltScriptGroupRepository.findOne(editSaltScript.group)
+            // создание новой группы скриптов
+            SaltScriptGroup newSaltScriptGroup = createScriptGroup(editSaltScript.group)
 
-            if (!newSaltScriptGroup) {
-
-                log.debug("Start creating salt script group wiht name [${editSaltScript.group}].")
-
-                newSaltScriptGroup = new SaltScriptGroup(name: editSaltScript.group)
-                saltScriptGroupRepository.save(saltScriptGroup)
-
-                log.debug("Successfully created salt script group with name [${editSaltScript.group}].")
-            }
+            log.debug("Updating salt script with name [${saltScript.name}].")
 
             saltScript.group = newSaltScriptGroup
 
-            saltScriptRepository.save(saltScript)
+            log.debug("Adding script [${saltScript.name}] to group [${newSaltScriptGroup.name}].")
 
             newSaltScriptGroup.scriptList.add(saltScript)
             saltScriptGroupRepository.save(newSaltScriptGroup)
+
+            log.debug("Successfully added script [${saltScript.name}] to group [${newSaltScriptGroup.name}].")
         }
 
         String newFileName = null
 
         if (saltScript.name != editSaltScript.name) {
 
+            log.debug("Updating name of salt script from [${saltScript.name}] to [${editSaltScript.name}].")
+
             saltScript.name = editSaltScript.name
-            saltScriptRepository.save(saltScript)
 
             newFileName = editSaltScript.name
         }
 
         saltScript.filePath = saltScriptFileService.updateSaltScriptSlsFile(saltScript.filePath, editSaltScript.content, newFileName)
         saltScriptRepository.save(saltScript)
+
+        log.debug("Successfully updated salt script [${saltScript.name}].")
 
         new SaltScriptGroupViewModel(saltScript.group)
     }
