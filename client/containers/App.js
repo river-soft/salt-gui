@@ -6,6 +6,7 @@ import {Header} from '../components/Header';
 import * as filesTreeActions from '../actions/FilesTreeActions';
 import * as createGroupActions from '../actions/GroupCreateActions';
 import * as getScriptContent from '../actions/GetScriptContentAction';
+import * as scriptRemoveAction from '../actions/ScriptRemoveAction';
 
 class App extends Component {
 
@@ -13,7 +14,8 @@ class App extends Component {
         super(props);
 
         this.state = {
-            createSuccess: false
+            createSuccess: false,
+            removeSuccess: false
         };
     }
 
@@ -31,7 +33,8 @@ class App extends Component {
         const _this = this,
             {filesRequest} = _this.props.filesTreeActions,
             {createGroup} = _this.props.createGroupActions,
-            {getScriptContent} = _this.props.getScriptContent;
+            {getScriptContent} = _this.props.getScriptContent,
+            {scriptRemove} = _this.props.scriptRemoveAction;
 
         if (_this.props.createGroup.group) {
 
@@ -49,8 +52,8 @@ class App extends Component {
             }
         }
 
-        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest}
-                                   scriptContent={_this.props.scriptContent}
+        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest} removed={this.props.scriptRemove.removed}
+                                   scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
                                    error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}/>;
 
@@ -67,7 +70,8 @@ function mapStateToProps(state) {
     return {
         filesTree: state.filesTree,
         createGroup: state.createGroup,
-        scriptContent: state.getScriptContent
+        scriptContent: state.getScriptContent,
+        scriptRemove: state.scriptRemove
     }
 }
 
@@ -75,7 +79,8 @@ function mapDispatchToProps(dispatch) {
     return {
         filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
         createGroupActions: bindActionCreators(createGroupActions, dispatch),
-        getScriptContent: bindActionCreators(getScriptContent, dispatch)
+        getScriptContent: bindActionCreators(getScriptContent, dispatch),
+        scriptRemoveAction: bindActionCreators(scriptRemoveAction, dispatch)
     }
 }
 

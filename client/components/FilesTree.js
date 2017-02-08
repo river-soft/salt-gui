@@ -7,6 +7,8 @@ import TreeView from './tree/TreeView';
 import Input from 'muicss/lib/react/input';
 import CreateGroup from './CreateGroup';
 import Modal from 'react-modal';
+import EditScript from './EditScript';
+import RemoveScript from './RemoveScript';
 
 export class FilesTree extends Component {
 
@@ -18,27 +20,50 @@ export class FilesTree extends Component {
             scriptName: '',
             filterScripts: [],
             rerender: false,
-            showModal: false
+            showModal: false,
+            editScript: false,
+            removeScript: false,
+            getFiles: false
         };
         this.showContent = this.showContent.bind(this);
         this.showModal = this.showModal.bind(this);
         this.onRequestClose = this.onRequestClose.bind(this);
+        this.editScript = this.editScript.bind(this);
+        this.removeScriptState = this.removeScriptState.bind(this);
+        this.hideContent = this.hideContent.bind(this);
     }
 
     componentDidMount() {
         this.props.filesRequest();
     }
 
+    componentDidUpdate() {
+        console.log(this.state.getFiles);
+        if(this.state.getFiles) {
+            this.props.filesRequest();
+            this.setState({getFiles: false});
+        }
+    }
+
+    hideContent() {
+        this.setState({showFileDescription: false});
+        this.setState({getFiles: true})
+    }
+
     showContent(scriptId) {
         this.props.getScriptContent(scriptId);
 
         this.setState({
-            showFileDescription: true,
+            showFileDescription: true
         })
     }
 
     showModal() {
-        this.setState({showModal: true});
+        this.setState({
+            removeScript: false,
+            showModal: true,
+            editScript: false
+        });
     }
 
     filterTree(e) {
@@ -68,22 +93,55 @@ export class FilesTree extends Component {
         this.setState({showModal: false});
     }
 
+    editScript(script) {
+
+        this.setState({
+            removeScript: false,
+            editScript: true,
+            showModal: true,
+            editingScript: script
+        });
+    }
+
+    removeScriptState(script) {
+
+        this.setState({
+            removeScript: true,
+            editingScript: script,
+            showModal: true,
+            editScript: false
+        });
+    }
+
     render() {
 
-        let _this = this, template, fileDescription;
+        let _this = this, template, fileDescription, modal;
 
         if (_this.state.showFileDescription) {
 
-            fileDescription = <FileDescription scriptContent={this.props.scriptContent}
-                                               script={this.props.script}/>;
+            fileDescription = <FileDescription scriptContent={_this.props.scriptContent} editScript={_this.editScript}
+                                               removeScript={_this.removeScriptState} script={_this.props.script}/>;
         }
 
-        if (this.props.files.length === 0) {
+        if (_this.props.files.length === 0) {
             template = <div>Данных нету</div>
-        } else if (this.state.rerender) {
-            template = <TreeView groups={this.state.filterScripts} showContent={this.showContent}/>;
+        } else if (_this.state.rerender) {
+            template = <TreeView groups={_this.state.filterScripts} showContent={this.showContent}/>;
         } else {
-            template = <TreeView groups={this.props.files} showContent={this.showContent}/>;
+            template = <TreeView groups={_this.props.files} showContent={this.showContent}/>;
+        }
+
+        if (_this.state.editScript) {
+            modal = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}/>
+        } else if (_this.state.removeScript) {
+            modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
+                                  filesRequest={this.props.filesRequest}
+                                  script={_this.state.editingScript} removed={_this.props.removed}
+                                  hideContent={this.hideContent}/>
+        } else {
+            modal = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
+                                 closeModal={_this.onRequestClose} error={_this.props.error}
+                                 createSuccess={_this.props.createSuccess}/>
         }
 
         return <Container>
@@ -104,8 +162,7 @@ export class FilesTree extends Component {
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
                    onRequestClose={this.onRequestClose.bind(this)} overlayClassName='overlay'
                    parentSelector={() => document.body} ariaHideApp={false}>
-                <CreateGroup createGroup={this.props.createGroup} groups={this.props.files}
-                             closeModal={this.onRequestClose} error={this.props.error} createSuccess={this.props.createSuccess}/>
+                {modal}
             </Modal>
         </Container>
     }
