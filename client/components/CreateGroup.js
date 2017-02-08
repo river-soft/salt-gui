@@ -134,7 +134,7 @@ export default class CreateGroup extends Component {
         input.focus();
         input.className.replace('mui--is-empty', '');
         input.className += ' mui--is-not-empty';
-        this.setState({showDropdown: false})
+        this.setState({showDropdown: false});
     }
 
     rerenderGroupList(groupName) {

@@ -38,16 +38,17 @@ export class FilesTree extends Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state.getFiles);
-        if(this.state.getFiles) {
+        if (this.state.getFiles) {
             this.props.filesRequest();
             this.setState({getFiles: false});
         }
     }
 
     hideContent() {
-        this.setState({showFileDescription: false});
-        this.setState({getFiles: true})
+        this.setState({
+            showFileDescription: false,
+            getFiles: true
+        });
     }
 
     showContent(scriptId) {
@@ -132,7 +133,9 @@ export class FilesTree extends Component {
         }
 
         if (_this.state.editScript) {
-            modal = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}/>
+            modal = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}
+                                hideContent={this.hideContent} groups={_this.props.files}
+                                editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={this.props.filesRequest}
