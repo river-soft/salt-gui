@@ -13,13 +13,18 @@ buildscript {
 	}
 }
 
+apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 
-repositories {
-	mavenCentral()
+allprojects {
+
+	repositories {
+		mavenCentral()
+	}
 }
 
+sourceCompatibility = 1.8
 
 dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-actuator'
@@ -33,4 +38,6 @@ dependencies {
 	compile 'org.codehaus.groovy:groovy'
 	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+	compile project ('salt-netapi-client')
 }
