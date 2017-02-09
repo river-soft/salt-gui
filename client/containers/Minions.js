@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Header} from '../components/Header';
-// import MinionsState from '../components/minions/MinionsState';
+import MinionsCountsStatus from '../components/minions/MinionsCountsStatus';
+import MinionsCountsGroup from '../components/minions/MinionsCountsGroup';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
-import * as getMinionsState from '../actions/GetMinionsStateAction';
-
+import * as minionsAction from '../actions/minionsAction';
 
 class Minions extends Component {
 
@@ -24,9 +24,9 @@ class Minions extends Component {
     }
 
     componentDidMount() {
-        const {getMinionsState} = this.props.getMinionsState;
+        const {minions} = this.props.minionsAction;
 
-        getMinionsState();
+        minions();
     }
 
     componentDidUpdate() {
@@ -34,7 +34,10 @@ class Minions extends Component {
     }
 
     render() {
-console.log(this);
+
+        let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
+            countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>;
+
         return <div className='wrapper'>
             <Header />
             <main className='main'>
@@ -44,12 +47,12 @@ console.log(this);
                             <Row>
                                 <Col md='12' xs='12' lg='12'>
                                     <div className='minions__state'>
-
+                                        {countsStatus}
                                     </div>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col md='12' xs='12' lg='12'>Пока пусто</Col>
+                                <Col md='12' xs='12' lg='12'>{countsGroup}</Col>
                             </Row>
                         </Col>
                         <Col md='9' xs='6' lg='9'>Пока пусто</Col>
@@ -62,13 +65,13 @@ console.log(this);
 
 function mapStateToProps(state) {
     return {
-        getMinionsState: state.getMinionsState
+        minions: state.minions
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        getMinionsState: bindActionCreators(getMinionsState, dispatch)
+        minionsAction: bindActionCreators(minionsAction, dispatch)
     }
 }
 
