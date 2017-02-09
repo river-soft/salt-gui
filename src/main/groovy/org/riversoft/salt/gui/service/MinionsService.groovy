@@ -21,11 +21,16 @@ import org.springframework.stereotype.Service
 @Service
 class MinionsService {
 
+    //region injection
+
     @Value('${salt.user}')
     private String USER
 
     @Value('${salt.password}')
     private String PASSWORD
+
+    @Autowired
+    private ObjectMapper mapper
 
     @Autowired
     private SaltClient saltClient
@@ -34,18 +39,12 @@ class MinionsService {
     private MinionRepository minionRepository
 
     @Autowired
+    private SimpMessagingTemplate messagingTemplate
+
+    @Autowired
     private MinionGroupRepository minionGroupRepository
 
-    @Autowired
-    SimpMessagingTemplate messagingTemplate
-
-    @Autowired
-    ObjectMapper mapper
-
-    void sendSignalToUpdateMinionsCount(def map) {
-
-        messagingTemplate.convertAndSend('/queue/update-minions-count', mapper.writeValueAsString(map))
-    }
+    //endregion
 
     /**
      * Поиск принятых миньонов (из бд)
@@ -54,102 +53,41 @@ class MinionsService {
     def findAllAcceptedMinions() {
 
         log.debug("Start searching accepted minions.")
-//
+
         List<Minion> minions = minionRepository.findAll()
 
         log.debug("Found [${minions.size()}] accepted minions.")
-//
+
         minions.collect { new MinionViewModel(it) }
-
-//        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-//                saltClient, USER, PASSWORD, AuthModule.PAM);
-//        Key.Names keys = keyResults.getData().getResult();
-//
-//        keys.getMinions()
     }
 
     /**
-     * Поиск миньонов по статусу
-     * @param state - статус миньона
-     * @return массив содержащий названия миньонов
+     * Поиск и отправка принятых миньонов (из бд)
      */
-    def findAllByState(String state) {
+    @Scheduled(fixedDelayString = '${salt.minions.update_list_by_status:5000}')
+    def findAndSendAllAcceptedMinions() {
+
+        sendAllMinionsByStatuses("/queue/minions/update-accepted-minions", "accepted", findAllAcceptedMinions())
+    }
+
+    @Scheduled(fixedDelayString = '${salt.minions.update_list_by_status:5000}')
+    def findAndSendAllMinionsByStatuses() {
 
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
         Key.Names keys = keyResults.getData().getResult();
 
-        def result = []
-
-        switch (state) {
-
-            case "unaccepted":
-
-                result = keys.getUnacceptedMinions()
-
-                break
-
-            case "rejected":
-
-                result = keys.getRejectedMinions()
-
-                break
-
-            case "denied":
-
-                result = keys.getDeniedMinions()
-
-                break
-        }
-
-        return result
-    }
-
-    /**
-     * Поиск не принятых миньонов
-     * @return список названий миньонов
-     */
-    def findAllUnaccepted() {
-
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
-
-        keys.getUnacceptedMinions()
-    }
-
-    /**
-     * Поиск отклоненных миньонов
-     * @return список названий миньонов
-     */
-    def findAllRejected() {
-
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
-
-        keys.getRejectedMinions()
-    }
-
-    /**
-     * Поиск миньонов которым было отказано
-     * @return список названий миньонов
-     */
-    def findAllDenied() {
-
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
-
-        keys.getDeniedMinions()
+        sendAllMinionsByStatuses("/queue/minions/update-denied-minions", "denied", keys.getDeniedMinions())
+        sendAllMinionsByStatuses("/queue/minions/update-rejected-minions", "rejected", keys.getRejectedMinions())
+        sendAllMinionsByStatuses("/queue/minions/update-unaccepted-minions", "unaccepted", keys.getUnacceptedMinions())
     }
 
     /**
      * Получение количества миньонов сгруппированное по статусу
      * @return map содержащий ключи - статус миньона, количество миньонов этого статуса
      */
-    @Scheduled(fixedDelayString = '${salt:5000}', initialDelay = 10000l)
-    def getCountsOfMinionsByStatus() {
+    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+    def getAndSendCountsOfMinionsByStatus() {
 
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
@@ -160,16 +98,15 @@ class MinionsService {
                       "Rejected"  : keys.getRejectedMinions().size(),
                       "Denied"    : keys.getDeniedMinions().size()]
 
-        sendSignalToUpdateMinionsCount(counts)
-
-//        return counts
+        sendCountsOfMinionsByStatus(counts)
     }
 
     /**
      * Получение количества миньонов сгруппированное по группе
      * @return map содержащий ключи - группа миньона, количество миньонов в этой группе
      */
-    def getCountsOfMinionsByGroup() {
+    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+    def getAndSendCountsOfMinionsByGroup() {
 
         def counts = [:]
 
@@ -180,6 +117,39 @@ class MinionsService {
             counts.put(minionGroup.name, minionRepository.countByGroupsId(minionGroup.id))
         }
 
-        return counts
+        sendCountsOfMinionsByGroup(counts)
+    }
+
+    /**
+     * Отправка данных миньонов
+     * @param map - объект/мапа с данными
+     */
+    void sendAllMinionsByStatuses(String signal, String status, def map) {
+
+        log.debug("Update ${status} minions list to [${mapper.writeValueAsString(map)}].")
+
+        messagingTemplate.convertAndSend(signal, mapper.writeValueAsString(map))
+    }
+
+    /**
+     * Отправка количества миньонов по статусам
+     * @param map - объект/мапа с данными
+     */
+    void sendCountsOfMinionsByStatus(def map) {
+
+        log.debug("Update counts of minions by status [${mapper.writeValueAsString(map)}]")
+
+        messagingTemplate.convertAndSend('/queue/minions/update-counts-status', mapper.writeValueAsString(map))
+    }
+
+    /**
+     * Отправка количества миньонов по группам
+     * @param map - объект/мапа с данными
+     */
+    void sendCountsOfMinionsByGroup(def map) {
+
+        log.debug("Update counts of minions by group [${mapper.writeValueAsString(map)}]")
+
+        messagingTemplate.convertAndSend('/queue/minions/update-counts-group', mapper.writeValueAsString(map))
     }
 }

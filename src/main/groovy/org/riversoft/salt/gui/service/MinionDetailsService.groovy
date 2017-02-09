@@ -21,7 +21,7 @@ class MinionDetailsService {
     @Value('${salt.password}')
     private String PASSWORD
 
-    @Value('${minion.details.properties}')
+    @Value('${salt.minion.details.properties}')
     private String[] properties
 
     @Autowired
