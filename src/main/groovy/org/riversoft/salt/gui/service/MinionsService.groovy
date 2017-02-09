@@ -126,7 +126,7 @@ class MinionsService {
      */
     void sendAllMinionsByStatuses(String signal, String status, def map) {
 
-        log.debug("Update ${status} minions list to [${mapper.writeValueAsString(map)}].")
+        log.trace("Update ${status} minions list to [${mapper.writeValueAsString(map)}].")
 
         messagingTemplate.convertAndSend(signal, mapper.writeValueAsString(map))
     }
@@ -137,7 +137,7 @@ class MinionsService {
      */
     void sendCountsOfMinionsByStatus(def map) {
 
-        log.debug("Update counts of minions by status [${mapper.writeValueAsString(map)}]")
+        log.trace("Update counts of minions by status [${mapper.writeValueAsString(map)}]")
 
         messagingTemplate.convertAndSend('/queue/minions/update-counts-status', mapper.writeValueAsString(map))
     }
@@ -148,7 +148,7 @@ class MinionsService {
      */
     void sendCountsOfMinionsByGroup(def map) {
 
-        log.debug("Update counts of minions by group [${mapper.writeValueAsString(map)}]")
+        log.trace("Update counts of minions by group [${mapper.writeValueAsString(map)}]")
 
         messagingTemplate.convertAndSend('/queue/minions/update-counts-group', mapper.writeValueAsString(map))
     }

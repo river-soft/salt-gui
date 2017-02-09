@@ -18,4 +18,13 @@ class MinionController extends BaseRestController {
 
         minionsService.findAllAcceptedMinions()
     }
+
+    @RequestMapping('/minions-all-data')
+    findAllMinions() {
+
+        minionsService.findAndSendAllMinionsByStatuses()
+        minionsService.findAndSendAllAcceptedMinions()
+        minionsService.getAndSendCountsOfMinionsByStatus()
+        minionsService.getAndSendCountsOfMinionsByGroup()
+    }
 }
