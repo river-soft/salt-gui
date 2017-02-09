@@ -4,7 +4,7 @@ import createGroup from './createGroup';
 import getScriptContent from './getScriptContent';
 import scriptRemove from './scriptRemove';
 import editScript from './editScript';
-import getMinionsState from './getMinionsState';
+import getMinionsState from './minionsState';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -12,5 +12,5 @@ export default combineReducers({
     createGroup: createGroup,
     scriptRemove: scriptRemove,
     editScript: editScript,
-    getMinionsState: getMinionsState
+    minionsState: getMinionsState
 })

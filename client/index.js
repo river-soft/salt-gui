@@ -7,23 +7,8 @@ import App from './containers/App';
 import Minions from './containers/Minions';
 import './styles/app.scss'
 import configureStore from './store/configureStore'
-import io from 'socket.io-client';
 
 export const store = configureStore();
-store.dispatch({
-    type: 'SET_STATE',
-    state: {
-        vote: {
-            pair: ['Sunshine', '28 Days Later'],
-            tally: {Sunshine: 2}
-        }
-    }
-});
-
-export const socket = io(`${location.protocol}//${location.hostname}:8081`);
-socket.on('state', state =>
-    store.dispatch({type: 'SET_STATE', state})
-);
 
 render(
     <Provider store={store}>

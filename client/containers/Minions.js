@@ -2,16 +2,25 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Header} from '../components/Header';
-import MinionsState from '../components/minions/MinionsState';
+// import MinionsState from '../components/minions/MinionsState';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
-import * as getMinionsState from '../actions/minions/GetMinionsStateAction';
+import * as getMinionsState from '../actions/GetMinionsStateAction';
+
 
 class Minions extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            data: {}
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps);
     }
 
     componentDidMount() {
@@ -20,10 +29,12 @@ class Minions extends Component {
         getMinionsState();
     }
 
-    render() {
-console.log(this.props);
-        let minionsState = <MinionsState minionsStates={this.props.getMinionsState.states}/>;
+    componentDidUpdate() {
+        console.log(this);
+    }
 
+    render() {
+console.log(this);
         return <div className='wrapper'>
             <Header />
             <main className='main'>
@@ -33,7 +44,7 @@ console.log(this.props);
                             <Row>
                                 <Col md='12' xs='12' lg='12'>
                                     <div className='minions__state'>
-                                        {minionsState}
+
                                     </div>
                                 </Col>
                             </Row>

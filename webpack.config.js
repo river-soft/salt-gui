@@ -18,6 +18,12 @@ module.exports = {
         path: path.join(__dirname, '/src/main/resources/static/'),
         filename: '/js/bundle.js'
     },
+    node: {
+        net: 'empty',
+        fs: 'empty',
+        dns: 'empty',
+        tls: 'empty'
+    },
     // watch: NODE_ENV == 'develop',
     // watchOptions: {
     //     aggregateTimeout: 100
@@ -47,7 +53,8 @@ module.exports = {
                 include: [
                     path.resolve(__dirname, "client")
                 ]
-            }
+            },
+            {test: /\.json$/, loader: 'json'},
         ],
         loaders: [
             {
@@ -56,7 +63,8 @@ module.exports = {
                     path.resolve(__dirname, 'client')
                 ],
                 test: /\.js$/,
-                plugins: ['transform-runtime']
+                plugins: ['transform-runtime'],
+                exclude: /node_modules/
             },
             {
                 test: /\.(woff|eot|ttf|woff2)$/,
