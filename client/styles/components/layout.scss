@@ -273,3 +273,11 @@ body {
     font-weight: bold;
   }
 }
+
+.minions-list {
+
+  &__item {
+    display: block;
+    @include clearfix();
+  }
+}
