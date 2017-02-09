@@ -1,16 +1,20 @@
 package org.riversoft.salt.gui.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.AuthModule
 import org.riversoft.salt.gui.calls.WheelResult
 import org.riversoft.salt.gui.calls.wheel.Key
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.domain.Minion
+import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.model.view.MinionViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Slf4j
@@ -32,18 +36,28 @@ class MinionsService {
     @Autowired
     private MinionGroupRepository minionGroupRepository
 
+    @Autowired
+    SimpMessagingTemplate messagingTemplate
+
+    @Autowired
+    ObjectMapper mapper
+
+    void sendSignalToUpdateMinionsCount(def map) {
+
+        messagingTemplate.convertAndSend('/queue/update-minions-count', mapper.writeValueAsString(map))
+    }
+
     /**
      * Поиск принятых миньонов (из бд)
      * @return список названий миньонов
      */
-    def /*List<SaltScriptGroupViewModel>*/ findAllAcceptedMinions() {
+    def findAllAcceptedMinions() {
 
-//        log.debug("Start searching grouped minions.")
+        log.debug("Start searching accepted minions.")
 //
         List<Minion> minions = minionRepository.findAll()
 
-//        log.debug("Found [${saltScriptGroups.size()}] groups and " +
-//                "[${saltScriptGroups.size() ? saltScriptGroups.sum { it.scriptList.size() } : 0}] script.")
+        log.debug("Found [${minions.size()}] accepted minions.")
 //
         minions.collect { new MinionViewModel(it) }
 
@@ -52,6 +66,43 @@ class MinionsService {
 //        Key.Names keys = keyResults.getData().getResult();
 //
 //        keys.getMinions()
+    }
+
+    /**
+     * Поиск миньонов по статусу
+     * @param state - статус миньона
+     * @return массив содержащий названия миньонов
+     */
+    def findAllByState(String state) {
+
+        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                saltClient, USER, PASSWORD, AuthModule.PAM);
+        Key.Names keys = keyResults.getData().getResult();
+
+        def result = []
+
+        switch (state) {
+
+            case "unaccepted":
+
+                result = keys.getUnacceptedMinions()
+
+                break
+
+            case "rejected":
+
+                result = keys.getRejectedMinions()
+
+                break
+
+            case "denied":
+
+                result = keys.getDeniedMinions()
+
+                break
+        }
+
+        return result
     }
 
     /**
@@ -94,9 +145,10 @@ class MinionsService {
     }
 
     /**
-     * Количество миньонов сгруппированное по статусу
+     * Получение количества миньонов сгруппированное по статусу
      * @return map содержащий ключи - статус миньона, количество миньонов этого статуса
      */
+    @Scheduled(fixedDelayString = '${salt:5000}', initialDelay = 10000l)
     def getCountsOfMinionsByStatus() {
 
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
@@ -108,14 +160,26 @@ class MinionsService {
                       "Rejected"  : keys.getRejectedMinions().size(),
                       "Denied"    : keys.getDeniedMinions().size()]
 
-        return counts
+        sendSignalToUpdateMinionsCount(counts)
+
+//        return counts
     }
 
     /**
-     * Количество миньонов сгруппированное по группе
+     * Получение количества миньонов сгруппированное по группе
      * @return map содержащий ключи - группа миньона, количество миньонов в этой группе
      */
     def getCountsOfMinionsByGroup() {
-        //TODO
+
+        def counts = [:]
+
+        List<MinionGroup> minionGroups = minionGroupRepository.findAll()
+
+        for (MinionGroup minionGroup : minionGroups) {
+
+            counts.put(minionGroup.name, minionRepository.countByGroupsId(minionGroup.id))
+        }
+
+        return counts
     }
 }
