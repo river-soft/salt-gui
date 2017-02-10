@@ -2,12 +2,8 @@ package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.AuthModule
-import org.riversoft.salt.gui.calls.LocalAsyncResult
-import org.riversoft.salt.gui.calls.WheelResult
-import org.riversoft.salt.gui.calls.modules.Grains
 import org.riversoft.salt.gui.calls.modules.State
 import org.riversoft.salt.gui.calls.modules.Test
-import org.riversoft.salt.gui.calls.wheel.Key
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.Glob
 import org.riversoft.salt.gui.datatypes.target.MinionList
@@ -104,7 +100,6 @@ class TestController {
 //        Map<String, Result<Boolean>> results = Cmd.run("uname -a").callSync(
 //                client, minionList, USER, PASSWORD, AuthModule.PAM);
 
-        return
     }
 
     @RequestMapping('/generate')
@@ -118,7 +113,7 @@ class TestController {
 
 
             CreateMinion createMinion = new CreateMinion(name: "minion${i}0")
-            minionCRUDService.createMinion(createMinion, minionGroup)
+            minionCRUDService.createMinion(createMinion, [minionGroup])
 
         }
     }
