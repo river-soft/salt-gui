@@ -25,6 +25,6 @@ class MinionActionController extends BaseRestController {
     @RequestMapping(value = '/reject-minions', method = RequestMethod.POST)
     rejectMinions(@RequestParam(value = "names", required = true) String[] names) {
 
-        minionsActionService.rejectMinion(names)
+        minionsActionService.rejectMinions(names)
     }
 }

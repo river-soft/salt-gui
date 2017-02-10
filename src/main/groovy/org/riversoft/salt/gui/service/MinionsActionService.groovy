@@ -15,17 +15,19 @@ class MinionsActionService {
     //region injection
 
     @Autowired
-    MinionCRUDService minionCRUDService
+    private MinionCRUDService minionCRUDService
 
     @Autowired
-    MinionsSaltService minionsSaltService
+    private MinionsSaltService minionsSaltService
 
     //endregion
 
     /**
      * Принятие списка миньонов
      * @param minionNames - перечень имен миньонов
-     * @param groups - перечень групп миньона
+     * @param groups - перечень групп миньона.
+     * @return список объектов MinionViewModel
+     * @see MinionViewModel
      */
     def acceptMinions(String[] minionNames, String[] groups) {
 
@@ -47,6 +49,7 @@ class MinionsActionService {
      * @param minionName - имя миньона
      * @param groups - перечень групп миньона
      * @return объект MinionViewModel
+     * @see MinionViewModel
      */
     def acceptMinion(String minionName, String[] groups) {
 
@@ -64,10 +67,10 @@ class MinionsActionService {
     }
 
     /**
-     * Отклонение миньонов
+     * Отклонение списка миньонов
      * @param minionNames - перечень имен миньонов
      */
-    def rejectMinion(String[] minionNames) {
+    def rejectMinions(String[] minionNames) {
 
         log.debug("Start rejecting [${minionNames.size()}] counts of minions.")
 
@@ -77,6 +80,5 @@ class MinionsActionService {
 
         log.debug("Finish rejecting [${minionNames.size()}] counts of minions.")
     }
-
 
 }
