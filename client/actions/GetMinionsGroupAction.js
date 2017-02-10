@@ -5,7 +5,7 @@ import {
 } from '../constants/GetMinionsGroup';
 import $ from 'jquery';
 
-export default function getMinionsGroup() {
+export function getMinionsGroups() {
 
     return dispatch => {
 

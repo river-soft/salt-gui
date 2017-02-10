@@ -13,6 +13,7 @@ import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
 import * as minionsAction from '../actions/minionsAction';
 import * as getMinionsGroupsAction from '../actions/GetMinionsGroupAction';
+import * as acceptMinionsAction from '../actions/AcceptMinionsAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -22,7 +23,8 @@ class Minions extends Component {
         super(props);
 
         this.state = {
-            client: ''
+            client: '',
+            acceptedMinions: false
         }
     }
 
@@ -42,13 +44,18 @@ class Minions extends Component {
 
     render() {
 
-        const {getMinionsGroups} = this.props.getMinionsGroups;
+        const {getMinionsGroups} = this.props.getMinionsGroupsAction,
+            {acceptMinions} = this.props.acceptMinionsAction,
+            acceptMinionsSuccess = this.props.acceptMinions.minions;
 
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
             acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}/>,
             unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
-            getMinionsGroups={getMinionsGroups}/>,
+                                                   getMinionsGroups={getMinionsGroups}
+                                                   minionsGroups={this.props.minionsGroups.groups}
+                                                   acceptMinions={acceptMinions}
+                                                   acceptMinionsSuccess={acceptMinionsSuccess}/>,
             deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}/>,
             rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}/>;
 
@@ -85,14 +92,16 @@ class Minions extends Component {
 function mapStateToProps(state) {
     return {
         minions: state.minions,
-        minionsGroups: state.minionsGroups
+        minionsGroups: state.minionsGroups,
+        acceptMinions: state.acceptMinions
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         minionsAction: bindActionCreators(minionsAction, dispatch),
-        getMinionsGroupsAction: bindActionCreators(getMinionsGroupsAction, dispatch)
+        getMinionsGroupsAction: bindActionCreators(getMinionsGroupsAction, dispatch),
+        acceptMinionsAction: bindActionCreators(acceptMinionsAction, dispatch)
     }
 }
 
