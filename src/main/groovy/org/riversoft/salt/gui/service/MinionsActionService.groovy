@@ -81,4 +81,40 @@ class MinionsActionService {
         log.debug("Finish rejecting [${minionNames.size()}] counts of minions.")
     }
 
+    /**
+     *
+     * @param minionNames
+     * @return
+     */
+    def deleteMinions(String[] minionNames) {
+
+        log.debug("Start deleting [${minionNames.size()}] counts of minions.")
+
+        for (String minionName : minionNames) {
+            deleteMinion(minionName)
+        }
+
+        log.debug("Finish deleting [${minionNames.size()}] counts of minions.")
+    }
+
+    /**
+     *
+     * @param minionName
+     * @return
+     */
+    def deleteMinion(String minionName) {
+
+        log.debug("Start deleting minion [${minionName}].")
+
+        minionsSaltService.deleteMinion(minionName)
+
+        Minion minion = minionCRUDService.findMinionByName(minionName)
+        if (minion) {
+            minionCRUDService.deleteMinion(minion)
+        }
+
+        log.debug("Finish deleting minion [${minionName}].")
+    }
+
+
 }

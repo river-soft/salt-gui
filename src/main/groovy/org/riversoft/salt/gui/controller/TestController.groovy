@@ -109,13 +109,13 @@ class TestController {
 
         MinionGroup minionGroup = minionCRUDService.createMinionGroup("group2")
 
-        for (i; i <= 5; i++) {
-
-
-            CreateMinion createMinion = new CreateMinion(name: "minion${i}0")
-            minionCRUDService.createMinion(createMinion, [minionGroup])
-
-        }
+//        for (i; i <= 5; i++) {
+//
+//
+//            CreateMinion createMinion = new CreateMinion(name: "minion${i}0")
+//            minionCRUDService.createMinion(createMinion, [minionGroup])
+//
+//        }
     }
 
 }

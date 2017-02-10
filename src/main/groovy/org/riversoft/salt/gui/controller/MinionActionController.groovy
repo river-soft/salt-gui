@@ -27,4 +27,10 @@ class MinionActionController extends BaseRestController {
 
         minionsActionService.rejectMinions(names)
     }
+
+    @RequestMapping(value = '/delete-minions', method = RequestMethod.POST)
+    deleteMinions(@RequestParam(value = "names", required = true) String[] names) {
+
+        minionsActionService.deleteMinions(names)
+    }
 }

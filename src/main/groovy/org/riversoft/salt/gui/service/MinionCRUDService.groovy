@@ -62,6 +62,35 @@ class MinionCRUDService {
     }
 
     /**
+     * Получение миньона по имени
+     * @param minionName - имя меньона
+     * @return
+     */
+    Minion getMinionByName(String minionName) {
+
+        Minion minion = minionRepository.findByName(minionName)
+
+        if (minion) {
+            log.error("Minion with name [${minionName}] already exist.")
+            throw new SaltScriptAlreadyExistException("Minion with name [${minionName}] already exist.")
+        }
+
+        minion
+    }
+
+    /**
+     * Поиск миньона по имени
+     * @param minionName - имя меньона
+     * @return
+     */
+    Minion findMinionByName(String minionName) {
+
+        Minion minion = minionRepository.findByName(minionName)
+
+        minion
+    }
+
+    /**
      * Создание списка групп миньонов
      * @param groupNames - перечень названий групп миньонов
      * @return список объектов MinionGroup
@@ -119,11 +148,25 @@ class MinionCRUDService {
 
     /**
      * Удаление миньона
-     * @param
+     * @param объект Minion
      */
-    def deleteMinion(String minionId) {
+    def deleteMinion(Minion minion) {
 
-        //TODO implementation
+        log.debug("Start deleting minion with name [${minion.name}].")
+
+        String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id ${minion.id}"
+
+
+        for (MinionGroup group : minion.groups) {
+
+            group.minions.removeAll { it.id == minion.id }
+
+            minionGroupRepository.save(group)
+        }
+
+        minionRepository.delete(minion.id)
+
+        log.debug(deletedMinionMessage)
     }
 
 }
