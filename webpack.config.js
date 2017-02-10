@@ -33,11 +33,6 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('/css/main.css', {allChunks: true}),
-        // new webpack.ProvidePlugin({
-        //     $: "jquery/dist/jquery.min.js",
-        //     jQuery: "jquery/dist/jquery.min.js",
-        //     "window.jQuery": "jquery/dist/jquery.min.js"
-        // })
         // new webpack.optimize.UglifyJsPlugin({
         //     warnings: false,
         //     drop_console: true,

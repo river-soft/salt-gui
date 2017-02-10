@@ -53,6 +53,12 @@ export function minions() {
                     payload: JSON.parse(obj.body)
                 })
             });
+
+            load();
         });
+
+        function load() {
+            client.send('/request/minions-all-data', {}, '')
+        }
     }
 }
