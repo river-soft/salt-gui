@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import Input from 'muicss/lib/react/input';
+import Checkbox from 'muicss/lib/react/checkbox';
+import Button from 'muicss/lib/react/button';
 
 export default class MinionsUnaccepted extends Component {
 
@@ -8,7 +10,8 @@ export default class MinionsUnaccepted extends Component {
 
         this.state = {
             filterList: [],
-            rerender: false
+            rerender: false,
+            acceptingList: []
         }
     }
 
@@ -23,6 +26,15 @@ export default class MinionsUnaccepted extends Component {
         })
     }
 
+    addToAcceptingList(e, minion) {
+        if(e.target.checked) {
+            this.state.acceptingList.push(minion);
+        } else {
+            let index = this.state.acceptingList.indexOf(minion);
+            delete this.state.acceptingList[index];
+        }
+    }
+
     render() {
 
         let unacceptedMinions = this.state.rerender ? this.state.filterList : this.props.unacceptedMinions;
@@ -34,14 +46,25 @@ export default class MinionsUnaccepted extends Component {
                     <tbody>
                     <tr>
                         <td className='table__head'>NAME</td>
+                        <td className='table__head'>SELECT</td>
                     </tr>
                     {unacceptedMinions ? unacceptedMinions.map((item, index) => {
                             return <tr key={index}>
                                 <td>{item}</td>
+                                <td><Checkbox onClick={e => {::this.addToAcceptingList(e, item)}} /></td>
                             </tr>
                         }) : <tr><td>Данных нет</td></tr>}
                     </tbody>
                 </table>
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'>
+                    reject
+                </Button>
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'>
+                    DELETE
+                </Button>
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'>
+                    Accept
+                </Button>
             </div>
         </div>
     }

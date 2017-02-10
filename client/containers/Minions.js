@@ -12,6 +12,7 @@ import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
 import * as minionsAction from '../actions/minionsAction';
+import * as getMinionsGroupsAction from '../actions/GetMinionsGroupAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -41,10 +42,13 @@ class Minions extends Component {
 
     render() {
 
+        const {getMinionsGroups} = this.props.getMinionsGroups;
+
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
             acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}/>,
-            unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}/>,
+            unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
+            getMinionsGroups={getMinionsGroups}/>,
             deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}/>,
             rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}/>;
 
@@ -80,13 +84,15 @@ class Minions extends Component {
 
 function mapStateToProps(state) {
     return {
-        minions: state.minions
+        minions: state.minions,
+        minionsGroups: state.minionsGroups
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        minionsAction: bindActionCreators(minionsAction, dispatch)
+        minionsAction: bindActionCreators(minionsAction, dispatch),
+        getMinionsGroupsAction: bindActionCreators(getMinionsGroupsAction, dispatch)
     }
 }
 

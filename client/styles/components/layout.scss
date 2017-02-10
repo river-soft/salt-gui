@@ -232,6 +232,7 @@ body {
 .scripts__list {
   width: 65%;
   float: left;
+  
   &_item {
     border: 1px solid #ccc;
     background: #fff;
@@ -336,7 +337,7 @@ body {
   }
 
   &.block-list__table{
-    padding: 0;
+    padding: 0 0 43px 0;
   }
 
   & table {
@@ -346,6 +347,7 @@ body {
     & .table__head {
       background: $blue-background;
       color: #eee;
+      text-transform: uppercase;
 
       &:first-child {
         border-right: 2px solid #eee;
