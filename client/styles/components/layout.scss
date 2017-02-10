@@ -275,9 +275,75 @@ body {
 }
 
 .minions-list {
+  margin-bottom: 0;
 
   &__item {
     display: block;
     @include clearfix();
+
+    &.minions-list__header {
+      background: $blue-background;
+      color: #eee;
+    }
   }
+
+  &__header span {
+    width: 49%;
+    border-right: 1px solid #eee;
+  }
+}
+
+.minions-tabs .mui-tabs__bar > li.mui--is-active {
+  border-bottom: 2px solid $blue-background;
+}
+
+.minions-tabs .mui-tabs__bar > li.mui--is-active > a {
+  color: $blue-background;
+}
+
+.block-list {
+  border: 2px solid $blue-background;
+  padding: 10px;
+  @include borderRadius(6px);
+  position: relative;
+  margin-bottom: 15px;
+
+  &__header {
+    font-size: 1.2rem;
+    position: absolute;
+    background: #eee;
+    padding: 0 5px;
+    top: -18px;
+    left: 20px;
+  }
+
+  &.block-list__table{
+    padding: 0;
+  }
+
+  & table {
+    margin-bottom: 0;
+    border-collapse: collapse;
+
+    & .table__head {
+      background: $blue-background;
+      color: #eee;
+
+      &:first-child {
+        border-right: 2px solid #eee;
+      }
+    }
+
+    & tr {
+      border-bottom: 2px solid $blue-background;
+
+      & td:first-child {
+        border-right: 2px solid $blue-background;
+      }
+    }
+  }
+}
+
+.right-block-list {
+  padding-top: 10px;
 }
