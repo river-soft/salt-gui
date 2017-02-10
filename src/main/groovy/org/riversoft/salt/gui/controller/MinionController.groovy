@@ -3,6 +3,7 @@ package org.riversoft.salt.gui.controller
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.service.MinionsService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -19,7 +20,7 @@ class MinionController extends BaseRestController {
         minionsService.findAllAcceptedMinions()
     }
 
-    @RequestMapping('/minions-all-data')
+    @MessageMapping('/minions-all-data')
     findAllMinions() {
 
         minionsService.findAndSendAllMinionsByStatuses()
