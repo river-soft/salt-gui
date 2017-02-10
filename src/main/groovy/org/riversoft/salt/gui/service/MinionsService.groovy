@@ -52,11 +52,11 @@ class MinionsService {
      */
     def findAllAcceptedMinions() {
 
-        log.debug("Start searching accepted minions.")
+        log.trace("Start searching accepted minions.")
 
         List<Minion> minions = minionRepository.findAll()
 
-        log.debug("Found [${minions.size()}] accepted minions.")
+        log.trace("Found [${minions.size()}] accepted minions.")
 
         minions.collect { new MinionViewModel(it) }
     }
@@ -73,9 +73,13 @@ class MinionsService {
     @Scheduled(fixedDelayString = '${salt.minions.update_list_by_status:5000}')
     def findAndSendAllMinionsByStatuses() {
 
+        log.trace("Start searching minions by statuses from salt server.")
+
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
         Key.Names keys = keyResults.getData().getResult();
+
+        log.trace("Finish searching minions by statuses from salt server.")
 
         sendAllMinionsByStatuses("/queue/minions/update-denied-minions", "denied", keys.getDeniedMinions())
         sendAllMinionsByStatuses("/queue/minions/update-rejected-minions", "rejected", keys.getRejectedMinions())
@@ -89,6 +93,8 @@ class MinionsService {
     @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
     def getAndSendCountsOfMinionsByStatus() {
 
+        log.trace("Start getting minions counts by statuses from salt server.")
+
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
         Key.Names keys = keyResults.getData().getResult();
@@ -97,6 +103,8 @@ class MinionsService {
                       "Unaccepted": keys.getUnacceptedMinions().size(),
                       "Rejected"  : keys.getRejectedMinions().size(),
                       "Denied"    : keys.getDeniedMinions().size()]
+
+        log.trace("Finish getting minions counts by statuses from salt server.")
 
         sendCountsOfMinionsByStatus(counts)
     }
@@ -108,6 +116,8 @@ class MinionsService {
     @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
     def getAndSendCountsOfMinionsByGroup() {
 
+        log.trace("Start getting minions counts by groups from DB.")
+
         def counts = [:]
 
         List<MinionGroup> minionGroups = minionGroupRepository.findAll()
@@ -116,6 +126,8 @@ class MinionsService {
 
             counts.put(minionGroup.name, minionRepository.countByGroupsId(minionGroup.id))
         }
+
+        log.trace("Start getting minions counts by groups from DB.")
 
         sendCountsOfMinionsByGroup(counts)
     }
@@ -137,7 +149,7 @@ class MinionsService {
      */
     void sendCountsOfMinionsByStatus(def map) {
 
-        log.trace("Update counts of minions by status [${mapper.writeValueAsString(map)}]")
+        log.trace("Update counts of minions by statuses [${mapper.writeValueAsString(map)}]")
 
         messagingTemplate.convertAndSend('/queue/minions/update-counts-status', mapper.writeValueAsString(map))
     }

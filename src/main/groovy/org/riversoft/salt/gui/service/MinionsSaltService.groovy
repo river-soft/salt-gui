@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
-
 @Slf4j
 @Service
 class MinionsSaltService {
@@ -33,19 +32,21 @@ class MinionsSaltService {
      */
     def acceptMinion(String minionName) {
 
-        //TODO implementation
+        log.debug("Start accepting minion [${minionName}] on salt server.")
 
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
         Key.Names keys = keyResults.getData().getResult();
 
         if (!keys.getUnacceptedMinions().contains(minionName)) {
-            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions ")
+            log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
         }
 
-        //todo logs
         WheelResult<Object> acceptKeyResults = Key.accept(minionName).callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        log.debug("Finish accepting minion [${minionName}] on salt server.")
 
         def test = 1
     }
@@ -56,7 +57,21 @@ class MinionsSaltService {
      */
     def rejectMinion(String minionName) {
 
-        //TODO implementation
+        log.debug("Start rejecting minion [${minionName}] on salt server.")
+
+        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                saltClient, USER, PASSWORD, AuthModule.PAM);
+        Key.Names keys = keyResults.getData().getResult();
+
+        if (!keys.getUnacceptedMinions().contains(minionName)) {
+            log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+        }
+
+        WheelResult<Object> rejectResults = Key.reject(minionName).callSync(
+                saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        log.debug("Finish rejecting minion [${minionName}] on salt server.")
     }
 
 }

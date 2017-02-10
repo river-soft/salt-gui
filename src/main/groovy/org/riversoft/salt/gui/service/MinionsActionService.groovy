@@ -29,11 +29,15 @@ class MinionsActionService {
      */
     def acceptMinions(String[] minionNames, String[] groups) {
 
+        log.debug("Start accepting [${minionNames.size()}] counts of minions.")
+
         List<MinionViewModel> acceptedMinions = []
 
         for (String minionName : minionNames) {
             acceptedMinions.add(acceptMinion(minionName, groups))
         }
+
+        log.debug("Finish accepting [${minionNames.size()}] counts of minions.")
 
         return acceptedMinions
     }
@@ -42,9 +46,11 @@ class MinionsActionService {
      * Принятие миньона
      * @param minionName - имя миньона
      * @param groups - перечень групп миньона
-     * @return
+     * @return объект MinionViewModel
      */
     def acceptMinion(String minionName, String[] groups) {
+
+        log.debug("Start accepting minion [${minionName}].")
 
         minionsSaltService.acceptMinion(minionName)
 
@@ -52,11 +58,24 @@ class MinionsActionService {
 
         Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName), minionGroups)
 
+        log.debug("Finish accepting minion [${minionName}].")
+
         new MinionViewModel(minion)
     }
 
-    def rejectMinion() {
-        //TODO implementation
+    /**
+     * Отклонение миньонов
+     * @param minionNames - перечень имен миньонов
+     */
+    def rejectMinion(String[] minionNames) {
+
+        log.debug("Start rejecting [${minionNames.size()}] counts of minions.")
+
+        for (String minionName : minionNames) {
+            minionsSaltService.rejectMinion(minionName)
+        }
+
+        log.debug("Finish rejecting [${minionNames.size()}] counts of minions.")
     }
 
 
