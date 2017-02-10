@@ -13,7 +13,7 @@ export function minions() {
 
     return dispatch => {
 
-        let client = Stomp.over(new SockJS('/salt'));
+        let client = Stomp.over(SockJS('/salt'));
 
         client.connect({}, () => {
 
@@ -57,8 +57,10 @@ export function minions() {
             load();
         });
 
-        function load() {
+        let load = function () {
             client.send('/request/minions-all-data', {}, '')
-        }
+        };
+
+        return client;
     }
 }

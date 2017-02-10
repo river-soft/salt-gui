@@ -19,12 +19,24 @@ class Minions extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            client: ''
+        }
     }
 
     componentDidMount() {
         const {minions} = this.props.minionsAction;
 
-        minions();
+        let client = minions();
+
+        this.setState({
+            client: client
+        })
+    }
+
+    componentWillUnmount() {
+        this.state.client.disconnect();
     }
 
     render() {
