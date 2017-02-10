@@ -1,7 +1,6 @@
 package org.riversoft.salt.gui.service
 
 import groovy.util.logging.Slf4j
-import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.model.view.MinionGroupViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,10 +18,9 @@ class MinionGroupService {
     //endregion
 
     /**
-     * Создание списка групп миньонов
-     * @param groupNames - перечень названий групп миньонов
-     * @return список объектов MinionGroup
-     * @see MinionGroup
+     * Получение списка групп миньонов
+     * @return список объектов MinionGroupViewModel
+     * @see MinionGroupViewModel
      */
     List<MinionGroupViewModel> findAllMinionsGroups() {
 
