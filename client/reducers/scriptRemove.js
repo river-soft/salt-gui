@@ -10,7 +10,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
 
-    switch(action.type) {
+    switch (action.type) {
         case SCRIPT_REMOVE_SUCCESS:
             return {...state, removed: true, error: ''};
         case SCRIPT_REMOVE_FAIL:

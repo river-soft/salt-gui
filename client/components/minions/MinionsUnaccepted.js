@@ -25,7 +25,7 @@ export default class MinionsUnaccepted extends Component {
     }
 
     componentDidUpdate() {
-        if(this.props.acceptMinionsSuccess.length && this.state.showModal) {
+        if (this.props.acceptMinionsSuccess.length && this.state.showModal) {
             this.state = {
                 checkedList: [],
                 groupsList: [],
@@ -36,7 +36,22 @@ export default class MinionsUnaccepted extends Component {
             this.onRequestClose();
 
             let inputs = document.getElementsByTagName('input');
-            for(let i = 0; i < inputs.length; i++) {
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].checked = false
+            }
+        }
+
+        if (this.props.rejectMinionsSuccess && this.state.showModal) {
+            this.state = {
+                checkedList: [],
+                groupsList: [],
+            };
+
+            this.props.setRejectedFalse();
+            this.onRequestClose();
+
+            let inputs = document.getElementsByTagName('input');
+            for (let i = 0; i < inputs.length; i++) {
                 inputs[i].checked = false
             }
         }
@@ -65,7 +80,7 @@ export default class MinionsUnaccepted extends Component {
     }
 
     addToGroupsList(e, group) {
-        if(e.target.checked) {
+        if (e.target.checked) {
             this.state.groupsList.push(group);
         } else {
             let index = this.state.groupsList.indexOf(group);
@@ -91,8 +106,21 @@ export default class MinionsUnaccepted extends Component {
         })
     }
 
+    rejectMinions() {
+        this.setState({
+            showModal: true,
+            accept: false,
+            delete: false,
+            reject: true
+        })
+    }
+
     sendAcceptedMinionsAndGroups() {
         this.props.acceptMinions(this.state.checkedList, this.state.groupsList);
+    }
+
+    sendRejectedMinions() {
+        this.props.rejectMinions(this.state.checkedList);
     }
 
     render() {
@@ -111,7 +139,8 @@ export default class MinionsUnaccepted extends Component {
                         <h6 className='block-list__header'>Choose groups</h6>
                         {minionsGroups.length ? minionsGroups.map((item, index) => {
                                 return <Checkbox label={item.name} key={index} onClick={e => {
-                                    ::this.addToGroupsList(e, item.name)}}
+                                    ::this.addToGroupsList(e, item.name)
+                                }}
                                 />
                             }) : <span>Групп нет</span>}
                     </div>
@@ -119,7 +148,23 @@ export default class MinionsUnaccepted extends Component {
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendAcceptedMinionsAndGroups}
-                            className='modal__btn mui--pull-right' disabled={!this.state.groupsList.length}>Accept</Button>
+                            className='modal__btn mui--pull-right'
+                            disabled={!this.state.groupsList.length}>Accept</Button>
+                </div>
+            </div>
+        } else if (this.state.reject) {
+            modal = <div className='modal__content'>
+                <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
+                <h4 className='mui--text-center modal__header'>Reject minions</h4>
+                <div className='modal__body'>
+                    Are you sure you want to reject {this.state.checkedList.map((item) => {
+                    return item + ' '
+                })}
+                </div>
+                <div className='modal__footer'>
+                    <Divider />
+                    <Button size='small' color='primary' variant='flat' onClick={::this.sendRejectedMinions}
+                            className='modal__btn mui--pull-right'>Reject</Button>
                 </div>
             </div>
         }
@@ -147,13 +192,16 @@ export default class MinionsUnaccepted extends Component {
                         </tr>}
                     </tbody>
                 </table>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right' disabled={!this.state.checkedList.length}>
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                        disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
                     reject
                 </Button>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right' disabled={!this.state.checkedList.length}>
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                        disabled={!this.state.checkedList.length}>
                     delete
                 </Button>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right' disabled={!this.state.checkedList.length} onClick={
+                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                        disabled={!this.state.checkedList.length} onClick={
                     () => {
                         getMinionsGroups();
                         this.acceptMinions();

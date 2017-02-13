@@ -7,6 +7,7 @@ import editScript from './editScript';
 import minions from './minions';
 import minionsGroups from './minionsGroups';
 import acceptMinions from './acceptMinions';
+import rejectMinions from './rejectMinions';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -16,5 +17,6 @@ export default combineReducers({
     editScript: editScript,
     minions: minions,
     minionsGroups: minionsGroups,
-    acceptMinions: acceptMinions
+    acceptMinions: acceptMinions,
+    rejectMinions: rejectMinions
 })

@@ -14,6 +14,7 @@ import Container from 'muicss/lib/react/container';
 import * as minionsAction from '../actions/minionsAction';
 import * as getMinionsGroupsAction from '../actions/GetMinionsGroupAction';
 import * as acceptMinionsAction from '../actions/AcceptMinionsAction';
+import * as rejectMinionsAction from '../actions/RejectMinionsAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -42,11 +43,17 @@ class Minions extends Component {
         this.state.client.disconnect();
     }
 
+    setRejectedFalse() {
+        this.props.rejectMinions.rejected = false;
+    }
+
     render() {
 
         const {getMinionsGroups} = this.props.getMinionsGroupsAction,
             {acceptMinions} = this.props.acceptMinionsAction,
-            acceptMinionsSuccess = this.props.acceptMinions.minions;
+            {rejectMinions} = this.props.rejectMinionsAction,
+            acceptMinionsSuccess = this.props.acceptMinions.minions,
+            rejectMinionsSuccess = this.props.rejectMinions.rejected;
 
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
@@ -55,7 +62,10 @@ class Minions extends Component {
                                                    getMinionsGroups={getMinionsGroups}
                                                    minionsGroups={this.props.minionsGroups.groups}
                                                    acceptMinions={acceptMinions}
-                                                   acceptMinionsSuccess={acceptMinionsSuccess}/>,
+                                                   acceptMinionsSuccess={acceptMinionsSuccess}
+                                                   rejectMinions={rejectMinions}
+                                                   rejectMinionsSuccess={rejectMinionsSuccess}
+                                                   setRejectedFalse={::this.setRejectedFalse}/>,
             deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}/>,
             rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}/>;
 
@@ -93,7 +103,8 @@ function mapStateToProps(state) {
     return {
         minions: state.minions,
         minionsGroups: state.minionsGroups,
-        acceptMinions: state.acceptMinions
+        acceptMinions: state.acceptMinions,
+        rejectMinions: state.rejectMinions
     }
 }
 
@@ -101,7 +112,8 @@ function mapDispatchToProps(dispatch) {
     return {
         minionsAction: bindActionCreators(minionsAction, dispatch),
         getMinionsGroupsAction: bindActionCreators(getMinionsGroupsAction, dispatch),
-        acceptMinionsAction: bindActionCreators(acceptMinionsAction, dispatch)
+        acceptMinionsAction: bindActionCreators(acceptMinionsAction, dispatch),
+        rejectMinionsAction: bindActionCreators(rejectMinionsAction, dispatch)
     }
 }
 
