@@ -82,9 +82,8 @@ class MinionsActionService {
     }
 
     /**
-     *
-     * @param minionNames
-     * @return
+     * Удаление списка миньонов
+     * @param minionNames - перечень имен миньонов
      */
     def deleteMinions(String[] minionNames) {
 
@@ -98,9 +97,8 @@ class MinionsActionService {
     }
 
     /**
-     *
-     * @param minionName
-     * @return
+     * Удаление миньона
+     * @param minionName - имя миньона
      */
     def deleteMinion(String minionName) {
 
@@ -115,6 +113,4 @@ class MinionsActionService {
 
         log.debug("Finish deleting minion [${minionName}].")
     }
-
-
 }
