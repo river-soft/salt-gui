@@ -54,11 +54,11 @@ class SaltScriptCRUDService {
         }
 
         //создание sls файла на сервере salt
-        String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
+        String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name.trim(), createSaltScript.content)
 
         log.debug("Start creating salt script with name [${createSaltScript.name}].")
 
-        saltScript = new SaltScript(name: createSaltScript.name, filePath: filePath, group: saltScriptGroup)
+        saltScript = new SaltScript(name: createSaltScript.name.trim(), filePath: filePath, group: saltScriptGroup)
         saltScriptRepository.save(saltScript)
 
         log.debug("Successfully created salt script with name [${createSaltScript.name}].")
@@ -91,7 +91,7 @@ class SaltScriptCRUDService {
 
                 log.debug("Start creating salt script group wiht name [${groupName}].")
 
-                saltScriptGroup = new SaltScriptGroup(name: groupName)
+                saltScriptGroup = new SaltScriptGroup(name: groupName.trim())
                 saltScriptGroupRepository.save(saltScriptGroup)
 
                 log.debug("Successfully created salt script group with name [${saltScriptGroup.name}].")
@@ -204,7 +204,7 @@ class SaltScriptCRUDService {
         if (editSaltScript.group != saltScript.group?.name) {
 
             // удаление скрипта из его предыдущей группы
-            SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name)
+            SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name.trim())
             if (!saltScriptGroup) {
                 log.error("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
                 throw new SaltScriptGroupNotFoundException("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
@@ -215,7 +215,7 @@ class SaltScriptCRUDService {
             saltScriptGroupRepository.save(saltScriptGroup)
 
             // создание новой группы скриптов
-            SaltScriptGroup newSaltScriptGroup = createScriptGroup(editSaltScript.group)
+            SaltScriptGroup newSaltScriptGroup = createScriptGroup(editSaltScript.group.trim())
 
             log.debug("Updating salt script with name [${saltScript.name}].")
 
@@ -235,9 +235,9 @@ class SaltScriptCRUDService {
 
             log.debug("Updating name of salt script from [${saltScript.name}] to [${editSaltScript.name}].")
 
-            saltScript.name = editSaltScript.name
+            saltScript.name = editSaltScript.name.trim()
 
-            newFileName = editSaltScript.name
+            newFileName = editSaltScript.name.trim()
         }
 
         saltScript.filePath = saltScriptFileService.updateSaltScriptSlsFile(saltScript.filePath, editSaltScript.content, newFileName)

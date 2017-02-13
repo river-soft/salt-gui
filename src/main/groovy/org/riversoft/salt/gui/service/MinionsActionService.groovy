@@ -59,7 +59,7 @@ class MinionsActionService {
 
         List<MinionGroup> minionGroups = minionCRUDService.createMinionGroups(groups)
 
-        Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName), minionGroups)
+        Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName.trim()), minionGroups)
 
         log.debug("Finish accepting minion [${minionName}].")
 

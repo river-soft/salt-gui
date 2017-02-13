@@ -44,7 +44,7 @@ class MinionCRUDService {
 
         log.debug("Start creating minion with name [${createMinion.name}].")
 
-        minion = new Minion(name: createMinion.name, groups: minionGroups)
+        minion = new Minion(name: createMinion.name.trim(), groups: minionGroups)
         minionRepository.save(minion)
 
         log.debug("Successfully created minion with name [${minion.name}].")
@@ -128,7 +128,7 @@ class MinionCRUDService {
 
             log.debug("Start creating minion group wiht name [${groupName}].")
 
-            minionGroup = new MinionGroup(name: groupName)
+            minionGroup = new MinionGroup(name: groupName.trim())
             minionGroupRepository.save(minionGroup)
 
             log.debug("Successfully created minion group with name [${minionGroup.name}].")
@@ -144,7 +144,7 @@ class MinionCRUDService {
      */
     def updateMinion(def editMinion) {
 
-        //TODO implementation
+        //TODO implementation смена групп миньона
     }
 
     /**
