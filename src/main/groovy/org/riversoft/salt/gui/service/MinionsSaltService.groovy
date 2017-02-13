@@ -27,7 +27,7 @@ class MinionsSaltService {
     //endregion
 
     /**
-     * Принятие синьона на сервере salt
+     * Принятие миньона на сервере salt
      * @param minionName - название миньона
      */
     def acceptMinion(String minionName) {
@@ -47,8 +47,6 @@ class MinionsSaltService {
                 saltClient, USER, PASSWORD, AuthModule.PAM);
 
         log.debug("Finish accepting minion [${minionName}] on salt server.")
-
-        def test = 1
     }
 
     /**
@@ -82,22 +80,10 @@ class MinionsSaltService {
 
         log.debug("Start deleting minion [${minionName}] on salt server.")
 
-//        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-//                saltClient, USER, PASSWORD, AuthModule.PAM);
-//        Key.Names keys = keyResults.getData().getResult();
-
-        //TODO нужно ли проверять присутствует ли удаляемый миньон в какой то группе по статусу или  нет?
-
-//        if (!keys.getUnacceptedMinions().contains(minionName)) {
-//            log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
-//            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
-//        }
-
         WheelResult<Object> deleteResults = Key.delete(minionName).callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
 
         log.debug("Finish deleting minion [${minionName}] on salt server.")
     }
-
 
 }
