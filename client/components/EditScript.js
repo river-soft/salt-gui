@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
-import TextArea from 'muicss/lib/react/textarea';
 import Divider from 'muicss/lib/react/divider';
 import Button from 'muicss/lib/react/button';
+import AceEditor from 'react-ace';
+
+import 'brace/mode/yaml';
+import 'brace/theme/eclipse';
+
 
 export default class EditScript extends Component {
 
@@ -35,17 +39,15 @@ export default class EditScript extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.editSuccess && !this.state.closeModal) {
+        if (this.props.editSuccess) {
             this.setState({
                 id: '',
                 group: '',
                 name: '',
                 content: '',
-                closeModal: true
             });
 
-            this.props.closeModal();
-            this.props.hideContent();
+            this.props.cancel();
         }
     }
 
@@ -117,6 +119,10 @@ export default class EditScript extends Component {
         this.props.editScript(script);
     }
 
+    setContentOnLoad() {
+        this.setState({content: this.props.script.content})
+    }
+
     validateScript(scriptName) {
 
         const groups = this.props.groups;
@@ -178,15 +184,23 @@ export default class EditScript extends Component {
                            }}/>
                     {this.state.scriptExist ?
                         <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
-                    <TextArea label='Текст скрипта' floatingLabel={true} className='modal__textarea'
-                              defaultValue={this.props.script.content || ''}
-                              onChange={(e) => {
-                                  this.setContent(e.target.value)
-                              }}/>
+                    <AceEditor
+                        mode='yaml'
+                        theme='eclipse'
+                        width='100%'
+                        onChange={(content) => {
+                            this.setContent(content);
+                        }}
+                        onLoad={::this.setContentOnLoad}
+                        value={this.state.content}
+                    />
+
                 </div>
             </Form>
-            <div className='modal__footer'>
+            <div>
                 <Divider />
+                <Button size='small' color='primary' variant='flat'
+                        onClick={this.props.cancel} className='modal__btn mui--pull-right'>Отменить</Button>
                 <Button size='small' color='primary' variant='flat' onClick={this.editScript}
                         className='modal__btn mui--pull-right'>Сохранить</Button>
             </div>

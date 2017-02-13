@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
-import TextArea from 'muicss/lib/react/textarea';
+// import TextArea from 'muicss/lib/react/textarea';
 import Button from 'muicss/lib/react/button';
 import Divider from 'muicss/lib/react/divider';
+import AceEditor from 'react-ace';
+
+import 'brace/mode/yaml';
+import 'brace/theme/eclipse';
 
 export default class CreateGroup extends Component {
 
@@ -28,7 +32,7 @@ export default class CreateGroup extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.createSuccess && !this.state.closeModal) {
+        if (this.props.createSuccess) {
             this.setState({
                 addScript: false,
                 groupName: '',
@@ -38,10 +42,9 @@ export default class CreateGroup extends Component {
                 showDropdown: false,
                 rerenderList: [],
                 rerenderDropdown: false,
-                closeModal: true
             });
 
-            this.props.closeModal();
+            this.props.cancel();
         }
     }
 
@@ -163,9 +166,17 @@ export default class CreateGroup extends Component {
             this.validateScript(e.target.value);
         }} defaultValue={this.state.scriptName || ''}/>
             {this.state.scriptExist ? <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
-            <TextArea label='Текст скрипта' floatingLabel={true} onChange={(e) => {
-                this.setScriptContent(e.target.value)
-            }} className='modal__textarea' defaultValue={this.state.scriptContent || ''}/>
+
+            <AceEditor
+                mode='yaml'
+                theme='eclipse'
+                width='100%'
+                onChange={(content) => {
+                    this.setScriptContent(content);
+                }}
+                value={this.state.scriptContent || ''}
+            />
+
             <Button size='small' color='primary' variant='flat'
                     onClick={() => {
                         this.addScript();
@@ -228,7 +239,6 @@ export default class CreateGroup extends Component {
                 </ul> : null;
 
         return <div className='modal__content'>
-            <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
             <h4 className='mui--text-center modal__header'>Создание группы и скриптов</h4>
             <Form className='modal__form'>
                 <div className='modal__form_group'>
@@ -253,7 +263,7 @@ export default class CreateGroup extends Component {
                             }) : null}
                     </ul>
                     {this.state.addScript ? null :
-                        <Button size='small' color='primary' variant='flat' onClick={this.addScript.bind(this)}
+                        <Button size='small' color='primary' variant='flat' onClick={::this.addScript}
                                 className='modal__btn mui--pull-right'>
                             Добавить скрипт
                         </Button>}
@@ -261,8 +271,10 @@ export default class CreateGroup extends Component {
                 {this.state.addScript ? this.addScriptForm() : null}
             </Form>
             {!this.state.addScript ?
-                <div className='modal__footer'>
+                <div>
                     <Divider />
+                    <Button size='small' color='primary' variant='flat'
+                            onClick={this.props.cancel} className='modal__btn mui--pull-right'>Отменить</Button>
                     <Button size='small' color='primary' variant='flat'
                             onClick={this.createModel} className='modal__btn mui--pull-right'
                             disabled={!this.state.groupName}>Сохранить</Button>

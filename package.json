@@ -28,6 +28,7 @@
     "muicss": "^0.9.9-rc2",
     "postcss-loader": "1.2.2",
     "precss": "1.4.0",
+    "react-ace": "^4.1.4",
     "react-hot-loader": "^1.3.1",
     "react-modal": "^1.6.5",
     "sockjs-client": "^1.1.2",

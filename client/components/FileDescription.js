@@ -22,6 +22,6 @@ export default class FileDescription extends Component {
                     {description.script.content}
                 </pre>
             </Panel>
-        )
+        );
     }
 }
