@@ -26,6 +26,19 @@ class MinionsSaltService {
 
     //endregion
 
+    def getAllAcceptedMinions() {
+
+        log.trace("Start getting accepted minions from salt server.")
+
+        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                saltClient, USER, PASSWORD, AuthModule.PAM);
+        Key.Names keys = keyResults.getData().getResult();
+
+        log.trace("Finish getting accepted minions from salt server.")
+
+         keys.getMinions()
+    }
+
     /**
      * Принятие миньона на сервере salt
      * @param minionName - название миньона
@@ -85,5 +98,6 @@ class MinionsSaltService {
 
         log.debug("Finish deleting minion [${minionName}] on salt server.")
     }
+
 
 }

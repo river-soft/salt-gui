@@ -50,7 +50,7 @@ class MinionsService {
      * Поиск принятых миньонов (из бд)
      * @return список названий миньонов
      */
-    def findAllAcceptedMinions() {
+    List<MinionViewModel> findAllAcceptedMinions() {
 
         log.trace("Start searching accepted minions.")
 
