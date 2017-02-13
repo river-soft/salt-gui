@@ -352,17 +352,22 @@ body {
       background: $blue-background;
       color: #eee;
       text-transform: uppercase;
+      border-left: 2px solid #eee;
 
       &:first-child {
-        border-right: 2px solid #eee;
+        border-left: none;
       }
     }
 
     & tr {
       border-bottom: 2px solid $blue-background;
 
+      & td {
+        border-left: 2px solid $blue-background;
+      }
+
       & td:first-child {
-        border-right: 2px solid $blue-background;
+        border-left: none;
       }
     }
   }

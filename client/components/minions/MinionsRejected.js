@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import Input from 'muicss/lib/react/input';
+import Button from 'muicss/lib/react/button';
+import Checkbox from 'muicss/lib/react/checkbox';
+import Divider from 'muicss/lib/react/divider';
+import Modal from 'react-modal';
 
 export default class MinionsRejected extends Component {
 
@@ -8,7 +12,26 @@ export default class MinionsRejected extends Component {
 
         this.state = {
             filterList: [],
-            rerender: false
+            rerender: false,
+            checkedList: [],
+            clicked: false,
+            showModal: false,
+            delete: false
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.deleteMinionsSuccess && this.state.showModal) {
+
+            this.state = {checkedList: []};
+
+            this.props.setDeletedFalse();
+            this.onRequestClose();
+
+            let inputs = document.getElementsByTagName('input');
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].checked = false
+            }
         }
     }
 
@@ -23,26 +46,93 @@ export default class MinionsRejected extends Component {
         })
     }
 
+    addToCheckedList(e, minion) {
+        if (e.target.checked) {
+            this.state.checkedList.push(minion);
+        } else {
+            let index = this.state.checkedList.indexOf(minion);
+            this.state.checkedList.splice(index, 1);
+        }
+
+        this.setState({clicked: true});
+    }
+
+    deleteMinions() {
+        this.setState({
+            delete: true,
+            showModal: true
+        })
+    }
+
+    onRequestClose() {
+        this.setState({
+            showModal: false
+        });
+    }
+
+    sendDeleteMinions() {
+        this.props.deleteMinions(this.state.checkedList)
+    }
+
     render() {
 
-        let rejectedMinions = this.state.rerender ? this.state.filterList : this.props.rejectedMinions;
+        let rejectedMinions = this.state.rerender ? this.state.filterList : this.props.rejectedMinions,
+            modal;
+
+        if (this.state.delete) {
+            modal = <div className='modal__content'>
+                <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
+                <h4 className='mui--text-center modal__header'>Delete minions</h4>
+                <div className='modal__body'>
+                    Are you sure you want to delete {this.state.checkedList.map((item) => {
+                    return item + ' '
+                })}
+                </div>
+                <div className='modal__footer'>
+                    <Divider />
+                    <Button size='small' color='primary' variant='flat' onClick={::this.sendDeleteMinions}
+                            className='modal__btn mui--pull-right'>Delete</Button>
+                </div>
+            </div>
+        }
+
 
         return <div className='right-block-list'>
-            <Input label='Поиск' floatingLabel={true} onChange={e => {::this.filter(e.target.value)}} />
+            <Input label='Поиск' floatingLabel={true} onChange={e => {
+                ::this.filter(e.target.value)
+            }}/>
             <div className='block-list block-list__table'>
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
                         <td className='table__head'>NAME</td>
+                        <td className='table__head'>SELECT</td>
                     </tr>
                     {rejectedMinions ? rejectedMinions.map((item, index) => {
                             return <tr key={index}>
                                 <td>{item}</td>
+                                <td><Checkbox
+                                    onClick={e => {
+                                        ::this.addToCheckedList(e, item)
+                                    }}
+                                /></td>
                             </tr>
-                        }) : <tr><td>Данных нет</td></tr>}
+                        }) : <tr>
+                            <td>Данных нет</td>
+                        </tr>}
                     </tbody>
                 </table>
+                {rejectedMinions.length ?
+                    <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                            disabled={!this.state.checkedList.length} onClick={::this.deleteMinions}>
+                        delete
+                    </Button> : null}
             </div>
+            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
+                   onRequestClose={::this.onRequestClose} overlayClassName='overlay'
+                   parentSelector={() => document.body} ariaHideApp={false}>
+                {modal}
+            </Modal>
         </div>
     }
 }
