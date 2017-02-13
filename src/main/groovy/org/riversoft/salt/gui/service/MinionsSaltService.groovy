@@ -26,17 +26,23 @@ class MinionsSaltService {
 
     //endregion
 
+    /**
+     * Получение списка принятых миньонов с сервера salt
+     * @return перечень принятых миньонов
+     */
     def getAllAcceptedMinions() {
 
-        log.trace("Start getting accepted minions from salt server.")
+        log.debug("Start getting accepted minions from salt server.")
 
         WheelResult<Key.Names> keyResults = Key.listAll().callSync(
                 saltClient, USER, PASSWORD, AuthModule.PAM);
         Key.Names keys = keyResults.getData().getResult();
 
-        log.trace("Finish getting accepted minions from salt server.")
+        def minions = keys.getMinions()
 
-         keys.getMinions()
+        log.debug("Finish getting accepted minions from salt server. Found [${minions.size()}]")
+
+        minions
     }
 
     /**
