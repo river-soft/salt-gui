@@ -59,7 +59,7 @@ class MinionsActionService {
 
         List<MinionGroup> minionGroups = minionCRUDService.createMinionGroups(groups)
 
-        Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName), minionGroups)
+        Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName.trim()), minionGroups)
 
         log.debug("Finish accepting minion [${minionName}].")
 
@@ -82,9 +82,8 @@ class MinionsActionService {
     }
 
     /**
-     *
-     * @param minionNames
-     * @return
+     * Удаление списка миньонов
+     * @param minionNames - перечень имен миньонов
      */
     def deleteMinions(String[] minionNames) {
 
@@ -98,9 +97,8 @@ class MinionsActionService {
     }
 
     /**
-     *
-     * @param minionName
-     * @return
+     * Удаление миньона
+     * @param minionName - имя миньона
      */
     def deleteMinion(String minionName) {
 
@@ -115,6 +113,4 @@ class MinionsActionService {
 
         log.debug("Finish deleting minion [${minionName}].")
     }
-
-
 }

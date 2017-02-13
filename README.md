@@ -9,6 +9,7 @@
 - **salt.scripts.default_group** - название группы для скриптов по умолчанию
 - **salt.scripts.directory** - путь к папке куда создавать sls файлы скриптов
 
+- **salt.minion.default_group** - название группы миньона по умолчанию
 - **salt.minion.details.properties** - параметры которые необходимо получить для страницы детализации миньона
 
 - **salt.minions.update_counts_interval** - интервал с которым будет запрашиваться информация о количестве миньонов 

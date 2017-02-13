@@ -3,6 +3,7 @@ package org.riversoft.salt.gui.service
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
+import org.riversoft.salt.gui.exception.MinionNotFoundException
 import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
 import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.repository.MinionGroupRepository
@@ -43,7 +44,7 @@ class MinionCRUDService {
 
         log.debug("Start creating minion with name [${createMinion.name}].")
 
-        minion = new Minion(name: createMinion.name, groups: minionGroups)
+        minion = new Minion(name: createMinion.name.trim(), groups: minionGroups)
         minionRepository.save(minion)
 
         log.debug("Successfully created minion with name [${minion.name}].")
@@ -64,15 +65,16 @@ class MinionCRUDService {
     /**
      * Получение миньона по имени
      * @param minionName - имя меньона
-     * @return
+     * @return объект Minion
+     * @see Minion
      */
     Minion getMinionByName(String minionName) {
 
         Minion minion = minionRepository.findByName(minionName)
 
-        if (minion) {
-            log.error("Minion with name [${minionName}] already exist.")
-            throw new SaltScriptAlreadyExistException("Minion with name [${minionName}] already exist.")
+        if (!minion) {
+            log.error("Minion with name [${minionName}] not found.")
+            throw new MinionNotFoundException("Minion with name [${minionName}] not found.")
         }
 
         minion
@@ -81,13 +83,12 @@ class MinionCRUDService {
     /**
      * Поиск миньона по имени
      * @param minionName - имя меньона
-     * @return
+     * @return объект Minion
+     * @see Minion
      */
     Minion findMinionByName(String minionName) {
 
-        Minion minion = minionRepository.findByName(minionName)
-
-        minion
+        minionRepository.findByName(minionName)
     }
 
     /**
@@ -127,7 +128,7 @@ class MinionCRUDService {
 
             log.debug("Start creating minion group wiht name [${groupName}].")
 
-            minionGroup = new MinionGroup(name: groupName)
+            minionGroup = new MinionGroup(name: groupName.trim())
             minionGroupRepository.save(minionGroup)
 
             log.debug("Successfully created minion group with name [${minionGroup.name}].")
@@ -143,7 +144,7 @@ class MinionCRUDService {
      */
     def updateMinion(def editMinion) {
 
-        //TODO implementation
+        //TODO implementation смена групп миньона
     }
 
     /**
@@ -154,8 +155,7 @@ class MinionCRUDService {
 
         log.debug("Start deleting minion with name [${minion.name}].")
 
-        String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id ${minion.id}"
-
+        String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id х${minion.id}ъ."
 
         for (MinionGroup group : minion.groups) {
 
