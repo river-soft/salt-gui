@@ -15,6 +15,7 @@ import * as minionsAction from '../actions/minionsAction';
 import * as getMinionsGroupsAction from '../actions/GetMinionsGroupAction';
 import * as acceptMinionsAction from '../actions/AcceptMinionsAction';
 import * as rejectMinionsAction from '../actions/RejectMinionsAction';
+import * as deleteMinionsAction from '../actions/DeleteMinionsAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -47,17 +48,26 @@ class Minions extends Component {
         this.props.rejectMinions.rejected = false;
     }
 
+    setDeletedFalse() {
+        this.props.deleteMinions.deleted = false;
+    }
+
     render() {
 
         const {getMinionsGroups} = this.props.getMinionsGroupsAction,
             {acceptMinions} = this.props.acceptMinionsAction,
             {rejectMinions} = this.props.rejectMinionsAction,
+            {deleteMinions} = this.props.deleteMinionsAction,
             acceptMinionsSuccess = this.props.acceptMinions.minions,
-            rejectMinionsSuccess = this.props.rejectMinions.rejected;
+            rejectMinionsSuccess = this.props.rejectMinions.rejected,
+            deleteMinionsSuccess = this.props.deleteMinions.deleted;
 
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
-            acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}/>,
+            acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}
+                                               deleteMinions={deleteMinions}
+                                               deleteMinionsSuccess={deleteMinionsSuccess}
+                                               setDeletedFalse={::this.setDeletedFalse}/>,
             unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
                                                    getMinionsGroups={getMinionsGroups}
                                                    minionsGroups={this.props.minionsGroups.groups}
@@ -67,7 +77,10 @@ class Minions extends Component {
                                                    rejectMinionsSuccess={rejectMinionsSuccess}
                                                    setRejectedFalse={::this.setRejectedFalse}/>,
             deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}/>,
-            rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}/>;
+            rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}
+                                               deleteMinions={deleteMinions}
+                                               deleteMinionsSuccess={deleteMinionsSuccess}
+                                               setDeletedFalse={::this.setDeletedFalse}/>;
 
         return <div className='wrapper'>
             <Header />
@@ -104,7 +117,8 @@ function mapStateToProps(state) {
         minions: state.minions,
         minionsGroups: state.minionsGroups,
         acceptMinions: state.acceptMinions,
-        rejectMinions: state.rejectMinions
+        rejectMinions: state.rejectMinions,
+        deleteMinions: state.deleteMinions
     }
 }
 
@@ -113,7 +127,8 @@ function mapDispatchToProps(dispatch) {
         minionsAction: bindActionCreators(minionsAction, dispatch),
         getMinionsGroupsAction: bindActionCreators(getMinionsGroupsAction, dispatch),
         acceptMinionsAction: bindActionCreators(acceptMinionsAction, dispatch),
-        rejectMinionsAction: bindActionCreators(rejectMinionsAction, dispatch)
+        rejectMinionsAction: bindActionCreators(rejectMinionsAction, dispatch),
+        deleteMinionsAction: bindActionCreators(deleteMinionsAction, dispatch)
     }
 }
 

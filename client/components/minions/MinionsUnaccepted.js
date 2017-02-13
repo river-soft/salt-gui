@@ -17,7 +17,6 @@ export default class MinionsUnaccepted extends Component {
             groupsList: [],
             showModal: false,
             accept: false,
-            delete: false,
             reject: false,
             clicked: false,
             closeModal: false
@@ -101,7 +100,6 @@ export default class MinionsUnaccepted extends Component {
         this.setState({
             showModal: true,
             accept: true,
-            delete: false,
             reject: false
         })
     }
@@ -195,10 +193,6 @@ export default class MinionsUnaccepted extends Component {
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
                     reject
-                </Button>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
-                        disabled={!this.state.checkedList.length}>
-                    delete
                 </Button>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={
