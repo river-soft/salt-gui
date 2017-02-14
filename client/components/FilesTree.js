@@ -57,7 +57,8 @@ export class FilesTree extends Component {
 
         this.setState({
             showFileDescription: true,
-            addScript: false
+            addScript: false,
+            editScript: false
         })
     }
 
