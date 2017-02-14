@@ -22,17 +22,10 @@ class MinionGroupController extends BaseRestController {
         minionGroupService.findAllMinionsGroups()
     }
 
-    //TODO подумать может это не надо
-    @RequestMapping('/minion-groups-by-minion')
-    findAllMinionGroupsByMinion(@RequestParam(value = "name", required = true) String name) {
-
-        minionGroupService.findAllMinionGroupsByMinion(name)
-    }
-
     @RequestMapping(value = '/minion-group', method = RequestMethod.POST)
     createMinionGroup(@RequestParam(value = "name", required = true) String name) {
 
-        minionGroupService.createMinionGroup(name.trim())
+        new MinionGroupSimpleViewModel(minionGroupService.createMinionGroup(name.trim()))
     }
 
     @RequestMapping(value = '/minion-group', method = RequestMethod.PUT)

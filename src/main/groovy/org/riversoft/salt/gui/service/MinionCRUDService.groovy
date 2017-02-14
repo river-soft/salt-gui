@@ -29,6 +29,35 @@ class MinionCRUDService {
     //endregion
 
     /**
+     * Получение миньона по имени
+     * @param minionName - имя меньона
+     * @return объект Minion
+     * @see Minion
+     */
+    Minion getMinionByName(String minionName) {
+
+        Minion minion = minionRepository.findByName(minionName)
+
+        if (!minion) {
+            log.error("Minion with name [${minionName}] not found.")
+            throw new MinionNotFoundException("Minion with name [${minionName}] not found.")
+        }
+
+        minion
+    }
+
+    /**
+     * Поиск миньона по имени
+     * @param minionName - имя меньона
+     * @return объект Minion
+     * @see Minion
+     */
+    Minion findMinionByName(String minionName) {
+
+        minionRepository.findByName(minionName)
+    }
+
+    /**
      * Создание миньона
      * @param createMinion - модель создания миньона
      * @param minionGroups - перечень объектов групп миньонов
@@ -66,35 +95,6 @@ class MinionCRUDService {
     }
 
     /**
-     * Получение миньона по имени
-     * @param minionName - имя меньона
-     * @return объект Minion
-     * @see Minion
-     */
-    Minion getMinionByName(String minionName) {
-
-        Minion minion = minionRepository.findByName(minionName)
-
-        if (!minion) {
-            log.error("Minion with name [${minionName}] not found.")
-            throw new MinionNotFoundException("Minion with name [${minionName}] not found.")
-        }
-
-        minion
-    }
-
-    /**
-     * Поиск миньона по имени
-     * @param minionName - имя меньона
-     * @return объект Minion
-     * @see Minion
-     */
-    Minion findMinionByName(String minionName) {
-
-        minionRepository.findByName(minionName)
-    }
-
-    /**
      * Создание списка групп миньонов
      * @param groupNames - перечень названий групп миньонов
      * @return список объектов MinionGroup
@@ -113,13 +113,35 @@ class MinionCRUDService {
     }
 
     /**
-     * Обновление миньона и его групп
+     * Обновление миньона
      * @param
      * @return
      */
-    def updateMinion(def editMinion) {
+    def updateMinion(String minionName, List<String> newGroups) {
 
-        //TODO implementation смена групп миньона
+        Minion minion = minionRepository.findByName(minionName)
+
+        List<String> minionsGroups = minion.groups.collect { it.name }
+
+
+        def deleteGroups = newGroups - minionsGroups
+
+        def addGroup = minionsGroups - newGroups
+
+
+        for (String newGroup : newGroups) {
+
+            if (!minionsGroups.contains(newGroup)) {
+
+                MinionGroup minionGroup = minionGroupRepository.findByName(newGroup)
+
+                minion.groups.add(minionGroup)
+
+                minionRepository.save(minion)
+
+                minionGroup.minions.add(minion)
+            }
+        }
     }
 
     /**
@@ -130,7 +152,7 @@ class MinionCRUDService {
 
         log.debug("Start deleting minion with name [${minion.name}].")
 
-        String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id х${minion.id}ъ."
+        String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id [${minion.id}]."
 
         for (MinionGroup group : minion.groups) {
 
@@ -143,5 +165,4 @@ class MinionCRUDService {
 
         log.debug(deletedMinionMessage)
     }
-
 }

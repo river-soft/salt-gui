@@ -1,12 +1,12 @@
 package org.riversoft.salt.gui.service
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionGroupNotFoundException
 import org.riversoft.salt.gui.model.view.MinionGroupSimpleViewModel
-import org.riversoft.salt.gui.model.view.MinionGroupViewModel
-import org.riversoft.salt.gui.model.view.MinionViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
+import org.riversoft.salt.gui.repository.MinionRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -18,6 +18,9 @@ class MinionGroupService {
 
     @Autowired
     private MinionGroupRepository minionGroupRepository
+
+    @Autowired
+    private MinionRepository minionRepository
 
     //endregion
 
@@ -33,21 +36,6 @@ class MinionGroupService {
         }
 
         return minionGroupViewModels
-    }
-
-
-    //TODO подумать может это не надо
-    List<MinionGroupSimpleViewModel> findAllMinionGroupsByMinion(String name) {
-
-
-
-//        List<MinionGroupSimpleViewModel> minionGroupViewModels = minionGroupRepository.findAllByMinionName(name).collect {
-//            new MinionGroupSimpleViewModel(it)
-//        }
-//
-//        return minionGroupViewModels
-
-
     }
 
     /**
@@ -88,13 +76,13 @@ class MinionGroupService {
 
         MinionGroup minionGroup = minionGroupRepository.findOne(id)
         if (!minionGroup) {
-            log.error("MinionGroup by id [${id}] not found.")
-            throw new MinionGroupNotFoundException("MinionGroup by id [${id}] not found.")
+            log.error("MinionGroup with id [${id}] not found.")
+            throw new MinionGroupNotFoundException("MinionGroup with id [${id}] not found.")
         }
 
-        String oldName = minionGroup.name
-
         if (minionGroup.name != name) {
+
+            String oldName = minionGroup.name
 
             log.debug("Start updating MinionGroup name, from old name [${oldName}] to [${name}].")
 
@@ -104,8 +92,6 @@ class MinionGroupService {
 
             log.debug("Successfully updated MinionGroup name to [${minionGroup.name}].")
         }
-
-        //TODO implementation
 
         minionGroup
     }
@@ -118,27 +104,37 @@ class MinionGroupService {
 
         MinionGroup minionGroup = minionGroupRepository.findOne(id)
         if (!minionGroup) {
-            log.error("MinionGroup by id [${id}] not found.")
-            throw new MinionGroupNotFoundException("MinionGroup by id [${id}] not found.")
+            log.error("MinionGroup with id [${id}] not found.")
+            throw new MinionGroupNotFoundException("MinionGroup with id [${id}] not found.")
         }
 
-        int minionsInGroup = minionGroup.minions.size()
+//            log.warn("Can't delete, MinionGroup with name [${minionGroup.name}] have [${minionsInGroup}] minions.")
+//            return minionGroup.minions.collect { new MinionViewModel(it) }
 
-        if (minionsInGroup > 0) {
+        log.debug("Start deleting MinionGroup with name [${minionGroup.name}] and id [${minionGroup.id}].")
+        String deletedMinionGroupName = minionGroup.name
 
-            //TODO что надо возвращать при попытке удаления но если есть миньоны у группы ?
-            log.warn("Can't delete, MinionGroup with name [${minionGroup.name}] have [${minionsInGroup}] minions.")
-            return minionGroup.minions.collect { new MinionViewModel(it) }
+        List<Minion> minions = minionGroup.minions
 
-        } else {
+        for (Minion minion : minions) {
 
-            log.debug("Start deleting MinionGroup with name [${minionGroup.name}] and id [${minionGroup.id}].")
+            minion.groups.removeAll { it.name == deletedMinionGroupName }
 
-            String deletedMinionGroupName = minionGroup.name
+            if (minion.groups.size() == 0) {
 
-            minionGroupRepository.delete(minionGroup.id)
+                MinionGroup newMinionGroup = createMinionGroup("default")
+                minion.groups.add(newMinionGroup)
 
-            log.debug("Successfully deleted MinionGroup with name [${deletedMinionGroupName}].")
+                newMinionGroup.minions.add(minion)
+                minionGroupRepository.save(newMinionGroup)
+
+            }
+
+            minionRepository.save(minion)
         }
+
+        minionGroupRepository.delete(minionGroup.id)
+
+        log.debug("Successfully deleted MinionGroup with name [${deletedMinionGroupName}].")
     }
 }
