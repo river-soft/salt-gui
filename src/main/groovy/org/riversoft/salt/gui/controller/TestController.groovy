@@ -112,7 +112,7 @@ class TestController {
 
         int i = 1
 
-        MinionGroup minionGroup = minionGroupService.createMinionGroup("group2")
+        MinionGroup minionGroup = minionGroupService.createMinionGroup("group1")
 
 //        for (i; i <= 5; i++) {
 //

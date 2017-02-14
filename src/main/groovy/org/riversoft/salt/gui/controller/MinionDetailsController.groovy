@@ -21,9 +21,9 @@ class MinionDetailsController extends BaseRestController {
     }
 
     @RequestMapping(value = '/minion-details')
-    def createSaltScriptGroup(@RequestParam(value = "names", required = true) List<String> minionsNames) {
+    def createSaltScriptGroup(@RequestParam(value = "name", required = true) String minionsName) {
 
-        minionDetailsService.findMinionDetails(minionsNames)
+        minionDetailsService.findMinionDetails(minionsName)
     }
 
 
