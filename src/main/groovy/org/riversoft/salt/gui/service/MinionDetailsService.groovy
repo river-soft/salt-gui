@@ -28,10 +28,10 @@ class MinionDetailsService {
     private String[] properties
 
     @Autowired
-    SaltClient saltClient
+    private SaltClient saltClient
 
     @Autowired
-    MinionGroupRepository minionGroupRepository
+    private MinionGroupRepository minionGroupRepository
 
     /**
      * Получение списка миньонов сгрупированных по группам
@@ -50,11 +50,15 @@ class MinionDetailsService {
         minionsGroups.collect { new MinionGroupViewModel(it) }
     }
 
-
-    def findMinionDetails(List<String> minionsNames) {
+    /**
+     * Получение деталей о миньоне
+     * @param minionName - именя миньона
+     * @return объект данных ключ-значение
+     */
+    def findMinionDetails(String minionName) {
 
         // Set targets
-        Target<List<String>> minionList = new MinionList(minionsNames);
+        Target<List<String>> minionList = new MinionList(minionName);
 
         // call Grains.item
         Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, properties)
