@@ -28,9 +28,9 @@ export default class TreeNode extends Component {
 
     render() {
 
-        let nodes = this.props.group.scripts.map((file, index) => {
+        let nodes = this.props.nodes.map((file, index) => {
             return <li className={this.isActive(file.name)} key={index} onClick={() => {
-                this.props.showContent(file.id);
+                typeof this.props.showContent === 'function' ? this.props.showContent(file.id, file.name) : null;
                 this.setFilter(file.name);
             }}>{file.name}</li>
         }, this);
