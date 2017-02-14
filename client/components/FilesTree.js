@@ -124,9 +124,11 @@ export class FilesTree extends Component {
     }
 
     cancelEditScript() {
+        debugger;
         this.setState({
             editScript: false,
-            getFiles: true
+            getFiles: true,
+            showFileDescription: true
         });
     }
 
