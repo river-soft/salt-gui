@@ -6,6 +6,9 @@ import org.riversoft.salt.gui.calls.modules.Grains
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
+import org.riversoft.salt.gui.domain.MinionGroup
+import org.riversoft.salt.gui.model.view.MinionGroupViewModel
+import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -26,6 +29,27 @@ class MinionDetailsService {
 
     @Autowired
     SaltClient saltClient
+
+    @Autowired
+    MinionGroupRepository minionGroupRepository
+
+    /**
+     * Получение списка миньонов сгрупированных по группам
+     * @return список объектов MinionGroupViewModel
+     * @see MinionGroupViewModel
+     */
+    List<MinionGroupViewModel> findAllGroupedMinions() {
+
+        log.debug("Start searching grouped minions.")
+
+        List<MinionGroup> minionsGroups = minionGroupRepository.findAll()
+
+        log.debug("Found [${minionsGroups.size()}] groups and " +
+                "[${minionsGroups.size() ? minionsGroups.sum { it.minions.size() } : 0}] minions.")
+
+        minionsGroups.collect { new MinionGroupViewModel(it) }
+    }
+
 
     def findMinionDetails(List<String> minionsNames) {
 
