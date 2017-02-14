@@ -14,10 +14,17 @@ class MinionDetailsController extends BaseRestController {
     @Autowired
     MinionDetailsService minionDetailsService
 
+    @RequestMapping('/grouped-minions')
+    def findGroupedMinions() {
+
+        minionDetailsService.findAllGroupedMinions()
+    }
+
     @RequestMapping(value = '/minion-details')
     def createSaltScriptGroup(@RequestParam(value = "names", required = true) List<String> minionsNames) {
 
         minionDetailsService.findMinionDetails(minionsNames)
     }
+
 
 }

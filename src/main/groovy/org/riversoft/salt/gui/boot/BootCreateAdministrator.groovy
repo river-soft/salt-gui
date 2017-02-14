@@ -7,6 +7,7 @@ import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.model.view.MinionViewModel
 import org.riversoft.salt.gui.service.MinionCRUDService
+import org.riversoft.salt.gui.service.MinionGroupService
 import org.riversoft.salt.gui.service.MinionsSaltService
 import org.riversoft.salt.gui.service.MinionsService
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,6 +34,9 @@ class BootCreateAdministrator implements CommandLineRunner {
     @Autowired
     private MinionsSaltService minionsSaltService
 
+    @Autowired
+    private MinionGroupService minionGroupService
+
     //endregion
 
     @Override
@@ -52,7 +56,7 @@ class BootCreateAdministrator implements CommandLineRunner {
 
                 log.debug("Start creating minion with name [${minionName}] in database.")
 
-                MinionGroup minionGroup = minionCRUDService.createMinionGroup(defaultGroupForMinion)
+                MinionGroup minionGroup = minionGroupService.createMinionGroup(defaultGroupForMinion)
 
                 Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName), [minionGroup])
 

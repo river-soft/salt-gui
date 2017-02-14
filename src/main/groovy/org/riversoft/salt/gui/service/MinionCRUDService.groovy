@@ -23,6 +23,9 @@ class MinionCRUDService {
     @Autowired
     private MinionGroupRepository minionGroupRepository
 
+    @Autowired
+    MinionGroupService minionGroupService
+
     //endregion
 
     /**
@@ -103,38 +106,10 @@ class MinionCRUDService {
 
         for (String groupName : groupNames) {
 
-            minionGroups.add(createMinionGroup(groupName))
+            minionGroups.add(minionGroupService.createMinionGroup(groupName))
         }
 
         return minionGroups
-    }
-
-    /**
-     * Создание группы миньонов
-     * @param groupName - название группы миньонов
-     * @return объект MinionGroup
-     * @see MinionGroup
-     */
-    MinionGroup createMinionGroup(String groupName) {
-
-        if (!groupName) {
-            log.error("Illegal parameter groupName [${groupName}]")
-            throw new IllegalArgumentException("Illegal parameter groupName [${groupName}]")
-        }
-
-        MinionGroup minionGroup = minionGroupRepository.findByName(groupName)
-
-        if (!minionGroup) {
-
-            log.debug("Start creating minion group wiht name [${groupName}].")
-
-            minionGroup = new MinionGroup(name: groupName.trim())
-            minionGroupRepository.save(minionGroup)
-
-            log.debug("Successfully created minion group with name [${minionGroup.name}].")
-        }
-
-        return minionGroup
     }
 
     /**
