@@ -1,6 +1,7 @@
 package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
+import org.apache.http.auth.AUTH
 import org.riversoft.salt.gui.AuthModule
 import org.riversoft.salt.gui.calls.modules.State
 import org.riversoft.salt.gui.calls.modules.Test
@@ -15,6 +16,7 @@ import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.riversoft.salt.gui.results.Result
 import org.riversoft.salt.gui.service.MinionCRUDService
+import org.riversoft.salt.gui.service.MinionGroupService
 import org.riversoft.salt.gui.service.SaltScriptService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -49,6 +51,9 @@ class TestController {
 
     @Autowired
     MinionGroupRepository minionGroupRepository
+
+    @Autowired
+    MinionGroupService minionGroupService
 
     @Autowired
     SaltClient saltClient
@@ -107,7 +112,7 @@ class TestController {
 
         int i = 1
 
-        MinionGroup minionGroup = minionCRUDService.createMinionGroup("group2")
+        MinionGroup minionGroup = minionGroupService.createMinionGroup("group2")
 
 //        for (i; i <= 5; i++) {
 //
