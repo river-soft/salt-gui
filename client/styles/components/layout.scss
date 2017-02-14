@@ -221,7 +221,7 @@ body {
 
   &_item {
     cursor: pointer;
-    
+
     &:hover {
       background: $blue-background;
       color: #eee;
@@ -236,7 +236,7 @@ body {
 .scripts__list {
   width: 65%;
   float: left;
-  
+
   &_item {
     border: 1px solid #ccc;
     background: #fff;
@@ -245,7 +245,7 @@ body {
     border-radius: 10px;
     margin: 0 0 5px 5px;
     cursor: pointer;
-    
+
     &:hover {
       background: $blue-background;
       color: #fff
@@ -285,7 +285,7 @@ body {
     right: 20px;
     font-size: 1.8rem;
     color: $blue-background;
-    
+
     &_item {
       cursor: pointer;
     }
@@ -340,7 +340,7 @@ body {
     left: 20px;
   }
 
-  &.block-list__table{
+  &.block-list__table {
     padding: 0 0 43px 0;
   }
 
@@ -375,4 +375,29 @@ body {
 
 .right-block-list {
   padding-top: 10px;
+}
+
+.object {
+  margin-left: 10px;
+  @include clearfix();
+
+  &__key {
+    font-weight: bold;
+  }
+
+  &__value {
+    margin-left: 15px;
+
+    & .object {
+
+      &__key {
+        float: left;
+      }
+
+      &__value {
+        float: left;
+        margin-left: 15px;
+      }
+    }
+  }
 }

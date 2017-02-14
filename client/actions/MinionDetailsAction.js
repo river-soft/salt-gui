@@ -5,7 +5,7 @@ import {
 } from '../constants/MinionDetails';
 import $ from 'jquery';
 
-export function getMinionDetails(id, name) {
+export function getMinionDetails(name) {
 
     return dispatch => {
 

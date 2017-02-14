@@ -9,6 +9,7 @@ import Container from 'muicss/lib/react/container';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as minionDetailsAction from '../actions/MinionDetailsAction';
 import TreeView from '../components/tree/TreeView';
+import MinionDetails from '../components/minions/MinionDetails';
 
 class GroupsAndMinions extends Component {
 
@@ -17,15 +18,23 @@ class GroupsAndMinions extends Component {
 
         this.state = {
             filterMinions: [],
-            rerender: false
+            rerender: false,
+            showMinionDescription: false
         }
     }
 
     componentDidMount() {
         const {getGroupedMinions} = this.props.getGroupedMinionsAction;
-        if(typeof getGroupedMinions === 'function') {
+        if (typeof getGroupedMinions === 'function') {
             getGroupedMinions();
         }
+    }
+
+    showContent(minionId, minionName) {
+        const {getMinionDetails} = this.props.minionDetailsAction;
+
+        getMinionDetails(minionName);
+        this.setState({showMinionDescription: true})
     }
 
     filterTree(e) {
@@ -54,16 +63,15 @@ class GroupsAndMinions extends Component {
 
     render() {
 
-        const {getMinionDetails} = this.props.minionDetailsAction;
 
         let treeView;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
         } else if (this.state.rerender) {
-            treeView = <TreeView groups={this.state.filterMinions} showContent={getMinionDetails}/>;
+            treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}/>;
         } else {
-            treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={getMinionDetails}/>;
+            treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}/>;
         }
 
         return <div className='wrapper'>
@@ -72,14 +80,18 @@ class GroupsAndMinions extends Component {
                 <Container>
                     <Row>
                         <Col md='3' xs='6' lg='3'>
-                            <Input label='Поиск' floatingLabel={true} onChange={e => {this.filterTree(e)}}/>
+                            <Input label='Поиск' floatingLabel={true} onChange={e => {
+                                this.filterTree(e)
+                            }}/>
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
                             <button className='mui-btn button'>добавить</button>
                         </Col>
                         <Col md='9' xs='6' lg='9'>
-                            Текст 2
+                            {this.state.showMinionDescription ?
+                                <MinionDetails details={this.props.minionDetails.minionDetails[0]}/>
+                                : null}
                         </Col>
                     </Row>
                 </Container>
