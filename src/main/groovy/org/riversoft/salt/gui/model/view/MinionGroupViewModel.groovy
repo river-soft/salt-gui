@@ -5,16 +5,18 @@ import org.riversoft.salt.gui.domain.MinionGroup
 
 class MinionGroupViewModel {
 
+    String id
     String group
 
-    List<MinionsViewModel> minions = []
+    List<MinionSimpleViewModel> minions = []
 
     MinionGroupViewModel(MinionGroup minionGroup) {
 
+        this.id = minionGroup.id
         this.group = minionGroup.name
 
         for (Minion minion : minionGroup.minions) {
-            this.minions.add(new MinionsViewModel(minion))
+            this.minions.add(new MinionSimpleViewModel(minion))
         }
     }
 }

@@ -6,9 +6,12 @@ import org.riversoft.salt.gui.calls.modules.Grains
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
+import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
+import org.riversoft.salt.gui.exception.MinionNotFoundException
 import org.riversoft.salt.gui.model.view.MinionGroupViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
+import org.riversoft.salt.gui.repository.MinionRepository
 import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Service
 @Slf4j
 @Service
 class MinionDetailsService {
+
+    //region
 
     @Value('${salt.user}')
     private String USER
@@ -32,6 +37,11 @@ class MinionDetailsService {
 
     @Autowired
     private MinionGroupRepository minionGroupRepository
+
+    @Autowired
+    private MinionRepository minionRepository
+
+    //endregion
 
     /**
      * Получение списка миньонов сгрупированных по группам
@@ -56,6 +66,12 @@ class MinionDetailsService {
      * @return объект данных ключ-значение
      */
     def findMinionDetails(String minionName) {
+
+        Minion minion = minionRepository.findByName(minionName)
+        if (!minion) {
+            log.error("Minion with name [${minionName}] not found.")
+            throw new MinionNotFoundException("Minion with name [${minionName}] not found.")
+        }
 
         // Set targets
         Target<List<String>> minionList = new MinionList(minionName);
