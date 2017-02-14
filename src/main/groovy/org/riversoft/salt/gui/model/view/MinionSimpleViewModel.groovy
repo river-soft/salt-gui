@@ -2,12 +2,12 @@ package org.riversoft.salt.gui.model.view
 
 import org.riversoft.salt.gui.domain.Minion
 
-class MinionsViewModel {
+class MinionSimpleViewModel {
 
     String id
     String name
 
-    MinionsViewModel(Minion minion) {
+    MinionSimpleViewModel(Minion minion) {
         this.id = minion.id
         this.name = minion.name
     }
