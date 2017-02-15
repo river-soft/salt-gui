@@ -37,7 +37,9 @@ export default class TreeNode extends Component {
 
         return <li className='tree-list__item'>
             <div className='tree-list__item_actions'>
-                <span className='tree-list__item_action'><i className='mi mi-create'></i></span>
+                <span className='tree-list__item_action' onClick={() => {
+                    this.props.editGroup(this.props.group.id, this.props.group.group);
+                }}><i className='mi mi-create'></i></span>
                 <span className='tree-list__item_action' onClick={() => {
                     this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
                 }}><i className='mi mi-delete'></i></span>

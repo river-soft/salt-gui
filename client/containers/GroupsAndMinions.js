@@ -10,10 +10,12 @@ import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as minionDetailsAction from '../actions/MinionDetailsAction';
 import * as createMinionsGroupAction from '../actions/CreateMinionsGroupAction';
 import * as removeMinionsGroupAction from '../actions/RemoveMinionsGroupAction';
+import * as editMinionsGroupAction from '../actions/EditMinionsGroupAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
 import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
 import RemoveMinionsGroupModal from '../components/minions/RemoveMinionsGroupModal';
+import EditMinionsGroupModal from '../components/minions/EditMinionsGroupModal';
 import Modal from 'react-modal';
 
 class GroupsAndMinions extends Component {
@@ -24,11 +26,13 @@ class GroupsAndMinions extends Component {
         this.state = {
             filterMinions: [],
             removedGroup: {},
+            editedGroup: {},
             rerender: false,
             showMinionDescription: false,
             showModal: false,
             createMinionsGroupModal: false,
-            removeMinionsGroupModal: false
+            removeMinionsGroupModal: false,
+            editMinionsGroupModal: false
         }
     }
 
@@ -50,6 +54,12 @@ class GroupsAndMinions extends Component {
 
         if (this.props.removeMinionsGroup.remove) {
             this.props.removeMinionsGroup.remove = false;
+            this.onRequestClose();
+            getGroupedMinions();
+        }
+
+        if(this.props.editMinionsGroup.edit) {
+            this.props.editMinionsGroup.edit = false;
             this.onRequestClose();
             getGroupedMinions();
         }
@@ -90,7 +100,8 @@ class GroupsAndMinions extends Component {
         this.setState({
             showModal: true,
             createMinionsGroupModal: true,
-            removeMinionsGroupModal: false
+            removeMinionsGroupModal: false,
+            editMinionsGroupModal: false
         })
     }
 
@@ -98,11 +109,25 @@ class GroupsAndMinions extends Component {
         this.setState({
             showModal: true,
             createMinionsGroupModal: false,
+            editMinionsGroupModal: false,
             removeMinionsGroupModal: true,
             removedGroup: {
                 id: groupId,
                 name: groupName,
                 size: minionsSize
+            }
+        })
+    }
+
+    editGroup(groupId, groupName) {
+        this.setState({
+            showModal: true,
+            createMinionsGroupModal: false,
+            removeMinionsGroupModal: false,
+            editMinionsGroupModal: true,
+            editedGroup: {
+                id: groupId,
+                name: groupName
             }
         })
     }
@@ -115,16 +140,19 @@ class GroupsAndMinions extends Component {
     render() {
 
         const {createMinionsGroup} = this.props.createMinionsGroupAction,
-            {removeMinionsGroup} = this.props.removeMinionsGroupAction;
+            {removeMinionsGroup} = this.props.removeMinionsGroupAction,
+            {editMinionsGroup} = this.props.editMinionsGroupAction;
         let treeView, modal;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
         } else if (this.state.rerender) {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
+                                 editGroup={::this.editGroup}
                                  removeGroup={::this.removeGroup}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
+                                 editGroup={::this.editGroup}
                                  removeGroup={::this.removeGroup}/>;
         }
 
@@ -137,6 +165,10 @@ class GroupsAndMinions extends Component {
                 modal = <RemoveMinionsGroupModal group={this.state.removedGroup} closeModal={::this.onRequestClose}
                                                  removeGroup={removeMinionsGroup}
                                                  error={this.props.removeMinionsGroup.error}/>
+            } else if (this.state.editMinionsGroupModal) {
+                modal = <EditMinionsGroupModal group={this.state.editedGroup} closeModal={::this.onRequestClose}
+                                               groups={this.props.groupedMinions.groupedMinions}
+                                               edit={editMinionsGroup}/>
             }
         }
 
@@ -176,7 +208,8 @@ function mapStateToProps(state) {
         groupedMinions: state.groupedMinions,
         minionDetails: state.minionDetails,
         createMinionsGroup: state.createMinionsGroup,
-        removeMinionsGroup: state.removeMinionsGroup
+        removeMinionsGroup: state.removeMinionsGroup,
+        editMinionsGroup: state.editMinionsGroup
     }
 }
 
@@ -185,7 +218,8 @@ function mapDispatchToProps(dispatch) {
         getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch),
         minionDetailsAction: bindActionCreators(minionDetailsAction, dispatch),
         createMinionsGroupAction: bindActionCreators(createMinionsGroupAction, dispatch),
-        removeMinionsGroupAction: bindActionCreators(removeMinionsGroupAction, dispatch)
+        removeMinionsGroupAction: bindActionCreators(removeMinionsGroupAction, dispatch),
+        editMinionsGroupAction: bindActionCreators(editMinionsGroupAction, dispatch)
     }
 }
 

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Button from 'muicss/lib/react/button';
 import Divider from 'muicss/lib/react/divider';
 
-export default class CreateMinionsGroupModal extends Component {
+export default class RemoveMinionsGroupModal extends Component {
 
     render() {
 
