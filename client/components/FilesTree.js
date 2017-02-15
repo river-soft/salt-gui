@@ -9,6 +9,7 @@ import CreateGroup from './CreateGroup';
 import Modal from 'react-modal';
 import EditScript from './EditScript';
 import RemoveScript from './RemoveScript';
+import EditMinionsGroup from './minions/EditMinionsGroupModal';
 
 export class FilesTree extends Component {
 
@@ -25,7 +26,8 @@ export class FilesTree extends Component {
             removeScript: false,
             getFiles: false,
             addScript: false,
-            editGroup: false
+            editGroup: false,
+            editedGroup: {}
         };
         this.showContent = this.showContent.bind(this);
         this.addScript = this.addScript.bind(this);
@@ -45,6 +47,10 @@ export class FilesTree extends Component {
         if (this.state.getFiles) {
             this.props.filesRequest();
             this.setState({getFiles: false});
+        }
+
+        if(this.props.editGroupSuccess) {
+            this.setState({showModal: false});
         }
     }
 
@@ -138,11 +144,12 @@ export class FilesTree extends Component {
         this.setState({
             editGroup: true,
             removeScript: false,
-            showModal: true
+            showModal: true,
+            editedGroup: {
+                id: groupId,
+                name: groupName
+            }
         });
-
-        console.log(groupId);
-        console.log(groupName);
     }
 
     render() {
@@ -179,7 +186,9 @@ export class FilesTree extends Component {
                                            createSuccess={_this.props.createSuccess}
                                            cancel={::this.cancelAddGroupAndScript}/>
         } else if (_this.state.editGroup) {
-            console.log('dfsgasdfasdf');
+            modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
+                                      groups={_this.props.files}
+                                      edit={_this.props.editGroup}/>
         }
 
         return <Container>

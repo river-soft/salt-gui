@@ -8,6 +8,7 @@ import * as createGroupActions from '../actions/GroupCreateActions';
 import * as getScriptContent from '../actions/GetScriptContentAction';
 import * as scriptRemoveAction from '../actions/ScriptRemoveAction';
 import * as editScriptAction from '../actions/EditScriptAction';
+import * as editGroupAction from '../actions/GroupEditAction';
 
 class App extends Component {
 
@@ -17,11 +18,14 @@ class App extends Component {
         this.state = {
             createSuccess: false,
             removeSuccess: false,
-            editSuccess: false
+            editSuccess: false,
+            editGroupSuccess: false
         };
     }
 
     componentDidUpdate() {
+        const {filesRequest} = this.props.filesTreeActions;
+
         if (this.props.createGroup.group) {
             this.setState({createSuccess: true});
             delete this.props.createGroup.group;
@@ -29,18 +33,26 @@ class App extends Component {
             this.setState({createSuccess: false});
         }
 
-        if(this.props.editScript.edit) {
+        if (this.props.editScript.edit) {
             this.setState({editSuccess: true});
             delete this.props.editScript.edit;
-        } else if(this.state.editSuccess) {
+        } else if (this.state.editSuccess) {
             this.setState({editSuccess: false});
         }
 
-        if(this.props.scriptRemove.removed) {
+        if (this.props.scriptRemove.removed) {
             this.setState({removeSuccess: true});
             delete this.props.scriptRemove.removed;
-        } else if(this.state.removeSuccess) {
+        } else if (this.state.removeSuccess) {
             this.setState({removeSuccess: false});
+        }
+
+        if (this.props.editGroup.edit) {
+            this.setState({editGroupSuccess: true});
+            this.props.editGroup.edit = false;
+        } else if (this.state.editGroupSuccess) {
+            this.setState({editGroupSuccess: false});
+            filesRequest();
         }
     }
 
@@ -51,14 +63,15 @@ class App extends Component {
             {createGroup} = _this.props.createGroupActions,
             {getScriptContent} = _this.props.getScriptContent,
             {scriptRemove} = _this.props.scriptRemoveAction,
-            {editScript} = _this.props.editScriptAction;
+            {editScript} = _this.props.editScriptAction,
+            {editGroup} = _this.props.editGroupAction;
 
         if (_this.props.createGroup.group) {
 
             let position = -1;
-            for(let i = 0; i < _this.props.filesTree.files.length; i++) {
+            for (let i = 0; i < _this.props.filesTree.files.length; i++) {
 
-                if(_this.props.filesTree.files[i].group === _this.props.createGroup.group.group) {
+                if (_this.props.filesTree.files[i].group === _this.props.createGroup.group.group) {
                     position = i;
                 }
             }
@@ -76,7 +89,8 @@ class App extends Component {
                                    scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
                                    error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}
-                                   editScript={editScript} editSuccess={this.state.editSuccess}/>;
+                                   editScript={editScript} editSuccess={this.state.editSuccess} editGroup={editGroup}
+                                   editGroupSuccess={this.state.editGroupSuccess}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -93,7 +107,8 @@ function mapStateToProps(state) {
         createGroup: state.createGroup,
         scriptContent: state.getScriptContent,
         scriptRemove: state.scriptRemove,
-        editScript: state.editScript
+        editScript: state.editScript,
+        editGroup: state.editGroup
     }
 }
 
@@ -103,7 +118,8 @@ function mapDispatchToProps(dispatch) {
         createGroupActions: bindActionCreators(createGroupActions, dispatch),
         getScriptContent: bindActionCreators(getScriptContent, dispatch),
         scriptRemoveAction: bindActionCreators(scriptRemoveAction, dispatch),
-        editScriptAction: bindActionCreators(editScriptAction, dispatch)
+        editScriptAction: bindActionCreators(editScriptAction, dispatch),
+        editGroupAction: bindActionCreators(editGroupAction, dispatch)
     }
 }
 
