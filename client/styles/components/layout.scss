@@ -416,3 +416,19 @@ body {
     color: $blue-background;
   }
 }
+
+.minion-details {
+  position: relative;
+
+  &__actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.7rem;
+  }
+
+  &__action {
+    cursor: pointer;
+    color: $blue-background;
+  }
+}
