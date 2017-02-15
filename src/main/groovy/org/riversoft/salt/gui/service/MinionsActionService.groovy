@@ -20,6 +20,9 @@ class MinionsActionService {
     @Autowired
     private MinionsSaltService minionsSaltService
 
+    @Autowired
+    private MinionGroupService minionGroupService
+
     //endregion
 
     /**
@@ -57,7 +60,7 @@ class MinionsActionService {
 
         minionsSaltService.acceptMinion(minionName)
 
-        List<MinionGroup> minionGroups = minionCRUDService.createMinionGroups(groups)
+        List<MinionGroup> minionGroups = minionGroupService.createMinionGroups(groups)
 
         Minion minion = minionCRUDService.createMinion(new CreateMinion(name: minionName.trim()), minionGroups)
 

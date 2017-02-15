@@ -97,24 +97,6 @@ class MinionCRUDService {
     }
 
     /**
-     * Создание списка групп миньонов
-     * @param groupNames - перечень названий групп миньонов
-     * @return список объектов MinionGroup
-     * @see MinionGroup
-     */
-    List<MinionGroup> createMinionGroups(String[] groupNames) {
-
-        List<MinionGroup> minionGroups = []
-
-        for (String groupName : groupNames) {
-
-            minionGroups.add(minionGroupService.createMinionGroup(groupName))
-        }
-
-        return minionGroups
-    }
-
-    /**
      * Обновление миньона т.е. его групп
      * @param editMinion - объект EditMinion
      * @return
@@ -191,4 +173,5 @@ class MinionCRUDService {
 
         log.debug(deletedMinionMessage)
     }
+
 }
