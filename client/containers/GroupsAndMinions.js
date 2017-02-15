@@ -48,7 +48,7 @@ class GroupsAndMinions extends Component {
             getGroupedMinions();
         }
 
-        if(this.props.removeMinionsGroup.remove) {
+        if (this.props.removeMinionsGroup.remove) {
             this.props.removeMinionsGroup.remove = false;
             this.onRequestClose();
             getGroupedMinions();
@@ -108,6 +108,7 @@ class GroupsAndMinions extends Component {
     }
 
     onRequestClose() {
+        this.props.removeMinionsGroup.error = false;
         this.setState({showModal: false});
     }
 
@@ -134,7 +135,8 @@ class GroupsAndMinions extends Component {
                                                  closeModal={::this.onRequestClose}/>
             } else if (this.state.removeMinionsGroupModal) {
                 modal = <RemoveMinionsGroupModal group={this.state.removedGroup} closeModal={::this.onRequestClose}
-                                                 removeGroup={removeMinionsGroup}/>
+                                                 removeGroup={removeMinionsGroup}
+                                                 error={this.props.removeMinionsGroup.error}/>
             }
         }
 

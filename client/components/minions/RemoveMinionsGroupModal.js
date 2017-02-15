@@ -15,6 +15,7 @@ export default class CreateMinionsGroupModal extends Component {
                 Вы действительно хотите удалить группу {this.props.group.name}
                 {this.props.group.size ? ', которая содержит ' + this.props.group.size + ' миньонов' : null}?
             </div>
+            {this.props.error ? <span className='input_error'>{this.props.error.message}</span> : null}
             <div className='modal__footer'>
                 <Divider/>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
