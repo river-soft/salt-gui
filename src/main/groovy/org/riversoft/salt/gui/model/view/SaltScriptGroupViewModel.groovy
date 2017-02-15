@@ -5,12 +5,15 @@ import org.riversoft.salt.gui.domain.SaltScriptGroup
 
 class SaltScriptGroupViewModel {
 
+    String id
+
     String group
 
     List<SaltScriptViewModel> scripts = []
 
     SaltScriptGroupViewModel(SaltScriptGroup saltScriptGroup) {
 
+        this.id = saltScriptGroup.id
         this.group = saltScriptGroup.name
 
         for (SaltScript saltScript : saltScriptGroup.scriptList) {
