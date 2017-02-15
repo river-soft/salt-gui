@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
-// import TextArea from 'muicss/lib/react/textarea';
 import Button from 'muicss/lib/react/button';
 import Divider from 'muicss/lib/react/divider';
 import AceEditor from 'react-ace';

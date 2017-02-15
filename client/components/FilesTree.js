@@ -1,4 +1,4 @@
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
 import FileDescription from '../components/FileDescription';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
@@ -35,7 +35,9 @@ export class FilesTree extends Component {
     }
 
     componentDidMount() {
-        this.props.filesRequest();
+        if(typeof this.props.filesRequest === 'function') {
+            this.props.filesRequest();
+        }
     }
 
     componentDidUpdate() {
@@ -126,7 +128,8 @@ export class FilesTree extends Component {
     cancelEditScript() {
         this.setState({
             editScript: false,
-            getFiles: true
+            getFiles: true,
+            showFileDescription: true
         });
     }
 
@@ -186,8 +189,3 @@ export class FilesTree extends Component {
         </Container>
     }
 }
-
-FilesTree.propTypes = {
-    filesRequest: PropTypes.func.isRequired,
-    // error: PropTypes.string.isRequired
-};
