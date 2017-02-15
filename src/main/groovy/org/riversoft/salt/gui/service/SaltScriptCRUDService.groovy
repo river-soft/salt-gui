@@ -30,6 +30,9 @@ class SaltScriptCRUDService {
     private SaltScriptFileService saltScriptFileService
 
     @Autowired
+    private SaltScriptGroupService saltScriptGroupService
+
+    @Autowired
     private SaltScriptGroupRepository saltScriptGroupRepository
 
     @Value('${salt.scripts.default_group}')
@@ -74,48 +77,6 @@ class SaltScriptCRUDService {
     }
 
     /**
-     * Создание группы скриптов
-     * @param groupName - название группы скриптов
-     * @return объект модели SaltScriptGroup
-     * @see SaltScriptGroup
-     */
-    SaltScriptGroup createScriptGroup(String groupName) {
-
-        SaltScriptGroup saltScriptGroup = null
-
-        if (groupName) {
-
-            saltScriptGroup = saltScriptGroupRepository.findOne(groupName)
-
-            if (!saltScriptGroup) {
-
-                log.debug("Start creating salt script group wiht name [${groupName}].")
-
-                saltScriptGroup = new SaltScriptGroup(name: groupName.trim())
-                saltScriptGroupRepository.save(saltScriptGroup)
-
-                log.debug("Successfully created salt script group with name [${saltScriptGroup.name}].")
-            }
-
-        } else {
-
-            saltScriptGroup = saltScriptGroupRepository.findOne(defaultGroup)
-
-            if (!saltScriptGroup) {
-
-                log.debug("Start creating default salt script group with name [${defaultGroup}].")
-
-                saltScriptGroup = new SaltScriptGroup(name: "default")
-                saltScriptGroupRepository.save(saltScriptGroup)
-
-                log.debug("Successfully created default salt script group with name [${defaultGroup}].")
-            }
-        }
-
-        return saltScriptGroup
-    }
-
-    /**
      * Создание группы для скриптов и скриптов
      * @param createSaltScriptGroup - модель создания группы и скриптов группы
      * @return объект модели SaltScriptGroupViewModel
@@ -151,7 +112,7 @@ class SaltScriptCRUDService {
 
         //endregion
 
-        SaltScriptGroup saltScriptGroup = createScriptGroup(createSaltScriptGroup.group)
+        SaltScriptGroup saltScriptGroup = saltScriptGroupService.createScriptGroup(createSaltScriptGroup.group)
 
         for (CreateSaltScript createSaltScript : createSaltScriptGroup.scripts) {
 
@@ -204,7 +165,7 @@ class SaltScriptCRUDService {
         if (editSaltScript.group != saltScript.group?.name) {
 
             // удаление скрипта из его предыдущей группы
-            SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findOne(saltScript.group.name.trim())
+            SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findByName(saltScript.group.name.trim())
             if (!saltScriptGroup) {
                 log.error("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
                 throw new SaltScriptGroupNotFoundException("SaltScriptGroup by name [${saltScript.group?.name}] not found.")
@@ -215,7 +176,7 @@ class SaltScriptCRUDService {
             saltScriptGroupRepository.save(saltScriptGroup)
 
             // создание новой группы скриптов
-            SaltScriptGroup newSaltScriptGroup = createScriptGroup(editSaltScript.group.trim())
+            SaltScriptGroup newSaltScriptGroup = saltScriptGroupService.createScriptGroup(editSaltScript.group.trim())
 
             log.debug("Updating salt script with name [${saltScript.name}].")
 
