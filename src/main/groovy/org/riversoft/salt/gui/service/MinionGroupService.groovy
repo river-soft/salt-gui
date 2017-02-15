@@ -4,6 +4,8 @@ import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionGroupNotFoundException
+import org.riversoft.salt.gui.exception.MinionNotFoundException
+import org.riversoft.salt.gui.model.EditGroupsOfMinion
 import org.riversoft.salt.gui.model.view.MinionGroupSimpleViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
@@ -36,6 +38,41 @@ class MinionGroupService {
         }
 
         return minionGroupViewModels
+    }
+
+    /**
+     * Получение списка групп с отмечеными к которой привязан переданный миньон
+     * @param name - имя меньона
+     * @return список объектов EditGroupsOfMinion
+     * @see EditGroupsOfMinion
+     */
+    def findAllMinionGroupsWithChecks(String name) {
+
+        Minion minion = minionRepository.findByName(name)
+        if (!minion) {
+            log.error("Minion with name [${name}] not found.")
+            throw new MinionNotFoundException("Minion with name [${name}] not found.")
+        }
+
+        List<MinionGroup> allGroups = minionGroupRepository.findAll()
+
+        List<MinionGroup> groups = minion.groups
+
+        List<EditGroupsOfMinion> checkedGroups = []
+
+        for (MinionGroup minionGroup : allGroups) {
+
+            EditGroupsOfMinion editMinion = new EditGroupsOfMinion(id: minionGroup.id, name: minionGroup.name, checked: false)
+
+            if (groups.collect {it.name}.contains(minionGroup.name)) {
+
+                editMinion.checked = true
+            }
+
+            checkedGroups.add(editMinion)
+        }
+
+        checkedGroups
     }
 
     /**

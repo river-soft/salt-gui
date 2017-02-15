@@ -1,11 +1,14 @@
 package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.model.EditMinion
+import org.riversoft.salt.gui.service.MinionCRUDService
 import org.riversoft.salt.gui.service.MinionsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 
 @Slf4j
@@ -14,6 +17,9 @@ class MinionController extends BaseRestController {
 
     @Autowired
     MinionsService minionsService
+
+    @Autowired
+    MinionCRUDService minionCRUDService
 
     @RequestMapping('/accepted-minions')
     findAllAcceptedMinions() {
@@ -30,12 +36,9 @@ class MinionController extends BaseRestController {
         minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
+    @RequestMapping(value = '/change-minion-groups', method = RequestMethod.POST)
+    changeMinionGroups(@RequestBody EditMinion editMinion) {
 
-    @RequestMapping('/change-minion-groups')
-    changeMinionGroups(@RequestParam(value = "name", required = true) String name,
-                       @RequestParam(value = "groups", required = true) List<String> groups) {
-
-        minionsService.findAllAcceptedMinions()
+        minionCRUDService.updateMinion(editMinion)
     }
-
 }

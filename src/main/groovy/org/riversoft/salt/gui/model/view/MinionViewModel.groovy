@@ -11,6 +11,6 @@ class MinionViewModel {
     MinionViewModel(Minion minion) {
         this.id = minion.id
         this.name = minion.name
-        this.groups = minion.groups.collect { it.name }.join(",")
+        this.groups = minion.groups.collect { it.name }.join(", ")
     }
 }
