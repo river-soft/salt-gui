@@ -183,11 +183,13 @@ class GroupsAndMinions extends Component {
         } else if (this.state.rerender) {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup}
-                                 removeGroup={::this.removeGroup}/>;
+                                 removeGroup={::this.removeGroup}
+                                 removeIfNotEmpty={true}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup}
-                                 removeGroup={::this.removeGroup}/>;
+                                 removeGroup={::this.removeGroup}
+                                 removeIfNotEmpty={true}/>;
         }
 
         if (this.state.showModal) {

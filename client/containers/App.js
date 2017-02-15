@@ -9,6 +9,7 @@ import * as getScriptContent from '../actions/GetScriptContentAction';
 import * as scriptRemoveAction from '../actions/ScriptRemoveAction';
 import * as editScriptAction from '../actions/EditScriptAction';
 import * as editGroupAction from '../actions/GroupEditAction';
+import * as removeGroupAction from '../actions/GroupRemoveAction';
 
 class App extends Component {
 
@@ -19,7 +20,8 @@ class App extends Component {
             createSuccess: false,
             removeSuccess: false,
             editSuccess: false,
-            editGroupSuccess: false
+            editGroupSuccess: false,
+            removeGroupSuccess: false
         };
     }
 
@@ -54,6 +56,14 @@ class App extends Component {
             this.setState({editGroupSuccess: false});
             filesRequest();
         }
+
+        if (this.props.removeGroup.removed) {
+            this.setState({removeGroupSuccess: true});
+            this.props.removeGroup.removed = false;
+        } else if (this.state.removeGroupSuccess) {
+            this.setState({removeGroupSuccess: false});
+            filesRequest();
+        }
     }
 
     render() {
@@ -64,7 +74,8 @@ class App extends Component {
             {getScriptContent} = _this.props.getScriptContent,
             {scriptRemove} = _this.props.scriptRemoveAction,
             {editScript} = _this.props.editScriptAction,
-            {editGroup} = _this.props.editGroupAction;
+            {editGroup} = _this.props.editGroupAction,
+            {removeGroup} = _this.props.removeGroupAction;
 
         if (_this.props.createGroup.group) {
 
@@ -90,7 +101,9 @@ class App extends Component {
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
                                    error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}
                                    editScript={editScript} editSuccess={this.state.editSuccess} editGroup={editGroup}
-                                   editGroupSuccess={this.state.editGroupSuccess}/>;
+                                   editGroupSuccess={this.state.editGroupSuccess}
+                                   removeGroup={removeGroup}
+                                   removeGroupSuccess={_this.state.removeGroupSuccess}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -108,7 +121,8 @@ function mapStateToProps(state) {
         scriptContent: state.getScriptContent,
         scriptRemove: state.scriptRemove,
         editScript: state.editScript,
-        editGroup: state.editGroup
+        editGroup: state.editGroup,
+        removeGroup: state.removeGroup
     }
 }
 
@@ -119,7 +133,8 @@ function mapDispatchToProps(dispatch) {
         getScriptContent: bindActionCreators(getScriptContent, dispatch),
         scriptRemoveAction: bindActionCreators(scriptRemoveAction, dispatch),
         editScriptAction: bindActionCreators(editScriptAction, dispatch),
-        editGroupAction: bindActionCreators(editGroupAction, dispatch)
+        editGroupAction: bindActionCreators(editGroupAction, dispatch),
+        removeGroupAction: bindActionCreators(removeGroupAction, dispatch)
     }
 }
 

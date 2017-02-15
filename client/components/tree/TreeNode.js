@@ -35,14 +35,26 @@ export default class TreeNode extends Component {
             }}>{file.name}</li>
         }, this);
 
+        let removeGroup;
+
+        if(this.props.removeIfNotEmpty) {
+            removeGroup = <span className='tree-list__item_action' onClick={() => {
+                this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
+            }}><i className='mi mi-delete'></i></span>
+        } else {
+            if(!this.props.nodes.length) {
+                removeGroup = <span className='tree-list__item_action' onClick={() => {
+                    this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
+                }}><i className='mi mi-delete'></i></span>
+            }
+        }
+
         return <li className='tree-list__item'>
             <div className='tree-list__item_actions'>
                 <span className='tree-list__item_action' onClick={() => {
                     this.props.editGroup(this.props.group.id, this.props.group.group);
                 }}><i className='mi mi-create'></i></span>
-                <span className='tree-list__item_action' onClick={() => {
-                    this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
-                }}><i className='mi mi-delete'></i></span>
+                {removeGroup}
             </div>
             <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={::this.toggle}>{this.props.group.group}</span>
             <Divider />

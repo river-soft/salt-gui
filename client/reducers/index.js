@@ -17,6 +17,7 @@ import editMinionsGroup from './editMinionsGroup';
 import getGroupsByMinion from './getGroupsByMinion';
 import editMinionGroups from './editMinionGroups';
 import editGroup from './editGroup';
+import removeGroup from './removeGroup';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -36,5 +37,6 @@ export default combineReducers({
     editMinionsGroup: editMinionsGroup,
     getGroupsByMinion: getGroupsByMinion,
     editMinionGroups: editMinionGroups,
-    editGroup: editGroup
+    editGroup: editGroup,
+    removeGroup: removeGroup
 })

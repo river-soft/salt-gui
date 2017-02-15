@@ -10,7 +10,8 @@ export default class TreeView extends Component {
                                                                            editGroup={this.props.editGroup}
                                                                            removeGroup={this.props.removeGroup}
                                                                            nodes={group.scripts || group.minions}
-                                                                           showContent={this.props.showContent}/>) : null;
+                                                                           showContent={this.props.showContent}
+                                                                           removeIfNotEmpty={this.props.removeIfNotEmpty}/>) : null;
 
         return <div>{nodes}</div>
     }

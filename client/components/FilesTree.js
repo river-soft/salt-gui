@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import EditScript from './EditScript';
 import RemoveScript from './RemoveScript';
 import EditMinionsGroup from './minions/EditMinionsGroupModal';
+import RemoveMinionsGroupModal from './minions/RemoveMinionsGroupModal';
 
 export class FilesTree extends Component {
 
@@ -27,7 +28,9 @@ export class FilesTree extends Component {
             getFiles: false,
             addScript: false,
             editGroup: false,
-            editedGroup: {}
+            removeGroup: false,
+            editedGroup: {},
+            removedGroup: {}
         };
         this.showContent = this.showContent.bind(this);
         this.addScript = this.addScript.bind(this);
@@ -49,7 +52,7 @@ export class FilesTree extends Component {
             this.setState({getFiles: false});
         }
 
-        if(this.props.editGroupSuccess) {
+        if (this.props.editGroupSuccess || this.props.removeGroupSuccess) {
             this.setState({showModal: false});
         }
     }
@@ -144,12 +147,25 @@ export class FilesTree extends Component {
         this.setState({
             editGroup: true,
             removeScript: false,
+            removeGroup: false,
             showModal: true,
             editedGroup: {
                 id: groupId,
                 name: groupName
             }
         });
+    }
+
+    removeGroup(groupId, groupName) {
+        this.setState({
+            removeGroup: true,
+            editGroup: false,
+            showModal: true,
+            removedGroup: {
+                id: groupId,
+                name: groupName
+            }
+        })
     }
 
     render() {
@@ -165,10 +181,13 @@ export class FilesTree extends Component {
         if (_this.props.files.length === 0) {
             template = <div>Данных нету</div>
         } else if (_this.state.rerender) {
-            template = <TreeView groups={_this.state.filterScripts} showContent={this.showContent}/>;
+            template =
+                <TreeView groups={_this.state.filterScripts} showContent={this.showContent} removeIfNotEmpty={false}
+                          removeGroup={::this.removeGroup}/>;
         } else {
             template =
-                <TreeView groups={_this.props.files} showContent={this.showContent} editGroup={::this.editGroup}/>;
+                <TreeView groups={_this.props.files} showContent={this.showContent} editGroup={::this.editGroup}
+                          removeIfNotEmpty={false} removeGroup={::this.removeGroup}/>;
         }
 
         if (_this.state.editScript) {
@@ -189,6 +208,9 @@ export class FilesTree extends Component {
             modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
                                       groups={_this.props.files}
                                       edit={_this.props.editGroup}/>
+        } else if (_this.state.removeGroup) {
+            modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
+                                             removeGroup={_this.props.removeGroup}/>
         }
 
         return <Container>
