@@ -36,7 +36,7 @@ class MinionController extends BaseRestController {
         minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
-    @RequestMapping(value = '/change-minion-groups', method = RequestMethod.POST)
+    @RequestMapping(value = '/change-minion-groups', method = RequestMethod.PUT)
     changeMinionGroups(@RequestBody EditMinion editMinion) {
 
         minionCRUDService.updateMinion(editMinion)
