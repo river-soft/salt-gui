@@ -6,6 +6,8 @@ import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionNotFoundException
 import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
 import org.riversoft.salt.gui.model.CreateMinion
+import org.riversoft.salt.gui.model.EditMinion
+import org.riversoft.salt.gui.model.view.MinionViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -113,35 +115,59 @@ class MinionCRUDService {
     }
 
     /**
-     * Обновление миньона
-     * @param
+     * Обновление миньона т.е. его групп
+     * @param editMinion - объект EditMinion
      * @return
      */
-    def updateMinion(String minionName, List<String> newGroups) {
+    def updateMinion(EditMinion editMinion) {
 
-        Minion minion = minionRepository.findByName(minionName)
+        Minion minion = minionRepository.findByName(editMinion.name)
 
         List<String> minionsGroups = minion.groups.collect { it.name }
 
+        List<String> newMinionsGroups = editMinion.groups.collect { it.name }
 
-        def deleteGroups = newGroups - minionsGroups
-
-        def addGroup = minionsGroups - newGroups
-
-
-        for (String newGroup : newGroups) {
+        //добавление не достающей группы
+        for (String newGroup : newMinionsGroups) {
 
             if (!minionsGroups.contains(newGroup)) {
 
                 MinionGroup minionGroup = minionGroupRepository.findByName(newGroup)
+
+                log.debug("Start adding group [${minionGroup.name}] to minion [${minion.name}].")
 
                 minion.groups.add(minionGroup)
 
                 minionRepository.save(minion)
 
                 minionGroup.minions.add(minion)
+                minionGroupRepository.save(minionGroup)
+
+                log.debug("Finish adding group [${minionGroup.name}] to minion [${minion.name}].")
             }
         }
+
+        //удаление не нужной группы
+        for (String group : minionsGroups) {
+
+            if (!newMinionsGroups.contains(group)) {
+
+                MinionGroup minionGroup = minionGroupRepository.findByName(group)
+
+                log.debug("Start deleting group [${minionGroup.name}] from minion [${minion.name}].")
+
+                minion.groups.removeAll { it.name == group }
+
+                minionRepository.save(minion)
+
+                minionGroup.minions.removeAll { it.name == minion.name }
+                minionGroupRepository.save(minionGroup)
+
+                log.debug("Finish deleting group [${minionGroup.name}] from minion [${minion.name}].")
+            }
+        }
+
+        new MinionViewModel(minion)
     }
 
     /**

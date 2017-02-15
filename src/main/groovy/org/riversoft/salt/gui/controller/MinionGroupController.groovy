@@ -22,6 +22,11 @@ class MinionGroupController extends BaseRestController {
         minionGroupService.findAllMinionsGroups()
     }
 
+    @RequestMapping('/groups-by-minion')
+    findAllMinionGroupsWithChecks(@RequestParam(value = "name", required = true) String name) {
+        minionGroupService.findAllMinionGroupsWithChecks(name)
+    }
+
     @RequestMapping(value = '/minion-group', method = RequestMethod.POST)
     createMinionGroup(@RequestParam(value = "name", required = true) String name) {
 

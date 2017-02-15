@@ -25,5 +25,4 @@ class MinionDetailsController extends BaseRestController {
 
         minionDetailsService.findMinionDetails(minionName)
     }
-
 }
