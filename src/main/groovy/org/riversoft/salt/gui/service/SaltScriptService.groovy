@@ -35,9 +35,6 @@ class SaltScriptService {
     @Autowired
     private SaltScriptGroupRepository saltScriptGroupRepository
 
-    @Value('${salt.scripts.default_group}')
-    private String defaultGroup
-
     //endregion
 
     /**
