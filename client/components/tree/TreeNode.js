@@ -35,8 +35,16 @@ export default class TreeNode extends Component {
             }}>{file.name}</li>
         }, this);
 
-        return <li>
-            <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={this.toggle.bind(this)}>{this.props.group.group}</span>
+        return <li className='tree-list__item'>
+            <div className='tree-list__item_actions'>
+                <span className='tree-list__item_action' onClick={() => {
+                    this.props.editGroup(this.props.group.id, this.props.group.group);
+                }}><i className='mi mi-create'></i></span>
+                <span className='tree-list__item_action' onClick={() => {
+                    this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
+                }}><i className='mi mi-delete'></i></span>
+            </div>
+            <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={::this.toggle}>{this.props.group.group}</span>
             <Divider />
             <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}>{nodes}</ul>
         </li>
