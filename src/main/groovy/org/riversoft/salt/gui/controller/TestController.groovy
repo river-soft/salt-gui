@@ -9,15 +9,12 @@ import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.Glob
 import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
-import org.riversoft.salt.gui.domain.MinionGroup
-import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
 import org.riversoft.salt.gui.results.Result
 import org.riversoft.salt.gui.service.MinionCRUDService
 import org.riversoft.salt.gui.service.MinionGroupService
-import org.riversoft.salt.gui.service.SaltScriptService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RequestMapping
@@ -45,9 +42,6 @@ class TestController {
 
     @Autowired
     MinionCRUDService minionCRUDService
-
-    @Autowired
-    SaltScriptService saltScriptService
 
     @Autowired
     MinionGroupRepository minionGroupRepository
@@ -105,22 +99,6 @@ class TestController {
 //        Map<String, Result<Boolean>> results = Cmd.run("uname -a").callSync(
 //                client, minionList, USER, PASSWORD, AuthModule.PAM);
 
-    }
-
-    @RequestMapping('/generate')
-    def generateScripts() {
-
-        int i = 1
-
-        MinionGroup minionGroup = minionGroupService.createMinionGroup("group1")
-
-//        for (i; i <= 5; i++) {
-//
-//
-//            CreateMinion createMinion = new CreateMinion(name: "minion${i}0")
-//            minionCRUDService.createMinion(createMinion, [minionGroup])
-//
-//        }
     }
 
 }

@@ -80,6 +80,24 @@ class MinionGroupService {
     }
 
     /**
+     * Создание списка групп миньонов
+     * @param groupNames - перечень названий групп миньонов
+     * @return список объектов MinionGroup
+     * @see MinionGroup
+     */
+    List<MinionGroup> createMinionGroups(String[] groupNames) {
+
+        List<MinionGroup> minionGroups = []
+
+        for (String groupName : groupNames) {
+
+            minionGroups.add(createMinionGroup(groupName))
+        }
+
+        return minionGroups
+    }
+
+    /**
      * Создание группы миньонов
      * @param groupName - название группы миньонов
      * @return объект MinionGroup
@@ -106,6 +124,7 @@ class MinionGroupService {
 
         return minionGroup
     }
+
 
     /**
      * Редактирование группы миньона

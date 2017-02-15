@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class MinionActionController extends BaseRestController {
 
     @Autowired
-    MinionsActionService minionsActionService
+    private MinionsActionService minionsActionService
 
     @RequestMapping(value = '/accept-minions', method = RequestMethod.POST)
     acceptMinions(@RequestParam(value = "names", required = true) String[] names,

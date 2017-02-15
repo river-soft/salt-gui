@@ -48,16 +48,16 @@ class SaltScriptGroupService {
 
         } else {
 
-            saltScriptGroup = saltScriptGroupRepository.findOne(defaultGroup)
+            saltScriptGroup = saltScriptGroupRepository.findOne(defaultScriptGroup)
 
             if (!saltScriptGroup) {
 
-                log.debug("Start creating default salt script group with name [${defaultGroup}].")
+                log.debug("Start creating default salt script group with name [${defaultScriptGroup}].")
 
                 saltScriptGroup = new SaltScriptGroup(name: "default")
                 saltScriptGroupRepository.save(saltScriptGroup)
 
-                log.debug("Successfully created default salt script group with name [${defaultGroup}].")
+                log.debug("Successfully created default salt script group with name [${defaultScriptGroup}].")
             }
         }
 

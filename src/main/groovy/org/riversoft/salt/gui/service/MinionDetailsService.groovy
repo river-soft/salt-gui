@@ -36,10 +36,10 @@ class MinionDetailsService {
     private SaltClient saltClient
 
     @Autowired
-    private MinionGroupRepository minionGroupRepository
+    private MinionRepository minionRepository
 
     @Autowired
-    private MinionRepository minionRepository
+    private MinionGroupRepository minionGroupRepository
 
     //endregion
 
