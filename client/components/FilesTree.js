@@ -24,7 +24,8 @@ export class FilesTree extends Component {
             editScript: false,
             removeScript: false,
             getFiles: false,
-            addScript: false
+            addScript: false,
+            editGroup: false
         };
         this.showContent = this.showContent.bind(this);
         this.addScript = this.addScript.bind(this);
@@ -35,7 +36,7 @@ export class FilesTree extends Component {
     }
 
     componentDidMount() {
-        if(typeof this.props.filesRequest === 'function') {
+        if (typeof this.props.filesRequest === 'function') {
             this.props.filesRequest();
         }
     }
@@ -133,6 +134,17 @@ export class FilesTree extends Component {
         });
     }
 
+    editGroup(groupId, groupName) {
+        this.setState({
+            editGroup: true,
+            removeScript: false,
+            showModal: true
+        });
+
+        console.log(groupId);
+        console.log(groupName);
+    }
+
     render() {
 
         let _this = this, template, modal, createEditGroup, fileDescription;
@@ -148,13 +160,14 @@ export class FilesTree extends Component {
         } else if (_this.state.rerender) {
             template = <TreeView groups={_this.state.filterScripts} showContent={this.showContent}/>;
         } else {
-            template = <TreeView groups={_this.props.files} showContent={this.showContent}/>;
+            template =
+                <TreeView groups={_this.props.files} showContent={this.showContent} editGroup={::this.editGroup}/>;
         }
 
         if (_this.state.editScript) {
             createEditGroup = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}
-                                cancel={::this.cancelEditScript} groups={_this.props.files}
-                                editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
+                                          cancel={::this.cancelEditScript} groups={_this.props.files}
+                                          editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={this.props.filesRequest}
@@ -162,15 +175,17 @@ export class FilesTree extends Component {
                                   hideContent={this.hideContent}/>
         } else if (this.state.addScript) {
             createEditGroup = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
-                                       error={_this.props.error}
-                                       createSuccess={_this.props.createSuccess}
-                                       cancel={::this.cancelAddGroupAndScript}/>
+                                           error={_this.props.error}
+                                           createSuccess={_this.props.createSuccess}
+                                           cancel={::this.cancelAddGroupAndScript}/>
+        } else if (_this.state.editGroup) {
+            console.log('dfsgasdfasdf');
         }
 
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск' floatingLabel={true} onChange={this.filterTree.bind(this)}/>
+                    <Input label='Поиск' floatingLabel={true} onChange={::this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
