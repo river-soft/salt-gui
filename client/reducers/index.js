@@ -11,6 +11,7 @@ import rejectMinions from './rejectMinions';
 import deleteMinions from './deleteMinions';
 import groupedMinions from './groupedMinions';
 import minionDetails from './minionDetails';
+import createMinionsGroup from './createMinionsGroup';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -24,5 +25,6 @@ export default combineReducers({
     rejectMinions: rejectMinions,
     deleteMinions: deleteMinions,
     groupedMinions: groupedMinions,
-    minionDetails: minionDetails
+    minionDetails: minionDetails,
+    createMinionsGroup: createMinionsGroup
 })

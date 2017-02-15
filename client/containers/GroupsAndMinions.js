@@ -8,8 +8,11 @@ import Input from 'muicss/lib/react/input';
 import Container from 'muicss/lib/react/container';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as minionDetailsAction from '../actions/MinionDetailsAction';
+import * as createMinionsGroupAction from '../actions/CreateMinionsGroupAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
+import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
+import Modal from 'react-modal';
 
 class GroupsAndMinions extends Component {
 
@@ -19,13 +22,25 @@ class GroupsAndMinions extends Component {
         this.state = {
             filterMinions: [],
             rerender: false,
-            showMinionDescription: false
+            showMinionDescription: false,
+            showModal: false,
+            createMinionsGroupModal: false
         }
     }
 
     componentDidMount() {
         const {getGroupedMinions} = this.props.getGroupedMinionsAction;
         if (typeof getGroupedMinions === 'function') {
+            getGroupedMinions();
+        }
+    }
+
+    componentDidUpdate() {
+        const {getGroupedMinions} = this.props.getGroupedMinionsAction;
+
+        if (this.props.createMinionsGroup.createGroup) {
+            this.props.createMinionsGroup.createGroup = false;
+            this.onRequestClose();
             getGroupedMinions();
         }
     }
@@ -61,10 +76,21 @@ class GroupsAndMinions extends Component {
         });
     }
 
+    createMinionsGroup() {
+        this.setState({
+            showModal: true,
+            createMinionsGroupModal: true
+        })
+    }
+
+    onRequestClose() {
+        this.setState({showModal: false});
+    }
+
     render() {
 
-
-        let treeView;
+        const {createMinionsGroup} = this.props.createMinionsGroupAction;
+        let treeView, modal;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
@@ -72,6 +98,14 @@ class GroupsAndMinions extends Component {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}/>;
+        }
+
+        if (this.state.showModal) {
+            if (this.state.createMinionsGroupModal) {
+                modal = <CreateMinionsGroupModal groups={this.props.groupedMinions.groupedMinions}
+                                                 createMinionsGroup={createMinionsGroup}
+                                                 closeModal={::this.onRequestClose}/>
+            }
         }
 
         return <div className='wrapper'>
@@ -86,7 +120,7 @@ class GroupsAndMinions extends Component {
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
-                            <button className='mui-btn button'>добавить</button>
+                            <button className='mui-btn button' onClick={::this.createMinionsGroup}>добавить</button>
                         </Col>
                         <Col md='9' xs='6' lg='9'>
                             {this.state.showMinionDescription ?
@@ -96,6 +130,11 @@ class GroupsAndMinions extends Component {
                     </Row>
                 </Container>
             </main>
+            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
+                   onRequestClose={::this.onRequestClose} overlayClassName='overlay'
+                   parentSelector={() => document.body} ariaHideApp={false}>
+                {modal}
+            </Modal>
         </div>
     }
 }
@@ -103,14 +142,16 @@ class GroupsAndMinions extends Component {
 function mapStateToProps(state) {
     return {
         groupedMinions: state.groupedMinions,
-        minionDetails: state.minionDetails
+        minionDetails: state.minionDetails,
+        createMinionsGroup: state.createMinionsGroup
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch),
-        minionDetailsAction: bindActionCreators(minionDetailsAction, dispatch)
+        minionDetailsAction: bindActionCreators(minionDetailsAction, dispatch),
+        createMinionsGroupAction: bindActionCreators(createMinionsGroupAction, dispatch)
     }
 }
 
