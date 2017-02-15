@@ -9,6 +9,7 @@ import Container from 'muicss/lib/react/container';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as minionDetailsAction from '../actions/MinionDetailsAction';
 import * as createMinionsGroupAction from '../actions/CreateMinionsGroupAction';
+import * as removeMinionsGroupAction from '../actions/RemoveMinionsGroupAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
 import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
@@ -89,15 +90,18 @@ class GroupsAndMinions extends Component {
 
     render() {
 
-        const {createMinionsGroup} = this.props.createMinionsGroupAction;
+        const {createMinionsGroup} = this.props.createMinionsGroupAction,
+            {removeMinionsGroup} = this.props.removeMinionsGroupAction;
         let treeView, modal;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
         } else if (this.state.rerender) {
-            treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}/>;
+            treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
+                                 removeGroup={removeMinionsGroup}/>;
         } else {
-            treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}/>;
+            treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
+                                 removeGroup={removeMinionsGroup}/>;
         }
 
         if (this.state.showModal) {
@@ -143,7 +147,8 @@ function mapStateToProps(state) {
     return {
         groupedMinions: state.groupedMinions,
         minionDetails: state.minionDetails,
-        createMinionsGroup: state.createMinionsGroup
+        createMinionsGroup: state.createMinionsGroup,
+        removeMinionsGroup: state.removeMinionsGroup
     }
 }
 
@@ -151,7 +156,8 @@ function mapDispatchToProps(dispatch) {
     return {
         getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch),
         minionDetailsAction: bindActionCreators(minionDetailsAction, dispatch),
-        createMinionsGroupAction: bindActionCreators(createMinionsGroupAction, dispatch)
+        createMinionsGroupAction: bindActionCreators(createMinionsGroupAction, dispatch),
+        removeMinionsGroupAction: bindActionCreators(removeMinionsGroupAction, dispatch)
     }
 }
 

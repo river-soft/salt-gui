@@ -41,10 +41,9 @@ body {
 }
 
 .list {
-  border: 1px solid black;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  border: 2px solid $blue-background;
+  @include borderRadius(5px);
+  padding: 0 5px;
 
   &__child {
     margin-left: 10px;
@@ -399,5 +398,21 @@ body {
         margin-left: 15px;
       }
     }
+  }
+}
+
+.tree-list__item {
+  position: relative;
+  color: $blue-background;
+
+  &_actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  &_action {
+    cursor: pointer;
+    color: $blue-background;
   }
 }
