@@ -10,6 +10,7 @@ import org.riversoft.salt.gui.model.view.MinionGroupSimpleViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Slf4j
@@ -23,6 +24,9 @@ class MinionGroupService {
 
     @Autowired
     private MinionRepository minionRepository
+
+    @Value('${salt.minion.default_group:default}')
+    private String defaultMinionGroup
 
     //endregion
 
@@ -64,7 +68,7 @@ class MinionGroupService {
 
             EditGroupsOfMinion editMinion = new EditGroupsOfMinion(id: minionGroup.id, name: minionGroup.name, checked: false)
 
-            if (groups.collect {it.name}.contains(minionGroup.name)) {
+            if (groups.collect { it.name }.contains(minionGroup.name)) {
 
                 editMinion.checked = true
             }
@@ -145,11 +149,13 @@ class MinionGroupService {
             throw new MinionGroupNotFoundException("MinionGroup with id [${id}] not found.")
         }
 
-//            log.warn("Can't delete, MinionGroup with name [${minionGroup.name}] have [${minionsInGroup}] minions.")
-//            return minionGroup.minions.collect { new MinionViewModel(it) }
-
         log.debug("Start deleting MinionGroup with name [${minionGroup.name}] and id [${minionGroup.id}].")
         String deletedMinionGroupName = minionGroup.name
+
+        if (deletedMinionGroupName == defaultMinionGroup) {
+            log.debug("No permission to delete [${defaultMinionGroup}] group for minion.")
+            throw new Exception("No permission to delete [${defaultMinionGroup}] group for minion.")
+        }
 
         List<Minion> minions = minionGroup.minions
 
@@ -159,12 +165,11 @@ class MinionGroupService {
 
             if (minion.groups.size() == 0) {
 
-                MinionGroup newMinionGroup = createMinionGroup("default")
+                MinionGroup newMinionGroup = createMinionGroup(defaultMinionGroup)
                 minion.groups.add(newMinionGroup)
 
                 newMinionGroup.minions.add(minion)
                 minionGroupRepository.save(newMinionGroup)
-
             }
 
             minionRepository.save(minion)
