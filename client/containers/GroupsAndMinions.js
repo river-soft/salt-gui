@@ -13,6 +13,7 @@ import * as removeMinionsGroupAction from '../actions/RemoveMinionsGroupAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
 import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
+import RemoveMinionsGroupModal from '../components/minions/RemoveMinionsGroupModal';
 import Modal from 'react-modal';
 
 class GroupsAndMinions extends Component {
@@ -22,10 +23,12 @@ class GroupsAndMinions extends Component {
 
         this.state = {
             filterMinions: [],
+            removedGroup: {},
             rerender: false,
             showMinionDescription: false,
             showModal: false,
-            createMinionsGroupModal: false
+            createMinionsGroupModal: false,
+            removeMinionsGroupModal: false
         }
     }
 
@@ -41,6 +44,12 @@ class GroupsAndMinions extends Component {
 
         if (this.props.createMinionsGroup.createGroup) {
             this.props.createMinionsGroup.createGroup = false;
+            this.onRequestClose();
+            getGroupedMinions();
+        }
+
+        if(this.props.removeMinionsGroup.remove) {
+            this.props.removeMinionsGroup.remove = false;
             this.onRequestClose();
             getGroupedMinions();
         }
@@ -80,7 +89,21 @@ class GroupsAndMinions extends Component {
     createMinionsGroup() {
         this.setState({
             showModal: true,
-            createMinionsGroupModal: true
+            createMinionsGroupModal: true,
+            removeMinionsGroupModal: false
+        })
+    }
+
+    removeGroup(groupId, groupName, minionsSize) {
+        this.setState({
+            showModal: true,
+            createMinionsGroupModal: false,
+            removeMinionsGroupModal: true,
+            removedGroup: {
+                id: groupId,
+                name: groupName,
+                size: minionsSize
+            }
         })
     }
 
@@ -98,10 +121,10 @@ class GroupsAndMinions extends Component {
             treeView = <div>Данных нету</div>
         } else if (this.state.rerender) {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
-                                 removeGroup={removeMinionsGroup}/>;
+                                 removeGroup={::this.removeGroup}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
-                                 removeGroup={removeMinionsGroup}/>;
+                                 removeGroup={::this.removeGroup}/>;
         }
 
         if (this.state.showModal) {
@@ -109,6 +132,9 @@ class GroupsAndMinions extends Component {
                 modal = <CreateMinionsGroupModal groups={this.props.groupedMinions.groupedMinions}
                                                  createMinionsGroup={createMinionsGroup}
                                                  closeModal={::this.onRequestClose}/>
+            } else if (this.state.removeMinionsGroupModal) {
+                modal = <RemoveMinionsGroupModal group={this.state.removedGroup} closeModal={::this.onRequestClose}
+                                                 removeGroup={removeMinionsGroup}/>
             }
         }
 
