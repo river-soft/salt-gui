@@ -47,14 +47,16 @@ export default class MinionsRejected extends Component {
     }
 
     addToCheckedList(e, minion) {
-        if (e.target.checked) {
-            this.state.checkedList.push(minion);
-        } else {
-            let index = this.state.checkedList.indexOf(minion);
-            this.state.checkedList.splice(index, 1);
-        }
+        if (e.target.tagName === 'INPUT') {
+            if (e.target.checked) {
+                this.state.checkedList.push(minion);
+            } else {
+                let index = this.state.checkedList.indexOf(minion);
+                this.state.checkedList.splice(index, 1);
+            }
 
-        this.setState({clicked: true});
+            this.setState({clicked: true});
+        }
     }
 
     deleteMinions() {
