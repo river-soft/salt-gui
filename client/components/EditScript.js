@@ -162,7 +162,6 @@ export default class EditScript extends Component {
                 </ul> : null;
 
         return <div className='modal__content'>
-            <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
             <h4 className='mui--text-center modal__header'>Редактирование скрипта</h4>
             <Form className='modal__form'>
                 <div className='modal__form_group'>

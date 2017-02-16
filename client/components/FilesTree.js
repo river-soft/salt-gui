@@ -76,7 +76,6 @@ export class FilesTree extends Component {
 
     addScript() {
         this.setState({
-            removeScript: false,
             addScript: true,
             editScript: false,
             showFileDescription: false
@@ -111,7 +110,6 @@ export class FilesTree extends Component {
     }
 
     editScript(script) {
-
         this.setState({
             removeScript: false,
             editScript: true,
@@ -122,7 +120,6 @@ export class FilesTree extends Component {
     }
 
     removeScriptState(script) {
-
         this.setState({
             removeScript: true,
             editingScript: script,
@@ -204,13 +201,17 @@ export class FilesTree extends Component {
                                            error={_this.props.error}
                                            createSuccess={_this.props.createSuccess}
                                            cancel={::this.cancelAddGroupAndScript}/>
-        } else if (_this.state.editGroup) {
-            modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
-                                      groups={_this.props.files}
-                                      edit={_this.props.editGroup}/>
-        } else if (_this.state.removeGroup) {
-            modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
-                                             removeGroup={_this.props.removeGroup}/>
+        }
+
+        if(_this.state.showModal) {
+            if (_this.state.removeGroup) {
+                modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
+                                                 removeGroup={_this.props.removeGroup}/>
+            }  else if (_this.state.editGroup) {
+                modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
+                                          groups={_this.props.files}
+                                          edit={_this.props.editGroup}/>
+            }
         }
 
         return <Container>
