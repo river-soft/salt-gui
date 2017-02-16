@@ -1,9 +1,16 @@
 package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.model.EditMinion
+import org.riversoft.salt.gui.service.MinionCRUDService
+import org.riversoft.salt.gui.service.MinionDetailsService
 import org.riversoft.salt.gui.service.MinionsService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Slf4j
@@ -11,7 +18,13 @@ import org.springframework.web.bind.annotation.RestController
 class MinionController extends BaseRestController {
 
     @Autowired
-    MinionsService minionsService
+    private MinionsService minionsService
+
+    @Autowired
+    private MinionCRUDService minionCRUDService
+
+    @Autowired
+    private MinionDetailsService minionDetailsService
 
     @RequestMapping('/accepted-minions')
     findAllAcceptedMinions() {
@@ -19,29 +32,30 @@ class MinionController extends BaseRestController {
         minionsService.findAllAcceptedMinions()
     }
 
-    @RequestMapping('/unaccepted-minions')
-    findAllUnaccepted() {
+    @MessageMapping('/minions-all-data')
+    findAllMinions() {
 
-        minionsService.findAllUnaccepted()
+        minionsService.findAndSendAllMinionsByStatuses()
+        minionsService.findAndSendAllAcceptedMinions()
+        minionsService.getAndSendCountsOfMinionsByStatus()
+        minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
-    @RequestMapping('/rejected-minions')
-    findAllRejected() {
+    @RequestMapping('/grouped-minions')
+    def findAllGroupedMinions() {
 
-        minionsService.findAllRejected()
+        minionDetailsService.findAllGroupedMinions()
     }
 
-    @RequestMapping('/denied-minions')
-    findAllDenied() {
+    @RequestMapping(value = '/minion-details')
+    def findMinionDetails(@RequestParam(value = "name", required = true) String minionName) {
 
-        minionsService.findAllDenied()
+        minionDetailsService.findMinionDetails(minionName)
     }
 
+    @RequestMapping(value = '/change-minion-groups', method = RequestMethod.PUT)
+    changeMinionGroups(@RequestBody EditMinion editMinion) {
 
-    @RequestMapping('/counts-minions-by-state')
-    getCountsOfMinionsByStatus() {
-
-        minionsService.getCountsOfMinionsByStatus()
+        minionCRUDService.updateMinion(editMinion)
     }
-
 }

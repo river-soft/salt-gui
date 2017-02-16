@@ -6,4 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository
 interface MinionRepository extends MongoRepository<Minion, String> {
 
     Minion findByName(String name)
+
+    int countByGroupsId(String id)
 }

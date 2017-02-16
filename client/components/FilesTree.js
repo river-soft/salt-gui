@@ -1,4 +1,4 @@
-import React, {PropTypes, Component} from 'react';
+import React, {Component} from 'react';
 import FileDescription from '../components/FileDescription';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
@@ -9,6 +9,8 @@ import CreateGroup from './CreateGroup';
 import Modal from 'react-modal';
 import EditScript from './EditScript';
 import RemoveScript from './RemoveScript';
+import EditMinionsGroup from './minions/EditMinionsGroupModal';
+import RemoveMinionsGroupModal from './minions/RemoveMinionsGroupModal';
 
 export class FilesTree extends Component {
 
@@ -23,10 +25,15 @@ export class FilesTree extends Component {
             showModal: false,
             editScript: false,
             removeScript: false,
-            getFiles: false
+            getFiles: false,
+            addScript: false,
+            editGroup: false,
+            removeGroup: false,
+            editedGroup: {},
+            removedGroup: {}
         };
         this.showContent = this.showContent.bind(this);
-        this.showModal = this.showModal.bind(this);
+        this.addScript = this.addScript.bind(this);
         this.onRequestClose = this.onRequestClose.bind(this);
         this.editScript = this.editScript.bind(this);
         this.removeScriptState = this.removeScriptState.bind(this);
@@ -34,13 +41,19 @@ export class FilesTree extends Component {
     }
 
     componentDidMount() {
-        this.props.filesRequest();
+        if (typeof this.props.filesRequest === 'function') {
+            this.props.filesRequest();
+        }
     }
 
     componentDidUpdate() {
         if (this.state.getFiles) {
             this.props.filesRequest();
             this.setState({getFiles: false});
+        }
+
+        if (this.props.editGroupSuccess || this.props.removeGroupSuccess) {
+            this.setState({showModal: false});
         }
     }
 
@@ -55,15 +68,17 @@ export class FilesTree extends Component {
         this.props.getScriptContent(scriptId);
 
         this.setState({
-            showFileDescription: true
+            showFileDescription: true,
+            addScript: false,
+            editScript: false
         })
     }
 
-    showModal() {
+    addScript() {
         this.setState({
-            removeScript: false,
-            showModal: true,
-            editScript: false
+            addScript: true,
+            editScript: false,
+            showFileDescription: false
         });
     }
 
@@ -95,17 +110,16 @@ export class FilesTree extends Component {
     }
 
     editScript(script) {
-
         this.setState({
             removeScript: false,
             editScript: true,
-            showModal: true,
+            addScript: false,
+            showFileDescription: false,
             editingScript: script
         });
     }
 
     removeScriptState(script) {
-
         this.setState({
             removeScript: true,
             editingScript: script,
@@ -114,9 +128,46 @@ export class FilesTree extends Component {
         });
     }
 
+    cancelAddGroupAndScript() {
+        this.setState({addScript: false});
+    }
+
+    cancelEditScript() {
+        this.setState({
+            editScript: false,
+            getFiles: true,
+            showFileDescription: true
+        });
+    }
+
+    editGroup(groupId, groupName) {
+        this.setState({
+            editGroup: true,
+            removeScript: false,
+            removeGroup: false,
+            showModal: true,
+            editedGroup: {
+                id: groupId,
+                name: groupName
+            }
+        });
+    }
+
+    removeGroup(groupId, groupName) {
+        this.setState({
+            removeGroup: true,
+            editGroup: false,
+            showModal: true,
+            removedGroup: {
+                id: groupId,
+                name: groupName
+            }
+        })
+    }
+
     render() {
 
-        let _this = this, template, fileDescription, modal;
+        let _this = this, template, modal, createEditGroup, fileDescription;
 
         if (_this.state.showFileDescription) {
 
@@ -127,39 +178,54 @@ export class FilesTree extends Component {
         if (_this.props.files.length === 0) {
             template = <div>Данных нету</div>
         } else if (_this.state.rerender) {
-            template = <TreeView groups={_this.state.filterScripts} showContent={this.showContent}/>;
+            template =
+                <TreeView groups={_this.state.filterScripts} showContent={this.showContent} removeIfNotEmpty={false}
+                          removeGroup={::this.removeGroup}/>;
         } else {
-            template = <TreeView groups={_this.props.files} showContent={this.showContent}/>;
+            template =
+                <TreeView groups={_this.props.files} showContent={this.showContent} editGroup={::this.editGroup}
+                          removeIfNotEmpty={false} removeGroup={::this.removeGroup}/>;
         }
 
         if (_this.state.editScript) {
-            modal = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}
-                                hideContent={this.hideContent} groups={_this.props.files}
-                                editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
+            createEditGroup = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}
+                                          cancel={::this.cancelEditScript} groups={_this.props.files}
+                                          editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={this.props.filesRequest}
                                   script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
                                   hideContent={this.hideContent}/>
-        } else {
-            modal = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
-                                 closeModal={_this.onRequestClose} error={_this.props.error}
-                                 createSuccess={_this.props.createSuccess}/>
+        } else if (this.state.addScript) {
+            createEditGroup = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
+                                           error={_this.props.error}
+                                           createSuccess={_this.props.createSuccess}
+                                           cancel={::this.cancelAddGroupAndScript}/>
+        }
+
+        if(_this.state.showModal) {
+            if (_this.state.removeGroup) {
+                modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
+                                                 removeGroup={_this.props.removeGroup}/>
+            }  else if (_this.state.editGroup) {
+                modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
+                                          groups={_this.props.files}
+                                          edit={_this.props.editGroup}/>
+            }
         }
 
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск' floatingLabel={true} onChange={this.filterTree.bind(this)}/>
+                    <Input label='Поиск' floatingLabel={true} onChange={::this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={this.showModal}>добавить</button>
+                    <button className='mui-btn button' onClick={this.addScript}>добавить</button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
-                    <div className=''>
-                        {fileDescription || ''}
-                    </div>
+                    {this.state.addScript || this.state.editScript ? createEditGroup : null}
+                    {this.state.showFileDescription ? fileDescription : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
@@ -170,8 +236,3 @@ export class FilesTree extends Component {
         </Container>
     }
 }
-
-FilesTree.propTypes = {
-    filesRequest: PropTypes.func.isRequired,
-    // error: PropTypes.string.isRequired
-};

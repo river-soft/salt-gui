@@ -16,3 +16,9 @@
   -o-transition: .3s;
   transition: .3s;
 }
+
+@mixin borderRadius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  border-radius: $radius;
+}

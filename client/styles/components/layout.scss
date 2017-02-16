@@ -18,15 +18,32 @@ body {
 }
 
 .header {
-  background-color: $blue-background;
   margin-bottom: 10px;
+  background-color: $blue-background;
+  position: relative;
+
+  &__navigation {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top: -0.625em;
+
+    &_link {
+      color: #eee;
+      font-size: 1.5rem;
+      margin-left: 10px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
 }
 
 .list {
-  border: 1px solid black;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  border: 2px solid $blue-background;
+  @include borderRadius(5px);
+  padding: 0 5px;
 
   &__child {
     margin-left: 10px;
@@ -100,6 +117,10 @@ body {
       font-weight: bold;
       padding: 20px 10px;
     }
+  }
+
+  &__body {
+    padding-top: 10px;
   }
 
   &__header {
@@ -180,6 +201,7 @@ body {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.75);
+  z-index: 999;
   @include transition();
 }
 
@@ -199,7 +221,7 @@ body {
 
   &_item {
     cursor: pointer;
-    
+
     &:hover {
       background: $blue-background;
       color: #eee;
@@ -214,6 +236,7 @@ body {
 .scripts__list {
   width: 65%;
   float: left;
+
   &_item {
     border: 1px solid #ccc;
     background: #fff;
@@ -222,7 +245,7 @@ body {
     border-radius: 10px;
     margin: 0 0 5px 5px;
     cursor: pointer;
-    
+
     &:hover {
       background: $blue-background;
       color: #fff
@@ -262,7 +285,7 @@ body {
     right: 20px;
     font-size: 1.8rem;
     color: $blue-background;
-    
+
     &_item {
       cursor: pointer;
     }
@@ -271,5 +294,142 @@ body {
   &-name {
     font-size: 1.5rem;
     font-weight: bold;
+  }
+}
+
+.minions-list {
+  margin-bottom: 0;
+
+  &__item {
+    display: block;
+    @include clearfix();
+
+    &.minions-list__header {
+      background: $blue-background;
+      color: #eee;
+    }
+  }
+
+  &__header span {
+    width: 49%;
+    border-right: 1px solid #eee;
+  }
+}
+
+.minions-tabs .mui-tabs__bar > li.mui--is-active {
+  border-bottom: 2px solid $blue-background;
+}
+
+.minions-tabs .mui-tabs__bar > li.mui--is-active > a {
+  color: $blue-background;
+}
+
+.block-list {
+  border: 2px solid $blue-background;
+  padding: 10px;
+  @include borderRadius(6px);
+  position: relative;
+  margin-bottom: 15px;
+
+  &__header {
+    font-size: 1.2rem;
+    position: absolute;
+    background: #eee;
+    padding: 0 5px;
+    top: -18px;
+    left: 20px;
+  }
+
+  &.block-list__table {
+    padding: 0 0 43px 0;
+  }
+
+  & table {
+    margin-bottom: 0;
+    border-collapse: collapse;
+
+    & .table__head {
+      background: $blue-background;
+      color: #eee;
+      text-transform: uppercase;
+      border-left: 2px solid #eee;
+
+      &:first-child {
+        border-left: none;
+      }
+    }
+
+    & tr {
+      border-bottom: 2px solid $blue-background;
+
+      & td {
+        border-left: 2px solid $blue-background;
+      }
+
+      & td:first-child {
+        border-left: none;
+      }
+    }
+  }
+}
+
+.right-block-list {
+  padding-top: 10px;
+}
+
+.object {
+  margin-left: 10px;
+  @include clearfix();
+
+  &__key {
+    font-weight: bold;
+  }
+
+  &__value {
+    margin-left: 15px;
+
+    & .object {
+
+      &__key {
+        float: left;
+      }
+
+      &__value {
+        float: left;
+        margin-left: 15px;
+      }
+    }
+  }
+}
+
+.tree-list__item {
+  position: relative;
+  color: $blue-background;
+
+  &_actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
+  &_action {
+    cursor: pointer;
+    color: $blue-background;
+  }
+}
+
+.minion-details {
+  position: relative;
+
+  &__actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.7rem;
+  }
+
+  &__action {
+    cursor: pointer;
+    color: $blue-background;
   }
 }

@@ -23,7 +23,6 @@ class Minion {
     /**
      * Спикок групп миньона
      */
-    @DBRef
-//    @Transient
+    @DBRef(lazy = true)
     List<MinionGroup> groups = []
 }
