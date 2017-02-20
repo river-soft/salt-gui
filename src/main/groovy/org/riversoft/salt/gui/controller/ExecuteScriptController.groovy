@@ -21,4 +21,11 @@ class ExecuteScriptController extends BaseRestController {
 
         executeScriptService.executeScripts(minions, scripts)
     }
+
+    @RequestMapping(value = '/check_job-by-jid', method = RequestMethod.GET)
+    checkJobByJid(@RequestParam(value = "jid", required = true) String jid) {
+
+        executeScriptService.checkJobByJid(jid)
+    }
+
 }
