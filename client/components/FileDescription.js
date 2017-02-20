@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Panel from 'muicss/lib/react/panel';
+import Divider from 'muicss/lib/react/divider';
 
 export default class FileDescription extends Component {
 
@@ -21,6 +22,12 @@ export default class FileDescription extends Component {
                 <pre className='file-description'>
                     {description.script.content}
                 </pre>
+                <Divider/>
+                <div className='file__footer'>
+                    <button className='button mui-btn mui--pull-right' onClick={() => {
+                        this.props.runScript(description.script.name);
+                    }}>run</button>
+                </div>
             </Panel>
         );
     }

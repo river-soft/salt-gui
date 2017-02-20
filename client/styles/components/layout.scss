@@ -43,7 +43,7 @@ body {
 .list {
   border: 2px solid $blue-background;
   @include borderRadius(5px);
-  padding: 0 5px;
+  padding: 5px 5px;
 
   &__child {
     margin-left: 10px;
@@ -59,20 +59,37 @@ body {
 
     &.active {
       background: $blue-background;
-      color: #fff;
+      color: #eee;
     }
 
     &:hover {
       background: $blue-background;
-      color: #fff;
+      color: #eee;
+    }
+  }
+
+  &__selected_items {
+    padding: 0 5px;
+    @include borderRadius(5px);
+    cursor: pointer;
+
+    &:hover {
+      background: $blue-background;
+      color: #eee;
+    }
+
+    &.active {
+      background: $blue-background;
+      color: #eee;
     }
   }
 }
 
 .file-description {
   font-family: Arial, Verdana, Tahoma, sans-serif;
-  margin: 0;
-  background: #f8f8f8;
+  margin: 0 0 10px 0;
+  background: #eee;
+  padding: 10px;
 }
 
 .hidden {
@@ -295,6 +312,12 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
   }
+
+  &__footer {
+    padding: 5px 15px;
+    background: #eee;
+    @include clearfix();
+  }
 }
 
 .minions-list {
@@ -405,6 +428,7 @@ body {
 .tree-list__item {
   position: relative;
   color: $blue-background;
+  @include clearfix();
 
   &_actions {
     position: absolute;
@@ -415,6 +439,10 @@ body {
   &_action {
     cursor: pointer;
     color: $blue-background;
+  }
+
+  &_header {
+    @include clearfix();
   }
 }
 
@@ -430,6 +458,29 @@ body {
 
   &__action {
     cursor: pointer;
+    color: $blue-background;
+  }
+}
+
+.select-items {
+  position: relative;
+}
+
+.add-items-actions {
+  position: absolute;
+  top: 20px;
+  right: -25px;
+}
+
+.add-items-action {
+  cursor: pointer;
+  padding: 5px;
+  background: $blue-background;
+  color: #eee;
+  @include transition();
+
+  &:hover {
+    background: #eee;
     color: $blue-background;
   }
 }

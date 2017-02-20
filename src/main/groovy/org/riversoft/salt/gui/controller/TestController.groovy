@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.Glob
 import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
+import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptGroupRepository
 import org.riversoft.salt.gui.repository.SaltScriptRepository
@@ -99,6 +100,17 @@ class TestController {
 //        Map<String, Result<Boolean>> results = Cmd.run("uname -a").callSync(
 //                client, minionList, USER, PASSWORD, AuthModule.PAM);
 
+    }
+
+    @RequestMapping('/minionsss')
+    def minionsssss() {
+
+        def group = minionGroupService.createMinionGroup('default')
+
+        for(int i = 0; i < 50; i++) {
+
+            minionCRUDService.createMinion(new CreateMinion(name: "minion${i}${i}"), [group])
+        }
     }
 
 }
