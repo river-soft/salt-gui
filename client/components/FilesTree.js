@@ -72,7 +72,8 @@ export class FilesTree extends Component {
         this.setState({
             showFileDescription: true,
             addScript: false,
-            editScript: false
+            editScript: false,
+            runScript: false
         })
     }
 
@@ -223,7 +224,8 @@ export class FilesTree extends Component {
             selectMinions =
                 <TreeViewModalCheckboxes groups={_this.props.groupedMinions}
                                          scriptName={this.state.scriptName}
-                                         executeScripts={this.props.executeScripts}/>
+                                         executeScripts={this.props.executeScripts}
+                                         minions={true}/>
         }
 
         if (_this.state.showModal) {

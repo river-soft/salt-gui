@@ -88,11 +88,20 @@ export default class TreeModalCheckboxes extends Component {
         if (selectedList.length) {
             for (let i = 0; i < selectedList.length; i++) {
                 for (let j = 0; j < groups.length; j++) {
-                    groups[j].minions.map((item, index) => {
-                        if (item.id === selectedList[i].id) {
-                            groups[j].minions.splice(index, 1);
-                        }
-                    });
+                    if(groups[j].minions) {
+                        groups[j].minions.map((item, index) => {
+                            if (item.id === selectedList[i].id) {
+                                groups[j].minions.splice(index, 1);
+                            }
+                        });
+                    } else {
+                        groups[j].scripts.map((item, index) => {
+                            if (item.id === selectedList[i].id) {
+                                groups[j].scripts.splice(index, 1);
+                            }
+                        });
+                    }
+
                 }
             }
 
@@ -110,16 +119,30 @@ export default class TreeModalCheckboxes extends Component {
 
     returnFromTransfer() {
         this.state.groups.map((group, index) => {
-            for (let i = 0; i < group.minions.length; i++) {
-                for (let j = 0; j < this.state.cancelList.length; j++) {
-                    if (this.state.cancelList[j].id === group.minions[i].id) {
-                        this.props.groups[index].minions.push(group.minions[i]);
 
-                        for(let z = 0; z < this.state.transferedList.length; z++) {
-                            if(group.minions[i].id === this.state.transferedList[z].id) {
-                                this.state.transferedList.splice(z, 1);
+            let items = group.minions || group.scripts;
+
+            for (let i = 0; i < items.length; i++) {
+                for (let j = 0; j < this.state.cancelList.length; j++) {
+                    if (this.state.cancelList[j].id === items[i].id) {
+                        if(this.props.groups[index].minions) {
+                            this.props.groups[index].minions.push(group.minions[i]);
+
+                            for(let z = 0; z < this.state.transferedList.length; z++) {
+                                if(group.minions[i].id === this.state.transferedList[z].id) {
+                                    this.state.transferedList.splice(z, 1);
+                                }
+                            }
+                        } else {
+                            this.props.groups[index].scripts.push(items[i]);
+
+                            for(let z = 0; z < this.state.transferedList.length; z++) {
+                                if(group.scripts[i].id === this.state.transferedList[z].id) {
+                                    this.state.transferedList.splice(z, 1);
+                                }
                             }
                         }
+
                     }
                 }
             }
@@ -156,10 +179,18 @@ export default class TreeModalCheckboxes extends Component {
         let list = [];
         let list2 = [];
 
-        list2.push(String(this.props.scriptName));
+        if(this.props.minions) {
+            list2.push(this.props.scriptName);
 
-        for(let i = 0; i < this.state.transferedList.length; i++) {
-            list.push(String(this.state.transferedList[i].name));
+            for(let i = 0; i < this.state.transferedList.length; i++) {
+                list.push(this.state.transferedList[i].name);
+            }
+        } else {
+            list.push(this.props.scriptName);
+
+            for(let i = 0; i < this.state.transferedList.length; i++) {
+                list2.push(this.state.transferedList[i].name);
+            }
         }
 
         this.props.executeScripts(list, list2);

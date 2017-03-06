@@ -109,7 +109,7 @@ class App extends Component {
                                    removeGroup={removeGroup}
                                    removeGroupSuccess={_this.state.removeGroupSuccess}
                                    getGroupedMinions={getGroupedMinions}
-                                   groupedMinions={this.props.groupedMinions.groupedMinions} б
+                                   groupedMinions={this.props.groupedMinions.groupedMinions}
                                    executeScripts={executeScripts}/>;
 
         return (<div className='wrapper'>

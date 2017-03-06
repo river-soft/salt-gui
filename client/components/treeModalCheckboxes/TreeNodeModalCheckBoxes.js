@@ -33,15 +33,21 @@ export default class TreeNodeModalCheckBoxes extends Component {
     }
 
     selectAll(group) {
-        for (let i = 0; i < group.minions.length; i++) {
-            this.props.selectItems(group.minions[i], true, group);
+
+        let items = group.minions || group.scripts;
+
+        for (let i = 0; i < items.length; i++) {
+            this.props.selectItems(items[i], true, group);
         }
         this.setState({checkedAll: true});
     }
 
     unSelectAll(group) {
-        for (let i = 0; i < group.minions.length; i++) {
-            this.props.selectItems(group.minions[i], false);
+
+        let items = group.minions || group.scripts;
+
+        for (let i = 0; i < items.length; i++) {
+            this.props.selectItems(items[i], false);
         }
         this.setState({checkedAll: false});
     }
