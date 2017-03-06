@@ -34,7 +34,7 @@ export default class TreeNodeModalCheckBoxes extends Component {
 
     selectAll(group) {
         for (let i = 0; i < group.minions.length; i++) {
-            this.props.selectItems(group.minions[i], true);
+            this.props.selectItems(group.minions[i], true, group);
         }
         this.setState({checkedAll: true});
     }
@@ -70,7 +70,7 @@ export default class TreeNodeModalCheckBoxes extends Component {
             return <li key={index} ref={item.id}
                        className={className}
                        onClick={(e) => {
-                           ::this.toggleChild(e.target, item)
+                           ::this.toggleChild(e.target, item, this.props.group.id)
                        }}>
                 <span>{item.name}</span>
             </li>

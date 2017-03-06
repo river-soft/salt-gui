@@ -11,6 +11,7 @@ import * as editScriptAction from '../actions/EditScriptAction';
 import * as editGroupAction from '../actions/GroupEditAction';
 import * as removeGroupAction from '../actions/GroupRemoveAction';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
+import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
 
 class App extends Component {
 
@@ -77,7 +78,8 @@ class App extends Component {
             {editScript} = _this.props.editScriptAction,
             {editGroup} = _this.props.editGroupAction,
             {removeGroup} = _this.props.removeGroupAction,
-            {getGroupedMinions} = this.props.getGroupedMinionsAction;
+            {getGroupedMinions} = _this.props.getGroupedMinionsAction,
+            {executeScripts} = _this.props.executeScriptsAction;
 
         if (_this.props.createGroup.group) {
 
@@ -107,7 +109,8 @@ class App extends Component {
                                    removeGroup={removeGroup}
                                    removeGroupSuccess={_this.state.removeGroupSuccess}
                                    getGroupedMinions={getGroupedMinions}
-                                   groupedMinions={this.props.groupedMinions.groupedMinions}/>;
+                                   groupedMinions={this.props.groupedMinions.groupedMinions} б
+                                   executeScripts={executeScripts}/>;
 
         return (<div className='wrapper'>
             <Header />
@@ -127,7 +130,8 @@ function mapStateToProps(state) {
         editScript: state.editScript,
         editGroup: state.editGroup,
         removeGroup: state.removeGroup,
-        groupedMinions: state.groupedMinions
+        groupedMinions: state.groupedMinions,
+        executeScripts: state.executeScripts
     }
 }
 
@@ -140,7 +144,8 @@ function mapDispatchToProps(dispatch) {
         editScriptAction: bindActionCreators(editScriptAction, dispatch),
         editGroupAction: bindActionCreators(editGroupAction, dispatch),
         removeGroupAction: bindActionCreators(removeGroupAction, dispatch),
-        getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch)
+        getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch),
+        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
     }
 }
 

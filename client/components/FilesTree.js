@@ -221,8 +221,9 @@ export class FilesTree extends Component {
                                            cancel={::this.cancelAddGroupAndScript}/>
         } else if (_this.state.runScript) {
             selectMinions =
-                <TreeViewModalCheckboxes groups={_this.props.groupedMinions} closeModal={_this.onRequestClose}
-                                         scriptName={this.state.scriptName}/>
+                <TreeViewModalCheckboxes groups={_this.props.groupedMinions}
+                                         scriptName={this.state.scriptName}
+                                         executeScripts={this.props.executeScripts}/>
         }
 
         if (_this.state.showModal) {

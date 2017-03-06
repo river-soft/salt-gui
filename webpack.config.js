@@ -10,6 +10,8 @@ const NODE_ENV = process.env.NODE_ENV || 'develop';
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
     entry: [
+        'webpack-dev-server/client',
+        'webpack/hot/only-dev-server',
         'webpack-hot-middleware/client?reload=true',
         'babel-polyfill',
         './client/index'
@@ -47,9 +49,9 @@ module.exports = {
                 loaders: ['eslint'],
                 include: [
                     path.resolve(__dirname, "client")
-                ]
+                ],
+                exclude: /node_modules/,
             },
-            {test: /\.json$/, loader: 'json'},
         ],
         loaders: [
             {
@@ -59,7 +61,7 @@ module.exports = {
                 ],
                 test: /\.js$/,
                 plugins: ['transform-runtime'],
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
             {
                 test: /\.(woff|eot|ttf|woff2)$/,
@@ -68,7 +70,23 @@ module.exports = {
             {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract('css!sass!autoprefixer')
+            },
+            {
+                test: /\.json$/,
+                loader: 'json-loader'
             }
         ]
+    },
+
+    devServer: {
+        host: 'localhost',
+        port: '8000',
+        hot: true,
+        proxy: {
+            '/': {
+                path: /.*/,
+                target: 'http://localhost:8082'
+            }
+        }
     }
 };

@@ -20,6 +20,7 @@ import RemoveMinionsGroupModal from '../components/minions/RemoveMinionsGroupMod
 import EditMinionsGroupModal from '../components/minions/EditMinionsGroupModal';
 import EditMinionGroupsModal from '../components/minions/EditMinionGroupsModal';
 import Modal from 'react-modal';
+// import TreeViewModalCheckboxes from '../components/treeModalCheckboxes/TreeViewModalCheckboxes';
 
 class GroupsAndMinions extends Component {
 
@@ -212,6 +213,10 @@ class GroupsAndMinions extends Component {
                                                edit={editMinionGroups}/>
             }
         }
+
+        // if(this.state.runScript) {
+            {/*let selectMinions = <TreeViewModalCheckboxes />*/}
+        // }
 
         return <div className='wrapper'>
             <Header />

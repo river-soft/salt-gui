@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import TreeNodeModalCheckBoxes from './TreeNodeModalCheckBoxes';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
+import clone from '../../helpers';
 
 export default class TreeModalCheckboxes extends Component {
 
@@ -22,10 +23,9 @@ export default class TreeModalCheckboxes extends Component {
     }
 
     componentDidUpdate() {
+
         if (!this.state.groups.length && this.props.groups.length) {
-            this.setState({
-                groups: this.props.groups
-            })
+            this.state.groups = clone(this.props.groups);
         }
     }
 
@@ -81,42 +81,57 @@ export default class TreeModalCheckboxes extends Component {
     }
 
     transferToSelected() {
+        let _this = this,
+            groups = _this.props.groups,
+            selectedList = _this.state.selectedList;
 
-        let _this = this;
-
-        for (let i = 0; i < _this.state.selectedList.length; i++) {
-            for (let j = 0; j < _this.state.groups.length; j++) {
-                _this.state.groups[j].minions.map((item, index) => {
-                    if (item.id === _this.state.selectedList[i].id) {
-                        _this.state.groups[j].minions.splice(index, 1);
-                    }
-                });
+        if (selectedList.length) {
+            for (let i = 0; i < selectedList.length; i++) {
+                for (let j = 0; j < groups.length; j++) {
+                    groups[j].minions.map((item, index) => {
+                        if (item.id === selectedList[i].id) {
+                            groups[j].minions.splice(index, 1);
+                        }
+                    });
+                }
             }
+
+            selectedList.map((el) => {
+                _this.state.transferedList.push(el)
+            });
+
+            _this.setState({
+                activeItems: [],
+                selectedList: [],
+                transfer: true
+            });
         }
-
-        _this.state.selectedList.map((el) => {
-            _this.state.transferedList.push(el)
-        });
-
-        _this.setState({
-            selectedList: [],
-            transfer: true
-        });
     }
 
     returnFromTransfer() {
-
-        this.props.groups.map((group, index) => {
+        this.state.groups.map((group, index) => {
             for (let i = 0; i < group.minions.length; i++) {
-                for(let j = 0; j < this.state.cancelList.length; j++) {
-                    if(this.state.cancelList[j].id === group.minions[i].id) {
-                        this.state.groups[index].minions.add(group.minions[i]);
+                for (let j = 0; j < this.state.cancelList.length; j++) {
+                    if (this.state.cancelList[j].id === group.minions[i].id) {
+                        this.props.groups[index].minions.push(group.minions[i]);
+
+                        for(let z = 0; z < this.state.transferedList.length; z++) {
+                            if(group.minions[i].id === this.state.transferedList[z].id) {
+                                this.state.transferedList.splice(z, 1);
+                            }
+                        }
                     }
                 }
             }
         });
-        console.log(this.state.groups);
-        console.log(this.state.cancelList);
+
+        document.getElementById('transfer__list').childNodes.forEach((el) => {
+            if(el.classList.contains('active')) {
+                el.classList.remove('active');
+            }
+        });
+
+        this.setState({cancelList: []});
     }
 
     toggleToCancelList(item, el) {
@@ -128,6 +143,7 @@ export default class TreeModalCheckboxes extends Component {
             }
             el.classList.remove('active');
         } else {
+
             this.state.cancelList.push(item);
             el.classList.add('active');
         }
@@ -135,9 +151,23 @@ export default class TreeModalCheckboxes extends Component {
         this.setState({go: true});
     }
 
+    executeScripts() {
+
+        let list = [];
+        let list2 = [];
+
+        list2.push(String(this.props.scriptName));
+
+        for(let i = 0; i < this.state.transferedList.length; i++) {
+            list.push(String(this.state.transferedList[i].name));
+        }
+
+        this.props.executeScripts(list, list2);
+    }
+
     render() {
 
-        let groups = this.state.groups;
+        let groups = this.props.groups;
 
         let nodes = groups.length ? groups.map((group, index) => <TreeNodeModalCheckBoxes
                 activeItems={this.state.activeItems}
@@ -161,7 +191,7 @@ export default class TreeModalCheckboxes extends Component {
             </Col>
             <Col md='8' xs='8' lg='8'>
                 <div className='added-list'>
-                    <ul className='list mui-list--inline'>
+                    <ul className='list mui-list--inline' id='transfer__list'>
                         {this.state.transferedList.length ? this.state.transferedList.map((el, index) => {
                                 return <li className='list__selected_items' key={index} onClick={(e) => {
                                     ::this.toggleToCancelList(el, e.target);
@@ -169,6 +199,12 @@ export default class TreeModalCheckboxes extends Component {
                             }) : null}
                     </ul>
                 </div>
+                {this.state.transferedList.length ? <div>
+                        <button className='button mui-btn mui--pull-right' onClick={() => {
+                            ::this.executeScripts();
+                        }}>run</button>
+                    </div> : null}
+
             </Col>
         </Row>
     }
