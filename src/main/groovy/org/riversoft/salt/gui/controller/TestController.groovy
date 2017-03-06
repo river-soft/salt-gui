@@ -7,7 +7,6 @@ import org.riversoft.salt.gui.calls.modules.State
 import org.riversoft.salt.gui.calls.modules.Test
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.Glob
-import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.repository.MinionGroupRepository
@@ -52,39 +51,6 @@ class TestController {
 
     @Autowired
     SaltClient saltClient
-
-    @RequestMapping("/execute-script")
-    def executeScript() {
-
-        //apply было до этого
-        Target<List<String>> minionList = new MinionList("minion1");
-
-        //если для всех надо выполнить скрипт или запрос
-        //Target<String> globTarget = new Glob("*");
-
-        //был файл test
-        Map<String, Result<Boolean>> results = State.apply(["test_script"]).callSync(
-                saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
-
-//        LocalAsyncResult< Map<String, Result<Boolean>>> results = State.apply(["test_script"]).callAsync(
-//                saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
-
-        //results.values().xor[0].right().value.find().value
-
-//        comment
-//        name
-//        startTime
-//        result
-//        duration
-//        runNum
-//        changes
-
-        def result = results.values().xor[0].right().value.find()
-
-        log.debug("comment : ${result.value['comment']}, name: ${result.value['name']}, startTime: ${result.value['startTime']}")
-
-//        return ["comment": result.value["comment"], "name": result.value["name"], "startTime": result.value["startTime"]]
-    }
 
     @RequestMapping('/ping')
     @ResponseBody
