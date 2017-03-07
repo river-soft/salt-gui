@@ -195,4 +195,12 @@ public class Jobs {
         return new RunnerCall<>("jobs.list_job", Optional.of(args),
                 new TypeToken<Info>(){});
     }
+
+
+    //test
+    public static RunnerCall<Info> active() {
+        LinkedHashMap<String, Object> args = new LinkedHashMap<>();
+        return new RunnerCall<>("jobs.active", Optional.of(args),
+                new TypeToken<Info>(){});
+    }
 }

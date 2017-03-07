@@ -256,4 +256,21 @@ class SaltScriptService {
         log.debug("Successfully deleted script with name [${deletedScriptName}].")
     }
 
+    /**
+     * Получение скрипта по его названию
+     * @param name - название скрипта
+     * @return объект SaltScript
+     * @see SaltScript
+     */
+    SaltScript getSaltScriptByName(String name) {
+
+        SaltScript saltScript = saltScriptRepository.findByName(name)
+        if (!saltScript) {
+            log.error("SaltScript with name [${name}] not found.")
+            throw new SaltScriptNotFoundException("SaltScript with name [${name}] not found.")
+        }
+
+        saltScript
+    }
+
 }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Panel from 'muicss/lib/react/panel';
+import Divider from 'muicss/lib/react/divider';
 
 export default class MinionDetails extends Component {
 
@@ -9,7 +10,7 @@ export default class MinionDetails extends Component {
 
         for (let key in details) {
             if (details.hasOwnProperty(key)) {
-                template.push(<ul className='mui-list--unstyled'>
+                template.push(<ul className='mui-list--unstyled' key={key}>
                     <li className='object'>
                         <div className='object__key'>{key}:</div>
                         <div className='object__value'>
@@ -43,6 +44,12 @@ export default class MinionDetails extends Component {
                 }}><i className='mi mi-create'></i></span>
             </div>
             {template}
+            <Divider />
+            <div className='file__footer'>
+                <button className='button mui-btn mui--pull-right' onClick={() => {
+                    ::this.props.runScript(this.props.minionName);
+                }}>run</button>
+            </div>
         </Panel>
     }
 }

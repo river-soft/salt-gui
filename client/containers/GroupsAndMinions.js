@@ -13,6 +13,8 @@ import * as removeMinionsGroupAction from '../actions/RemoveMinionsGroupAction';
 import * as editMinionsGroupAction from '../actions/EditMinionsGroupAction';
 import * as getGroupsByMinionAction from '../actions/GetGroupsByMinionAction';
 import * as editMinionGroupsAction from '../actions/EditMinionGroupsAction';
+import * as filesTreeActions from '../actions/FilesTreeActions';
+import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
 import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
@@ -20,6 +22,7 @@ import RemoveMinionsGroupModal from '../components/minions/RemoveMinionsGroupMod
 import EditMinionsGroupModal from '../components/minions/EditMinionsGroupModal';
 import EditMinionGroupsModal from '../components/minions/EditMinionGroupsModal';
 import Modal from 'react-modal';
+import TreeViewModalCheckboxes from '../components/treeModalCheckboxes/TreeViewModalCheckboxes';
 
 class GroupsAndMinions extends Component {
 
@@ -37,7 +40,9 @@ class GroupsAndMinions extends Component {
             createMinionsGroupModal: false,
             removeMinionsGroupModal: false,
             editMinionsGroupModal: false,
-            editMinionGroupsModal: false
+            editMinionGroupsModal: false,
+            runScript: false,
+            minionName: ''
         }
     }
 
@@ -69,11 +74,16 @@ class GroupsAndMinions extends Component {
             getGroupedMinions();
         }
 
-        if(this.props.editMinionGroups.editGroup) {
+        if (this.props.editMinionGroups.editGroup) {
             this.props.getGroupsByMinion.groups = [];
             this.props.editMinionGroups.editGroup = false;
             this.onRequestClose();
             getGroupedMinions();
+        }
+
+        if(this.props.executeScripts.execute && this.state.runScript) {
+            this.setState({runScript: false});
+            this.props.executeScripts.execute = false;
         }
     }
 
@@ -83,7 +93,8 @@ class GroupsAndMinions extends Component {
         getMinionDetails(minionName);
         this.setState({
             showMinionDescription: true,
-            minionDescriptionName: minionName
+            minionDescriptionName: minionName,
+            runScript: false
         })
     }
 
@@ -164,6 +175,22 @@ class GroupsAndMinions extends Component {
         });
     }
 
+    runScript(minionName) {
+        this.setState({
+            runScript: true,
+            showModal: false,
+            createMinionsGroupModal: false,
+            removeMinionsGroupModal: false,
+            editMinionsGroupModal: false,
+            editMinionGroupsModal: false,
+            showMinionDescription: false,
+            minionName: minionName
+        });
+
+        const {filesRequest} = this.props.filesTreeActions;
+        filesRequest();
+    }
+
     onRequestClose() {
         this.props.removeMinionsGroup.error = false;
         this.setState({showModal: false});
@@ -174,7 +201,8 @@ class GroupsAndMinions extends Component {
         const {createMinionsGroup} = this.props.createMinionsGroupAction,
             {removeMinionsGroup} = this.props.removeMinionsGroupAction,
             {editMinionsGroup} = this.props.editMinionsGroupAction,
-            {editMinionGroups} = this.props.editMinionGroupsAction;
+            {editMinionGroups} = this.props.editMinionGroupsAction,
+            {executeScripts} = this.props.executeScriptsAction;
 
         let treeView, modal;
 
@@ -231,8 +259,14 @@ class GroupsAndMinions extends Component {
                             {this.state.showMinionDescription ?
                                 <MinionDetails minionName={this.state.minionDescriptionName}
                                                details={this.props.minionDetails.minionDetails[0]}
-                                               getGroups={::this.editMinionGroups}/>
+                                               getGroups={::this.editMinionGroups}
+                                               runScript={::this.runScript}/>
                                 : null}
+                            {this.state.runScript ?
+                                <TreeViewModalCheckboxes groups={this.props.filesTree.files}
+                                                         scriptName={this.state.minionName}
+                                                         executeScripts={executeScripts}
+                                                         minions={false}/> : null}
                         </Col>
                     </Row>
                 </Container>
@@ -254,7 +288,9 @@ function mapStateToProps(state) {
         removeMinionsGroup: state.removeMinionsGroup,
         editMinionsGroup: state.editMinionsGroup,
         getGroupsByMinion: state.getGroupsByMinion,
-        editMinionGroups: state.editMinionGroups
+        editMinionGroups: state.editMinionGroups,
+        filesTree: state.filesTree,
+        executeScripts: state.executeScripts
     }
 }
 
@@ -266,7 +302,10 @@ function mapDispatchToProps(dispatch) {
         removeMinionsGroupAction: bindActionCreators(removeMinionsGroupAction, dispatch),
         editMinionsGroupAction: bindActionCreators(editMinionsGroupAction, dispatch),
         getGroupsByMinionAction: bindActionCreators(getGroupsByMinionAction, dispatch),
-        editMinionGroupsAction: bindActionCreators(editMinionGroupsAction, dispatch)
+        editMinionGroupsAction: bindActionCreators(editMinionGroupsAction, dispatch),
+        filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
+        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
+
     }
 }
 

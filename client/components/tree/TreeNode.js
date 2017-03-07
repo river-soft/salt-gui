@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Divider from 'muicss/lib/react/divider';
-import $ from 'jquery';
+
 export default class TreeNode extends Component {
 
     constructor(props) {
@@ -16,14 +16,20 @@ export default class TreeNode extends Component {
     }
 
     setFilter(filter) {
-        if(this.state.selected != filter) {
-            $('.list__child .list__item').removeClass('active');
+        if (this.state.selected != filter) {
+            let items = document.querySelectorAll('.list__child .list__item');
+            for(let i = 0; i < items.length; i++) {
+                if(items[i].classList.contains('active')) {
+                    items[i].classList.remove('active');
+                }
+            }
+
             this.setState({selected: filter});
         }
     }
 
     isActive(value) {
-        return 'list__item' + ((value===this.state.selected) ? ' active' : '')
+        return 'list__item' + ((value === this.state.selected) ? ' active' : '')
     }
 
     render() {
@@ -37,12 +43,12 @@ export default class TreeNode extends Component {
 
         let removeGroup;
 
-        if(this.props.removeIfNotEmpty) {
+        if (this.props.removeIfNotEmpty) {
             removeGroup = <span className='tree-list__item_action' onClick={() => {
                 this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
             }}><i className='mi mi-delete'></i></span>
         } else {
-            if(!this.props.nodes.length) {
+            if (!this.props.nodes.length) {
                 removeGroup = <span className='tree-list__item_action' onClick={() => {
                     this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
                 }}><i className='mi mi-delete'></i></span>
@@ -56,7 +62,8 @@ export default class TreeNode extends Component {
                 }}><i className='mi mi-create'></i></span>
                 {removeGroup}
             </div>
-            <span className={this.state.isVisible ? 'list__header active' : 'list__header'} onClick={::this.toggle}>{this.props.group.group}</span>
+            <span className={this.state.isVisible ? 'list__header active' : 'list__header'}
+                  onClick={::this.toggle}>{this.props.group.group}</span>
             <Divider />
             <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}>{nodes}</ul>
         </li>
