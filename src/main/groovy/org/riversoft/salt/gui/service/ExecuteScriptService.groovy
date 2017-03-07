@@ -10,9 +10,11 @@ import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.domain.Job
 import org.riversoft.salt.gui.domain.JobResult
+import org.riversoft.salt.gui.domain.JobResultItem
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.repository.JobRepository
+import org.riversoft.salt.gui.repository.JobResultItemRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
 import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +42,9 @@ class ExecuteScriptService {
 
     @Autowired
     JobResultRepository jobResultRepository
+
+    @Autowired
+    JobResultItemRepository jobResultItemRepository
 
     @Autowired
     SaltScriptService saltScriptService
@@ -98,15 +103,15 @@ class ExecuteScriptService {
 
         //вовзращает список результатов по миньонам
         //TODO подумать может результат все таки получать из jobInfoSalt что бы не делать два запроса на salt сервер
-        def jobResultsSalt = Jobs.lookupJid(jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+        def jobResultsSalt = Jobs.lookupJid(jobInfoSalt.jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
 
         Job job = jobRepository.findOne(jobInfoSalt.jid)
 
-        boolean isDone = true
+        boolean isDone = false
 
         // region update job results
 
-        List<String> scriptNames = jobInfoSalt.arguments["mods"]
+//        List<String> scriptNames = jobInfoSalt.arguments["mods"]
 
         for (def jobResultSalt : jobResultsSalt) {
 
@@ -117,25 +122,43 @@ class ExecuteScriptService {
 
             for (JobResult jobResult : jobResults) {
 
+                //TODO подумать как узнать к какому скрипту записывать результат?
+
                 log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
 
-                for (def val : jobResultSalt.value) {
+                for (def jobResultSaltItem : jobResultSalt) {
 
-                    jobResult.name = val["value"]["name"]
-                    jobResult.comment = val["value"]["comment"]
-                    jobResult.result = val["value"]["result"]
-                    jobResult.duration = val["value"]["duration"] as double
-                    jobResult.description = val["value"]["__id__"]
-                    jobResult.changes = val["value"]["changes"]
+                    if (jobResultSaltItem.value.size() > 1) {
 
-                    //TODO может не надо?
-                    if (!jobResult.result) {
-                        isDone = false
+                        for (def val : jobResultSaltItem.value) {
+
+                            JobResultItem resultItem = new JobResultItem()
+
+                            resultItem.cmd = val["key"]
+
+                            resultItem.name = val["value"]["name"]
+                            resultItem.comment = val["value"]["comment"]
+                            resultItem.result = val["value"]["result"]
+                            resultItem.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
+                            resultItem.description = val["value"]["__id__"]
+                            resultItem.changes = val["value"]["changes"]
+                            resultItem.jobResult = jobResult
+
+                            jobResult.resultItems.add(resultItem)
+
+                            jobResultItemRepository.save(resultItem)
+                            log.debug("Finish updating JobResultItem => [${jobResult.minion.name}], [${resultItem.name}], [${jobResult.job.jid}], [${resultItem.description}].")
+
+                            //TODO подумать когда отмечать задачу как выполненную
+                            isDone = true
+
+                            jobResult.isResult = true
+                        }
                     }
                 }
 
                 jobResultRepository.save(jobResult)
-                log.debug("Finish updating JobResult => [${jobResult.minion.name}], [${jobResult.name}], [${jobResult.job.jid}], [${jobResult.description}].")
+                log.debug("Finish updating JobResult => [${jobResult.minion.name}], [${jobResult.job.jid}].")
             }
         }
 
@@ -156,7 +179,7 @@ class ExecuteScriptService {
 
         log.debug("Finish check Job by jid [${jid}].")
 
-        return jobInfoSalt
+        return jobResultsSalt//jobInfoSalt
     }
 
     /**

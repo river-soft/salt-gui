@@ -13,40 +13,7 @@ class JobResult {
     @Id
     String id
 
-    /**
-     * Комментарий результата
-     */
-    String comment
-
-    /**
-     * Название результата
-     */
-    String name
-
-    /**
-     * Время начала выполнения работы
-     */
-    Date startTime
-
-    /**
-     * Флаг указывающий на успешное выполнение
-     */
-    boolean result
-
-    /**
-     * Длительность выполнения работы
-     */
-    double duration
-
-    /**
-     * Изменения
-     */
-    String changes
-
-    /**
-     * Описание выполняемой работы
-     */
-    String description
+    boolean isResult
 
     /**
      * Работа по которой береться результат
@@ -65,4 +32,10 @@ class JobResult {
      */
     @DBRef
     SaltScript saltScript
+
+    /**
+     * Список результатов единиц работы
+     */
+    @DBRef(lazy = true)
+    List<JobResultItem> resultItems = []
 }
