@@ -11,6 +11,7 @@ import EditScript from './EditScript';
 import RemoveScript from './RemoveScript';
 import EditMinionsGroup from './minions/EditMinionsGroupModal';
 import RemoveMinionsGroupModal from './minions/RemoveMinionsGroupModal';
+import TreeViewModalCheckboxes from './treeModalCheckboxes/TreeViewModalCheckboxes';
 
 export class FilesTree extends Component {
 
@@ -29,6 +30,7 @@ export class FilesTree extends Component {
             addScript: false,
             editGroup: false,
             removeGroup: false,
+            runScript: false,
             editedGroup: {},
             removedGroup: {}
         };
@@ -70,7 +72,8 @@ export class FilesTree extends Component {
         this.setState({
             showFileDescription: true,
             addScript: false,
-            editScript: false
+            editScript: false,
+            runScript: false
         })
     }
 
@@ -124,7 +127,9 @@ export class FilesTree extends Component {
             removeScript: true,
             editingScript: script,
             showModal: true,
-            editScript: false
+            editScript: false,
+            runScript: false
+
         });
     }
 
@@ -157,6 +162,7 @@ export class FilesTree extends Component {
         this.setState({
             removeGroup: true,
             editGroup: false,
+            runScript: false,
             showModal: true,
             removedGroup: {
                 id: groupId,
@@ -165,14 +171,27 @@ export class FilesTree extends Component {
         })
     }
 
+    runScript(scriptName) {
+        this.setState({
+            runScript: true,
+            addScript: false,
+            editScript: false,
+            showFileDescription: false,
+            scriptName: scriptName
+        });
+
+        this.props.getGroupedMinions();
+    }
+
     render() {
 
-        let _this = this, template, modal, createEditGroup, fileDescription;
+        let _this = this, template, modal, createEditGroup, fileDescription, selectMinions;
 
         if (_this.state.showFileDescription) {
 
             fileDescription = <FileDescription scriptContent={_this.props.scriptContent} editScript={_this.editScript}
-                                               removeScript={_this.removeScriptState} script={_this.props.script}/>;
+                                               removeScript={_this.removeScriptState} script={_this.props.script}
+                                               runScript={::this.runScript}/>;
         }
 
         if (_this.props.files.length === 0) {
@@ -201,13 +220,19 @@ export class FilesTree extends Component {
                                            error={_this.props.error}
                                            createSuccess={_this.props.createSuccess}
                                            cancel={::this.cancelAddGroupAndScript}/>
+        } else if (_this.state.runScript) {
+            selectMinions =
+                <TreeViewModalCheckboxes groups={_this.props.groupedMinions}
+                                         scriptName={this.state.scriptName}
+                                         executeScripts={this.props.executeScripts}
+                                         minions={true}/>
         }
 
-        if(_this.state.showModal) {
+        if (_this.state.showModal) {
             if (_this.state.removeGroup) {
                 modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
                                                  removeGroup={_this.props.removeGroup}/>
-            }  else if (_this.state.editGroup) {
+            } else if (_this.state.editGroup) {
                 modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
                                           groups={_this.props.files}
                                           edit={_this.props.editGroup}/>
@@ -226,6 +251,7 @@ export class FilesTree extends Component {
                 <Col md='9' xs='6' lg='9'>
                     {this.state.addScript || this.state.editScript ? createEditGroup : null}
                     {this.state.showFileDescription ? fileDescription : null}
+                    {this.state.runScript ? selectMinions : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'

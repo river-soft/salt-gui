@@ -24,6 +24,7 @@
     "extract-text-webpack-plugin": "1.0.1",
     "file-loader": "^0.10.0",
     "jquery": "^3.1.1",
+    "json-loader": "^0.5.4",
     "material-icons": "^0.1.0",
     "muicss": "^0.9.9-rc2",
     "postcss-loader": "1.2.2",
@@ -36,6 +37,7 @@
     "style-loader": "0.13.1",
     "webpack": "^1.14.0",
     "webpack-dev-middleware": "^1.9.0",
+    "webpack-dev-server": "^1.16.3",
     "webpack-hot-middleware": "^2.15.0"
   },
   "dependencies": {
