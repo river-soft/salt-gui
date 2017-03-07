@@ -13,40 +13,7 @@ class JobResult {
     @Id
     String id
 
-    /**
-     * Комментарий результата
-     */
-    String comment
-
-    /**
-     * Название результата
-     */
-    String name
-
-    /**
-     * Время начала выполнения работы
-     */
-    Date startTime
-
-    /**
-     * Флаг указывающий на успешное выполнение
-     */
-    boolean result
-
-    /**
-     * Длительность выполнения работы
-     */
-    double duration
-
-    /**
-     * Изменения
-     */
-    String changes
-
-    /**
-     * Описание выполняемой работы
-     */
-    String description
+    boolean isResult
 
     /**
      * Работа по которой береться результат
@@ -61,8 +28,16 @@ class JobResult {
     Minion minion
 
     /**
-     * Скрипт по которому выполняется работа
+     * Скрипты по которому выполняется работа
      */
-    @DBRef
-    SaltScript saltScript
+//    @DBRef
+//    SaltScript saltScript
+    @DBRef(lazy = true)
+    List<SaltScript> saltScripts = []
+
+    /**
+     * Список деталей результатов работы
+     */
+    @DBRef(lazy = true)
+    List<JobResultDetail> jobResultDetails = []
 }
