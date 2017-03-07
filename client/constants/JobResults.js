@@ -1,0 +1,1 @@
+export const JOB_RESULTS_COUNTS = 'JOB_RESULTS_COUNTS';
