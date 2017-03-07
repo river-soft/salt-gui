@@ -14,6 +14,11 @@ class Job {
     String jid
 
     /**
+     * Название задачи
+     */
+    String name
+
+    /**
      * Время начала выполнения работы
      */
     Date startTime

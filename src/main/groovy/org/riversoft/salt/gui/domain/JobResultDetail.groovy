@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
-@Document(collection = "jobs_items_results")
-class JobResultItem {
+@Document(collection = "jobs_results_details")
+class JobResultDetail {
 
     /**
      * Уникальный номер единицы результата работы

@@ -105,5 +105,4 @@ class MinionsSaltService {
         log.debug("Finish deleting minion [${minionName}] on salt server.")
     }
 
-
 }

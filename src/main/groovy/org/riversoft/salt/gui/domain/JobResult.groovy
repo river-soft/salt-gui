@@ -28,14 +28,16 @@ class JobResult {
     Minion minion
 
     /**
-     * Скрипт по которому выполняется работа
+     * Скрипты по которому выполняется работа
      */
-    @DBRef
-    SaltScript saltScript
+//    @DBRef
+//    SaltScript saltScript
+    @DBRef(lazy = true)
+    List<SaltScript> saltScripts = []
 
     /**
-     * Список результатов единиц работы
+     * Список деталей результатов работы
      */
     @DBRef(lazy = true)
-    List<JobResultItem> resultItems = []
+    List<JobResultDetail> jobResultDetails = []
 }
