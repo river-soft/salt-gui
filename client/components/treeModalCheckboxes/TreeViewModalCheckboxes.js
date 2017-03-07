@@ -88,7 +88,7 @@ export default class TreeModalCheckboxes extends Component {
         if (selectedList.length) {
             for (let i = 0; i < selectedList.length; i++) {
                 for (let j = 0; j < groups.length; j++) {
-                    if(groups[j].minions) {
+                    if (groups[j].minions) {
                         groups[j].minions.map((item, index) => {
                             if (item.id === selectedList[i].id) {
                                 groups[j].minions.splice(index, 1);
@@ -125,19 +125,19 @@ export default class TreeModalCheckboxes extends Component {
             for (let i = 0; i < items.length; i++) {
                 for (let j = 0; j < this.state.cancelList.length; j++) {
                     if (this.state.cancelList[j].id === items[i].id) {
-                        if(this.props.groups[index].minions) {
+                        if (this.props.groups[index].minions) {
                             this.props.groups[index].minions.push(group.minions[i]);
 
-                            for(let z = 0; z < this.state.transferedList.length; z++) {
-                                if(group.minions[i].id === this.state.transferedList[z].id) {
+                            for (let z = 0; z < this.state.transferedList.length; z++) {
+                                if (group.minions[i].id === this.state.transferedList[z].id) {
                                     this.state.transferedList.splice(z, 1);
                                 }
                             }
                         } else {
                             this.props.groups[index].scripts.push(items[i]);
 
-                            for(let z = 0; z < this.state.transferedList.length; z++) {
-                                if(group.scripts[i].id === this.state.transferedList[z].id) {
+                            for (let z = 0; z < this.state.transferedList.length; z++) {
+                                if (group.scripts[i].id === this.state.transferedList[z].id) {
                                     this.state.transferedList.splice(z, 1);
                                 }
                             }
@@ -149,7 +149,7 @@ export default class TreeModalCheckboxes extends Component {
         });
 
         document.getElementById('transfer__list').childNodes.forEach((el) => {
-            if(el.classList.contains('active')) {
+            if (el.classList.contains('active')) {
                 el.classList.remove('active');
             }
         });
@@ -176,24 +176,23 @@ export default class TreeModalCheckboxes extends Component {
 
     executeScripts() {
 
-        let list = [];
-        let list2 = [];
+        let scripts = [], minions = [];
 
-        if(this.props.minions) {
-            list2.push(this.props.scriptName);
+        if (this.props.minions) {
+            scripts.push(this.props.scriptName);
 
-            for(let i = 0; i < this.state.transferedList.length; i++) {
-                list.push(this.state.transferedList[i].name);
+            for (let i = 0; i < this.state.transferedList.length; i++) {
+                minions.push(this.state.transferedList[i].name);
             }
         } else {
-            list.push(this.props.scriptName);
+            minions.push(this.props.scriptName);
 
-            for(let i = 0; i < this.state.transferedList.length; i++) {
-                list2.push(this.state.transferedList[i].name);
+            for (let i = 0; i < this.state.transferedList.length; i++) {
+                scripts.push(this.state.transferedList[i].name);
             }
         }
 
-        this.props.executeScripts(list, list2);
+        this.props.executeScripts(minions, scripts);
     }
 
     render() {
@@ -209,31 +208,34 @@ export default class TreeModalCheckboxes extends Component {
                 transferedList={this.state.transferedList}/>) : null;
 
         return <Row>
-            <Col md='4' xs='4' lg='4'>
+            <h5 className='header__center'>{!this.props.minions ? 'Choose a scripts' : 'Choose a minions'}</h5>
+            <Col md='4' xs='4' lg='4' className='posr'>
                 <div className='select-items'>
                     <ul className='list mui-list--unstyled'>{nodes}</ul>
-                    <div className='add-items-actions'>
-                        <div className='add-items-action' onClick={::this.transferToSelected}><i
-                            className='mi mi-arrow-forward'></i></div>
-                        <div className='add-items-action' onClick={::this.returnFromTransfer}><i
-                            className='mi mi-arrow-back'></i></div>
-                    </div>
+                </div>
+                <div className='add-items-actions mui--align-middle'>
+                    <div className='add-items-action' onClick={::this.transferToSelected}><i
+                        className='mi mi-arrow-forward'></i></div>
+                    <div className='add-items-action' onClick={::this.returnFromTransfer}><i
+                        className='mi mi-arrow-back'></i></div>
                 </div>
             </Col>
             <Col md='8' xs='8' lg='8'>
                 <div className='added-list'>
-                    <ul className='list mui-list--inline' id='transfer__list'>
-                        {this.state.transferedList.length ? this.state.transferedList.map((el, index) => {
+                    {this.state.transferedList.length ? <ul className='list mui-list--inline' id='transfer__list'>
+                            {this.state.transferedList.map((el, index) => {
                                 return <li className='list__selected_items' key={index} onClick={(e) => {
                                     ::this.toggleToCancelList(el, e.target);
                                 }}>{el.name}</li>
-                            }) : null}
-                    </ul>
+                            })}
+                        </ul> : null }
+
                 </div>
                 {this.state.transferedList.length ? <div>
                         <button className='button mui-btn mui--pull-right' onClick={() => {
                             ::this.executeScripts();
-                        }}>run</button>
+                        }}>run
+                        </button>
                     </div> : null}
 
             </Col>

@@ -23,7 +23,7 @@ export default class TreeNodeModalCheckBoxes extends Component {
         el.nodeName != 'LI' ? toggleActive(el.parentElement) : toggleActive(el);
 
         function toggleActive(el) {
-            if(el.classList.contains('active')) {
+            if (el.classList.contains('active')) {
                 _this.props.selectItems(item, false);
                 _this.setState({checkedAll: false});
             } else {

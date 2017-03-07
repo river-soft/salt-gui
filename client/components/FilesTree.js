@@ -34,12 +34,6 @@ export class FilesTree extends Component {
             editedGroup: {},
             removedGroup: {}
         };
-        this.showContent = this.showContent.bind(this);
-        this.addScript = this.addScript.bind(this);
-        this.onRequestClose = this.onRequestClose.bind(this);
-        this.editScript = this.editScript.bind(this);
-        this.removeScriptState = this.removeScriptState.bind(this);
-        this.hideContent = this.hideContent.bind(this);
     }
 
     componentDidMount() {
@@ -56,6 +50,13 @@ export class FilesTree extends Component {
 
         if (this.props.editGroupSuccess || this.props.removeGroupSuccess) {
             this.setState({showModal: false});
+        }
+
+        if(this.props.execute && this.state.runScript) {
+            this.setState({
+                runScript: false
+            });
+            this.props.setExecuteFalse();
         }
     }
 
@@ -129,7 +130,6 @@ export class FilesTree extends Component {
             showModal: true,
             editScript: false,
             runScript: false
-
         });
     }
 
@@ -189,51 +189,52 @@ export class FilesTree extends Component {
 
         if (_this.state.showFileDescription) {
 
-            fileDescription = <FileDescription scriptContent={_this.props.scriptContent} editScript={_this.editScript}
-                                               removeScript={_this.removeScriptState} script={_this.props.script}
-                                               runScript={::this.runScript}/>;
+            fileDescription = <FileDescription scriptContent={_this.props.scriptContent} editScript={::_this.editScript}
+                                               removeScript={::_this.removeScriptState} script={_this.props.script}
+                                               runScript={::_this.runScript}/>;
         }
 
         if (_this.props.files.length === 0) {
             template = <div>Данных нету</div>
         } else if (_this.state.rerender) {
             template =
-                <TreeView groups={_this.state.filterScripts} showContent={this.showContent} removeIfNotEmpty={false}
-                          removeGroup={::this.removeGroup}/>;
+                <TreeView groups={_this.state.filterScripts} showContent={::_this.showContent} removeIfNotEmpty={false}
+                          removeGroup={::_this.removeGroup}/>;
         } else {
             template =
-                <TreeView groups={_this.props.files} showContent={this.showContent} editGroup={::this.editGroup}
-                          removeIfNotEmpty={false} removeGroup={::this.removeGroup}/>;
+                <TreeView groups={_this.props.files} showContent={::_this.showContent} editGroup={::_this.editGroup}
+                          removeIfNotEmpty={false} removeGroup={::_this.removeGroup}/>;
         }
 
         if (_this.state.editScript) {
-            createEditGroup = <EditScript closeModal={_this.onRequestClose} script={_this.state.editingScript}
-                                          cancel={::this.cancelEditScript} groups={_this.props.files}
-                                          editScript={this.props.editScript} editSuccess={this.props.editSuccess}/>
+            createEditGroup = <EditScript closeModal={::_this.onRequestClose} script={_this.state.editingScript}
+                                          cancel={::_this.cancelEditScript} groups={_this.props.files}
+                                          editScript={_this.props.editScript} editSuccess={_this.props.editSuccess}/>
         } else if (_this.state.removeScript) {
-            modal = <RemoveScript closeModal={_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
-                                  filesRequest={this.props.filesRequest}
+            modal = <RemoveScript closeModal={::_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
+                                  filesRequest={_this.props.filesRequest}
                                   script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
-                                  hideContent={this.hideContent}/>
+                                  hideContent={::_this.hideContent}/>
         } else if (this.state.addScript) {
             createEditGroup = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
                                            error={_this.props.error}
                                            createSuccess={_this.props.createSuccess}
-                                           cancel={::this.cancelAddGroupAndScript}/>
+                                           cancel={::_this.cancelAddGroupAndScript}/>
         } else if (_this.state.runScript) {
             selectMinions =
                 <TreeViewModalCheckboxes groups={_this.props.groupedMinions}
-                                         scriptName={this.state.scriptName}
-                                         executeScripts={this.props.executeScripts}
-                                         minions={true}/>
+                                         scriptName={_this.state.scriptName}
+                                         executeScripts={_this.props.executeScripts}
+                                         minions={true}
+                                         execute={_this.props.execute}/>
         }
 
         if (_this.state.showModal) {
             if (_this.state.removeGroup) {
-                modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={_this.onRequestClose}
+                modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={::_this.onRequestClose}
                                                  removeGroup={_this.props.removeGroup}/>
             } else if (_this.state.editGroup) {
-                modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={_this.onRequestClose}
+                modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={::_this.onRequestClose}
                                           groups={_this.props.files}
                                           edit={_this.props.editGroup}/>
             }
@@ -242,20 +243,20 @@ export class FilesTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск' floatingLabel={true} onChange={::this.filterTree}/>
+                    <Input label='Поиск' floatingLabel={true} onChange={::_this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={this.addScript}>добавить</button>
+                    <button className='mui-btn button' onClick={::_this.addScript}>добавить</button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
-                    {this.state.addScript || this.state.editScript ? createEditGroup : null}
-                    {this.state.showFileDescription ? fileDescription : null}
-                    {this.state.runScript ? selectMinions : null}
+                    {_this.state.addScript || _this.state.editScript ? createEditGroup : null}
+                    {_this.state.showFileDescription ? fileDescription : null}
+                    {_this.state.runScript ? selectMinions : null}
                 </Col>
             </Row>
-            <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
-                   onRequestClose={this.onRequestClose.bind(this)} overlayClassName='overlay'
+            <Modal contentLabel='label' isOpen={_this.state.showModal} className='modal'
+                   onRequestClose={::_this.onRequestClose} overlayClassName='overlay'
                    parentSelector={() => document.body} ariaHideApp={false}>
                 {modal}
             </Modal>

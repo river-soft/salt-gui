@@ -68,6 +68,10 @@ class App extends Component {
         }
     }
 
+    setExecuteFalse() {
+        this.props.executeScripts.execute = false;
+    }
+
     render() {
 
         const _this = this,
@@ -110,7 +114,9 @@ class App extends Component {
                                    removeGroupSuccess={_this.state.removeGroupSuccess}
                                    getGroupedMinions={getGroupedMinions}
                                    groupedMinions={this.props.groupedMinions.groupedMinions}
-                                   executeScripts={executeScripts}/>;
+                                   executeScripts={executeScripts}
+                                   execute={this.props.executeScripts.execute}
+                                   setExecuteFalse={::this.setExecuteFalse}/>;
 
         return (<div className='wrapper'>
             <Header />

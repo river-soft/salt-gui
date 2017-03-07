@@ -68,6 +68,10 @@ module.exports = {
                 loader: 'file?name=/fonts/[name].[ext]'
             },
             {
+                test: /\.(png|jpg|svg)$/,
+                loader: 'file?name=/img/[name].[ext]'
+            },
+            {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract('css!sass!autoprefixer')
             },

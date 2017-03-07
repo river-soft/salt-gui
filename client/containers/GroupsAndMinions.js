@@ -80,6 +80,11 @@ class GroupsAndMinions extends Component {
             this.onRequestClose();
             getGroupedMinions();
         }
+
+        if(this.props.executeScripts.execute && this.state.runScript) {
+            this.setState({runScript: false});
+            this.props.executeScripts.execute = false;
+        }
     }
 
     showContent(minionId, minionName) {

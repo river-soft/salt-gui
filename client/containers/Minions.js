@@ -76,7 +76,10 @@ class Minions extends Component {
                                                    rejectMinions={rejectMinions}
                                                    rejectMinionsSuccess={rejectMinionsSuccess}
                                                    setRejectedFalse={::this.setRejectedFalse}/>,
-            deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}/>,
+            deniedMinions = <MinionsDenied deniedMinions={this.props.minions.deniedMinions}
+                                           deleteMinions={deleteMinions}
+                                           deleteMinionsSuccess={deleteMinionsSuccess}
+                                           setDeletedFalse={::this.setDeletedFalse}/>,
             rejectedMinions = <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}
                                                deleteMinions={deleteMinions}
                                                deleteMinionsSuccess={deleteMinionsSuccess}
