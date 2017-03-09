@@ -23,7 +23,7 @@ export default class JobResultCounters extends Component {
             }
 
             tr.classList.add('active');
-            this.props.showJobDetails(jid)
+            this.props.showJobScriptResults(jid)
         }
     }
 

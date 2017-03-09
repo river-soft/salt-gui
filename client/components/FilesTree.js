@@ -143,6 +143,8 @@ export class FilesTree extends Component {
             getFiles: true,
             showFileDescription: true
         });
+
+        this.props.getScriptContent(this.state.editingScript.id);
     }
 
     editGroup(groupId, groupName) {
