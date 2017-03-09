@@ -3,6 +3,8 @@ package org.riversoft.salt.gui.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.Job
+import org.riversoft.salt.gui.domain.JobResult
+import org.riversoft.salt.gui.model.view.JobResultDetailsViewModel
 import org.riversoft.salt.gui.model.view.JobResultViewModel
 import org.riversoft.salt.gui.model.view.JobResultsCountsViewModel
 import org.riversoft.salt.gui.repository.JobRepository
@@ -35,12 +37,20 @@ class JobResultService {
     //endregion
 
     /**
+     * Обновление значения текущего jid
+     * @param jid - уникальный номер работыn
+     */
+    def updateJid(String jid) {
+        currentJid = jid
+    }
+
+    /**
      * Получение количества результатов выполнения работы по статусам
      * @return список моделей JobResultsCountsViewModel
      * @see JobResultsCountsViewModel
      */
     @Scheduled(fixedDelayString = '${salt.job_results.update_counts_interval:5000}')
-    def getAllJobResultsCount() {
+    def findAllJobResultsCount() {
 
         List<Job> jobs = jobRepository.findAll()
 
@@ -71,29 +81,15 @@ class JobResultService {
                             trueCounts: trueCount
                     )
             )
-//
-//            //TODO если isResult = false значит результат не пришел no connection
-//            //TODO если isResult = true результ есть
-//            //TODO если result.resultItems содержит хоть один false значит не выполнен
         }
 
         sendJobResultsBySignal('/queue/job-results/update-counts-job-results', "result counts", resultsData)
-
-        return resultsData
-    }
-
-    /**
-     * Обновление значения текущего jid
-     * @param jid - уникальный номер работыn
-     */
-    def updateJid(String jid) {
-        currentJid = jid
     }
 
     /**
      * Поиск всех результатов работы
      */
-    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+    @Scheduled(fixedDelayString = '${salt.job_results.update_list_interval:5000}')
     def findAllResultsByJob() {
 
         if (currentJid) {
@@ -106,79 +102,31 @@ class JobResultService {
         }
     }
 
-//    /**
-//     * Поиск no connected результатов работы
-//     */
-//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
-//    def findNoConnectedResultsByJob() {
-//
-//        if (currentJid) {
-//
-//            Job job = jobRepository.findOne(currentJid)
-//
-//            //isResult = false значит результат не пришел
-//
-//            def notConnectedResults = job.results.findAll { !it.isResult }
-//
-//            def results = notConnectedResults.collect { new JobResultViewModel(it) }
-//
-//            sendJobResultsBySignal('/queue/job-results/update-no-connected-results-by-job', "no connected results by job with jid [${currentJid}]", results)
-//        }
-//    }
-//
-//    /**
-//     * Поиск false результатов работы
-//     */
-//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
-//    def findFalseResultsByJob() {
-//
-//        if (currentJid) {
-//
-//            Job job = jobRepository.findOne(currentJid)
-//
-//            //есди result.resultItems содержит хоть один false значит не выполнен
-//
-//            def falseResults = job.results.findAll {
-//                it.jobResultDetails.findAll { !it.result } && it.isResult
-//            }
-//
-//            def results = falseResults.collect { new JobResultViewModel(it) }
-//
-//            sendJobResultsBySignal('/queue/job-results/update-false-results-by-job', "false results by job with jid [${currentJid}]", results)
-//        }
-//    }
-//
-//    /**
-//     * Поиск true результатов работы
-//     */
-//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
-//    def findTrueResultsByJob() {
-//
-//        if (currentJid) {
-//
-//            Job job = jobRepository.findOne(currentJid)
-//
-//            def falseResultsCount = job.results.findAll {
-//                it.jobResultDetails.findAll { !it.result } && it.isResult
-//            }.size()
-//
-//            def trueResults = []
-//
-//            if (!falseResultsCount) {
-//                trueResults = job.results.findAll {
-//                    it.jobResultDetails.findAll { it.result } && it.isResult
-//                }
-//            }
-//
-//            def results = trueResults.collect { new JobResultViewModel(it) }
-//
-//            sendJobResultsBySignal('/queue/job-results/update-true-results-by-job', "true results by job with jid [${currentJid}]", results)
-//            return results
-//        }
-//    }
+    /**
+     * Поиск деталей результата выполнения работы
+     * @param resultId - уникальный идентификатор результата работы
+     * @return список объктов JobResultDetailsViewModel
+     * @see JobResultDetailsViewModel
+     */
+    List<JobResultDetailsViewModel> findDetailsByJobResult(String resultId) {
+
+        log.debug("Start searching details by job result with id [${resultId}]")
+
+        JobResult jobResult = jobResultRepository.findOne(resultId)
+
+        List<JobResultDetailsViewModel> result = jobResult.jobResultDetails.collect {
+            new JobResultDetailsViewModel(it)
+        }
+
+        log.debug("Finish searching details by job result with id [${resultId}], found [${result.size()}] details records.")
+
+        return result
+    }
 
     /**
      * Отправка данных результатов выполнения работы по статусам
+     * @param signal - сигнал для отправки результатов
+     * @param message - сообщение выполняемого действия
      * @param map - объект/мапа с данными
      */
     void sendJobResultsBySignal(String signal, String message, def map) {

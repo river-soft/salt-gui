@@ -4,6 +4,8 @@ import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.service.JobResultService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Slf4j
@@ -14,9 +16,9 @@ class JobResultsController extends BaseRestController {
     JobResultService jobResultService
 
     @MessageMapping('/job-results-counts')
-    getAllJobResultsCount() {
+    findAllJobResultsCount() {
 
-        jobResultService.getAllJobResultsCount()
+        jobResultService.findAllJobResultsCount()
     }
 
     @MessageMapping('/find-all-results-by-job')
@@ -26,27 +28,9 @@ class JobResultsController extends BaseRestController {
         jobResultService.findAllResultsByJob()
     }
 
-//    @MessageMapping('/find-no-connected-results-by-job')
-//    findNoConnectedResultsByJob(HashMap map) {
-//
-//        jobResultService.updateJid(map["jid"] as String)
-//        jobResultService.findNoConnectedResultsByJob()
-//    }
-//
-//    @MessageMapping('/find-false-results-by-job')
-//    findFalseResultsByJob(HashMap map) {
-//
-//        jobResultService.updateJid(map["jid"] as String)
-//        jobResultService.findFalseResultsByJob()
-//    }
-//
-//    @MessageMapping('/find-true-results-by-job')
-//    findTrueResultsByJob(HashMap map) {
-//
-//        jobResultService.updateJid(map["jid"] as String)
-//        jobResultService.findTrueResultsByJob()
-//    }
+    @RequestMapping(value = '/find-details-by-job-result')
+    def findDetailsByJobResult(@RequestParam(value = "result_id", required = true) String resultId) {
 
-    //TODO получение списка деталей конкретного результата
-
+        jobResultService.findDetailsByJobResult(resultId)
+    }
 }

@@ -172,6 +172,7 @@ class ExecuteScriptService {
                         jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
                         jobResultDetail.description = val["value"]["__id__"]
                         jobResultDetail.changes = val["value"]["changes"]
+                        jobResultDetail.startTime = val["value"]["start_time"]
                         jobResultDetail.jobResult = jobResult
 
                         jobResult.jobResultDetails.add(jobResultDetail)

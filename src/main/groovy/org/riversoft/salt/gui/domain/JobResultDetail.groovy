@@ -31,7 +31,7 @@ class JobResultDetail {
     /**
      * Время начала выполнения работы
      */
-    Date startTime
+    String startTime
 
     /**
      * Флаг указывающий на успешное выполнение
