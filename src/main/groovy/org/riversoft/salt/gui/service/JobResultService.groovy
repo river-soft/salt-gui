@@ -3,6 +3,7 @@ package org.riversoft.salt.gui.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.domain.Job
+import org.riversoft.salt.gui.model.view.JobResultViewModel
 import org.riversoft.salt.gui.model.view.JobResultsCountsViewModel
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Service
 @Service
 class JobResultService {
 
+    private String currentJid = ""
+
     //region injection
+
     @Autowired
     private ObjectMapper mapper
 
@@ -44,17 +48,17 @@ class JobResultService {
 
         for (Job job : jobs) {
 
-            def notConnectedCount = job.results.findAll { it.isResult == false }.size()
+            def notConnectedCount = job.results.findAll { !it.isResult }.size()
 
             def falseCount = job.results.findAll {
-                it.jobResultDetails.findAll { it.result == false } && it.isResult == true
+                it.jobResultDetails.findAll { !it.result } && it.isResult
             }.size()
 
             def trueCount = 0
 
             if (!falseCount) {
                 trueCount = job.results.findAll {
-                    it.jobResultDetails.findAll { it.result == true } && it.isResult == true
+                    it.jobResultDetails.findAll { it.result } && it.isResult
                 }.size()
             }
 
@@ -73,20 +77,114 @@ class JobResultService {
 //            //TODO если result.resultItems содержит хоть один false значит не выполнен
         }
 
-        sendCountsOfJobResultsByStatus(resultsData)
+        sendJobResultsBySignal('/queue/job-results/update-counts-job-results', "result counts", resultsData)
 
-//        return resultsData
+        return resultsData
     }
 
     /**
-     * Отправка количества результатов выполнения работы по статусам
-     * @param map - объект/мапа с данными
+     * Обновление значения текущего jid
+     * @param jid - уникальный номер работыn
      */
-    void sendCountsOfJobResultsByStatus(def map) {
-
-        log.trace("Update counts of job results by statuses [${mapper.writeValueAsString(map)}]")
-
-        messagingTemplate.convertAndSend('/queue/job-results/update-counts-job-results', mapper.writeValueAsString(map))
+    def updateJid(String jid) {
+        currentJid = jid
     }
 
+    /**
+     * Поиск всех результатов работы
+     */
+    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+    def findAllResultsByJob() {
+
+        if (currentJid) {
+
+            Job job = jobRepository.findOne(currentJid)
+
+            def results = job.results.collect { new JobResultViewModel(it) }
+
+            sendJobResultsBySignal('/queue/job-results/update-all-results-by-job', "all results by job with jid [${currentJid}]", results)
+        }
+    }
+
+//    /**
+//     * Поиск no connected результатов работы
+//     */
+//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+//    def findNoConnectedResultsByJob() {
+//
+//        if (currentJid) {
+//
+//            Job job = jobRepository.findOne(currentJid)
+//
+//            //isResult = false значит результат не пришел
+//
+//            def notConnectedResults = job.results.findAll { !it.isResult }
+//
+//            def results = notConnectedResults.collect { new JobResultViewModel(it) }
+//
+//            sendJobResultsBySignal('/queue/job-results/update-no-connected-results-by-job', "no connected results by job with jid [${currentJid}]", results)
+//        }
+//    }
+//
+//    /**
+//     * Поиск false результатов работы
+//     */
+//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+//    def findFalseResultsByJob() {
+//
+//        if (currentJid) {
+//
+//            Job job = jobRepository.findOne(currentJid)
+//
+//            //есди result.resultItems содержит хоть один false значит не выполнен
+//
+//            def falseResults = job.results.findAll {
+//                it.jobResultDetails.findAll { !it.result } && it.isResult
+//            }
+//
+//            def results = falseResults.collect { new JobResultViewModel(it) }
+//
+//            sendJobResultsBySignal('/queue/job-results/update-false-results-by-job', "false results by job with jid [${currentJid}]", results)
+//        }
+//    }
+//
+//    /**
+//     * Поиск true результатов работы
+//     */
+//    @Scheduled(fixedDelayString = '${salt.minions.update_counts_interval:5000}')
+//    def findTrueResultsByJob() {
+//
+//        if (currentJid) {
+//
+//            Job job = jobRepository.findOne(currentJid)
+//
+//            def falseResultsCount = job.results.findAll {
+//                it.jobResultDetails.findAll { !it.result } && it.isResult
+//            }.size()
+//
+//            def trueResults = []
+//
+//            if (!falseResultsCount) {
+//                trueResults = job.results.findAll {
+//                    it.jobResultDetails.findAll { it.result } && it.isResult
+//                }
+//            }
+//
+//            def results = trueResults.collect { new JobResultViewModel(it) }
+//
+//            sendJobResultsBySignal('/queue/job-results/update-true-results-by-job', "true results by job with jid [${currentJid}]", results)
+//            return results
+//        }
+//    }
+
+    /**
+     * Отправка данных результатов выполнения работы по статусам
+     * @param map - объект/мапа с данными
+     */
+    void sendJobResultsBySignal(String signal, String message, def map) {
+
+        log.trace("Update ${message} to [${mapper.writeValueAsString(map)}].")
+
+        messagingTemplate.convertAndSend(signal, mapper.writeValueAsString(map))
+    }
 }

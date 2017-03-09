@@ -13,6 +13,9 @@ class JobResult {
     @Id
     String id
 
+    /**
+     * Флаг указывающий получены ли результаты
+     */
     boolean isResult
 
     /**
@@ -30,8 +33,6 @@ class JobResult {
     /**
      * Скрипты по которому выполняется работа
      */
-//    @DBRef
-//    SaltScript saltScript
     @DBRef(lazy = true)
     List<SaltScript> saltScripts = []
 
