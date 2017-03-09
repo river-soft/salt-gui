@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
+import java.text.SimpleDateFormat
+
 @Slf4j
 @Service
 class SaltScriptService {
@@ -76,6 +78,8 @@ class SaltScriptService {
         log.debug("Start creating salt script with name [${createSaltScript.name}].")
 
         saltScript = new SaltScript(name: createSaltScript.name.trim(), filePath: filePath, group: saltScriptGroup)
+        saltScript.createDate = new Date()
+        saltScript.lastModifiedDate = new Date()
         saltScriptRepository.save(saltScript)
 
         log.debug("Successfully created salt script with name [${createSaltScript.name}].")
@@ -214,6 +218,8 @@ class SaltScriptService {
 
             newFileName = editSaltScript.name.trim()
         }
+
+        saltScript.lastModifiedDate = new Date()
 
         saltScript.filePath = saltScriptFileService.updateSaltScriptSlsFile(saltScript.filePath, editSaltScript.content, newFileName)
         saltScriptRepository.save(saltScript)

@@ -33,4 +33,12 @@ class JobResultsController extends BaseRestController {
 
         jobResultService.findDetailsByJobResult(resultId)
     }
+
+    //TODO тест
+    @RequestMapping(value = '/find-results')
+    def findJobResult(@RequestParam(value = "id", required = true) String id) {
+
+        jobResultService.updateJid(id)
+        jobResultService.findAllResultsByJob()
+    }
 }

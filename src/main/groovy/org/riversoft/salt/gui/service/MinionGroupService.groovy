@@ -116,7 +116,7 @@ class MinionGroupService {
 
             log.debug("Start creating minion group wiht name [${groupName}].")
 
-            minionGroup = new MinionGroup(name: groupName.trim())
+            minionGroup = new MinionGroup(name: groupName.trim(), createDate: new Date(), lastModifiedDate: new Date())
             minionGroupRepository.save(minionGroup)
 
             log.debug("Successfully created minion group with name [${minionGroup.name}].")
@@ -124,7 +124,6 @@ class MinionGroupService {
 
         return minionGroup
     }
-
 
     /**
      * Редактирование группы миньона
@@ -147,6 +146,7 @@ class MinionGroupService {
             log.debug("Start updating MinionGroup name, from old name [${oldName}] to [${name}].")
 
             minionGroup.name = name
+            minionGroup.lastModifiedDate = new Date()
 
             minionGroupRepository.save(minionGroup)
 
@@ -191,6 +191,7 @@ class MinionGroupService {
                 minionGroupRepository.save(newMinionGroup)
             }
 
+            minion.lastModifiedDate = new Date()
             minionRepository.save(minion)
         }
 

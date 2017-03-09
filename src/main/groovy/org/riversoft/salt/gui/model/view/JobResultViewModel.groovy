@@ -1,6 +1,7 @@
 package org.riversoft.salt.gui.model.view
 
 import org.riversoft.salt.gui.domain.JobResult
+import org.riversoft.salt.gui.utils.DateTimeParser
 
 class JobResultViewModel {
 
@@ -10,6 +11,7 @@ class JobResultViewModel {
     String minionGroups
     boolean isResult
     String status
+    String lastModifiedDate
 
     JobResultViewModel(JobResult jobResult) {
         this.id = jobResult.id
@@ -17,6 +19,7 @@ class JobResultViewModel {
         this.minionName = jobResult.minion.name
         this.jid = jobResult.job.jid
         this.minionGroups = jobResult.minion.groups.collect { it.name }.join(",")
+        this.lastModifiedDate = DateTimeParser.dateToString(jobResult.lastModifiedDate)
 
         if (!jobResult.isResult) {
             this.status = "no connected"

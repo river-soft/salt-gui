@@ -1,6 +1,7 @@
 package org.riversoft.salt.gui.model.view
 
 import org.riversoft.salt.gui.domain.JobResultDetail
+import org.riversoft.salt.gui.utils.DateTimeParser
 
 class JobResultDetailsViewModel {
 
@@ -16,6 +17,7 @@ class JobResultDetailsViewModel {
     String description
     String minionName
     String jobName
+    String lastModifiedDate
 
     JobResultDetailsViewModel(JobResultDetail jobResultDetail) {
 
@@ -30,5 +32,6 @@ class JobResultDetailsViewModel {
         this.description = jobResultDetail.description
         this.jobName = jobResultDetail.jobResult.job.name
         this.minionName = jobResultDetail.jobResult.minion.name
+        this.lastModifiedDate = DateTimeParser.dateToString(jobResultDetail.lastModifiedDate)
     }
 }
