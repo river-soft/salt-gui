@@ -39,7 +39,9 @@ class JobResults extends Component {
     showJobDetails(jid) {
         this.setState({showJobDetails: true});
         this.state.client.send('/request/find-all-results-by-job', {}, JSON.stringify({jid: jid}));
-        this.state.client.subscribe('/queue/job-results/update-all-results-by-job', {}, '');
+        this.state.client.subscribe('/queue/job-results/update-all-results-by-job', (obj) => {
+
+        });
     }
 
 

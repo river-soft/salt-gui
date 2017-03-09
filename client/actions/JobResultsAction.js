@@ -18,6 +18,9 @@ export function jobResults() {
             });
         });
 
-        return client;
+        return {
+            client: client,
+            dispatch: dispatch
+        };
     }
 }

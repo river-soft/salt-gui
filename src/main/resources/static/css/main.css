@@ -4471,7 +4471,17 @@ body {
       .header__navigation_link:first-child {
         margin-left: 0; }
   .header__logo {
-    background-image: url(/img/logo.png); }
+    background-image: url(/img/logo.png);
+    height: 64px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-left: 15px;
+    width: 205px; }
+    .header__logo a {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      display: block; }
 
 .list {
   border: 2px solid #78909C;
@@ -4845,3 +4855,50 @@ body {
 
 .header__center {
   margin-left: 15px; }
+
+.job-table {
+  border: 3px solid #78909C;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  border-spacing: 0; }
+  .job-table tbody tr td {
+    padding: 0; }
+  .job-table__head {
+    background: #78909C;
+    color: #eee;
+    border-left: 2px solid #eee; }
+    .job-table__head:first-child {
+      border-left: none; }
+  .job-table__body {
+    border-left: 2px solid #78909C;
+    border-top: 1px solid #78909C; }
+    .job-table__body:first-child {
+      border-left: none; }
+    .job-table__body_row {
+      cursor: pointer; }
+      .job-table__body_row:hover {
+        background: #78909C;
+        color: #eee; }
+        .job-table__body_row:hover td {
+          border-left: 2px solid #eee; }
+          .job-table__body_row:hover td:first-child {
+            border-left: none; }
+      .job-table__body_row.active {
+        background: #78909C;
+        color: #eee; }
+        .job-table__body_row.active td {
+          border-left: 2px solid #eee; }
+          .job-table__body_row.active td:first-child {
+            border-left: none; }
+    .job-table__body_job-name {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+    .job-table__body_green {
+      color: #4CAF50; }
+    .job-table__body_red {
+      color: #F44336; }
+    .job-table__body_orange {
+      color: #FF9800; }
