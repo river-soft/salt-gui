@@ -296,7 +296,7 @@ body {
 }
 
 .input_error {
-  color: $error-text-color;
+  color: $red-text;
   font-size: 1.2rem;
 }
 
@@ -521,7 +521,14 @@ body {
   border: 3px solid $blue-background;
   @include borderRadius(6px);
   border-spacing: 0;
-  
+
+  & tbody {
+
+    & tr td {
+      padding: 0;
+    }
+  }
+
   &__head {
     background: $blue-background;
     color: #eee;
@@ -534,9 +541,59 @@ body {
 
   &__body {
     border-left: 2px solid $blue-background;
-
+    border-top: 1px solid $blue-background;
+    
     &:first-child {
       border-left: none;
+    }
+    
+    &_row {
+      cursor: pointer;
+      
+      &:hover {
+        background: $blue-background;
+        color: #eee;
+
+        & td {
+          border-left: 2px solid #eee;
+
+          &:first-child {
+            border-left: none;
+          }
+        }
+      }
+
+      &.active {
+        background: $blue-background;
+        color: #eee;
+
+        & td {
+          border-left: 2px solid #eee;
+
+          &:first-child {
+            border-left: none;
+          }
+        }
+      }
+    }
+
+    &_job-name {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    &_green {
+      color: $green-text;
+    }
+    
+    &_red {
+      color: $red-text;
+    }
+    
+    &_orange {
+      color: $orange-text;
     }
   }
 }

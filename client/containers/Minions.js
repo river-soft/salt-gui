@@ -102,12 +102,14 @@ class Minions extends Component {
                                 <Col md='12' xs='12' lg='12'>{countsGroup}</Col>
                             </Row>
                         </Col>
-                        <Col md='9' xs='6' lg='9'><Tabs className='minions-tabs' justified={true}>
-                            <Tab className='minions-tabs' label='Accepted'>{acceptedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Denied'>{deniedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Unaccepted'>{unacceptedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Rejected'>{rejectedMinions}</Tab>
-                        </Tabs></Col>
+                        <Col md='9' xs='6' lg='9'>
+                            <Tabs className='minions-tabs' justified={true}>
+                                <Tab className='minions-tabs' label='Accepted'>{acceptedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Denied'>{deniedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Unaccepted'>{unacceptedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Rejected'>{rejectedMinions}</Tab>
+                            </Tabs>
+                        </Col>
                     </Row>
                 </Container>
             </main>

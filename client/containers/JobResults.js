@@ -5,8 +5,10 @@ import {Header} from '../components/Header';
 import Container from 'muicss/lib/react/container';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
-import JobResultCounters from '../components/jobResults/JobResultConters';
+import JobResultCounters from '../components/jobResults/JobResultCounters';
 import * as jobResultsAction from '../actions/JobResultsAction';
+import Tabs from 'muicss/lib/react/tabs';
+import Tab from 'muicss/lib/react/tab';
 
 
 class JobResults extends Component {
@@ -15,7 +17,8 @@ class JobResults extends Component {
         super(props);
 
         this.state = {
-            client: ''
+            client: '',
+            showJobDetails: false
         }
     }
 
@@ -29,8 +32,16 @@ class JobResults extends Component {
         })
     }
 
-    componentDidUpdate() {
+    componentWillUnmount() {
+        this.state.client.disconnect();
     }
+
+    showJobDetails(jid) {
+        this.setState({showJobDetails: true});
+        this.state.client.send('/request/find-all-results-by-job', {}, JSON.stringify({jid: jid}));
+        this.state.client.subscribe('/queue/job-results/update-all-results-by-job', {}, '');
+    }
+
 
     render() {
 
@@ -41,10 +52,17 @@ class JobResults extends Component {
                     <Row>
                         <Col md='4' xs='6' lg='4'>
                             <h4>Результаты выполнения скриптов</h4>
-                            <JobResultCounters/>
+                            <JobResultCounters jobResults={this.props.jobResults.result}
+                                               showJobDetails={::this.showJobDetails}/>
                         </Col>
                         <Col md='8' xs='6' lg='8'>
-                            dva
+                            {this.state.showJobDetails ?
+                                <Tabs className='minions-tabs' justified={true}>
+                                    <Tab className='minions-tabs' label='All'>All</Tab>
+                                    <Tab className='minions-tabs' label='True'>True</Tab>
+                                    <Tab className='minions-tabs' label='False'>False</Tab>
+                                    <Tab className='minions-tabs' label='No connect'>No connect</Tab>
+                                </Tabs> : null}
                         </Col>
                     </Row>
                 </Container>
