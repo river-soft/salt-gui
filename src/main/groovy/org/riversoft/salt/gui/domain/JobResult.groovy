@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "jobs_results")
-class JobResult {
+class JobResult extends Base {
 
     /**
      * Уникальный номер результата работы

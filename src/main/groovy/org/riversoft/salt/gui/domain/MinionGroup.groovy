@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "minions_group")
-class MinionGroup {
+class MinionGroup extends Base{
 
     /**
      * Уникальный номер группы миньна

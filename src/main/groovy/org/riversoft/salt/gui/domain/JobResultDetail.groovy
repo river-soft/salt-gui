@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "jobs_results_details")
-class JobResultDetail {
+class JobResultDetail extends Base {
 
     /**
      * Уникальный номер единицы результата работы
@@ -16,7 +16,7 @@ class JobResultDetail {
     /**
      * Выполняемая команда
      */
-     String cmd
+    String cmd
 
     /**
      * Комментарий результата

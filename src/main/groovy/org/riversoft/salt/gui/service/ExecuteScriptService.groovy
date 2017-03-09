@@ -90,9 +90,17 @@ class ExecuteScriptService {
 
         log.debug("Start creating Job with jid [${result.jid}].")
 
-        Job job = jobRepository.save(new Job(jid: result.jid, done: false, name: saltScripts.collect {
-            it.name
-        }.join("/")))
+        Job job = jobRepository.save(
+                new Job(
+                        jid: result.jid,
+                        done: false,
+                        createDate: new Date(),
+                        lastModifiedDate: new Date(),
+                        name: saltScripts.collect {
+                            it.name
+                        }.join("/")
+                )
+        )
 
         log.debug("Successfully created Job with jid [${result.jid}] and with name [${job.name}].")
 
@@ -106,7 +114,13 @@ class ExecuteScriptService {
 
             log.debug("Start creating JobResult for minion [${minion.name}] and job with jid [${job.jid}].")
 
-            JobResult jobResult = new JobResult(minion: minion, job: job, saltScripts: saltScripts)
+            JobResult jobResult = new JobResult(
+                    minion: minion,
+                    job: job,
+                    saltScripts: saltScripts,
+                    createDate: new Date(),
+                    lastModifiedDate: new Date()
+            )
 
             jobResultRepository.save(jobResult)
 
@@ -165,7 +179,6 @@ class ExecuteScriptService {
                         JobResultDetail jobResultDetail = new JobResultDetail()
 
                         jobResultDetail.cmd = val["key"]
-
                         jobResultDetail.name = val["value"]["name"]
                         jobResultDetail.comment = val["value"]["comment"]
                         jobResultDetail.result = val["value"]["result"]
@@ -174,6 +187,8 @@ class ExecuteScriptService {
                         jobResultDetail.changes = val["value"]["changes"]
                         jobResultDetail.startTime = val["value"]["start_time"]
                         jobResultDetail.jobResult = jobResult
+                        jobResultDetail.createDate = new Date()
+                        jobResultDetail.lastModifiedDate = new Date()
 
                         jobResult.jobResultDetails.add(jobResultDetail)
 
@@ -185,6 +200,7 @@ class ExecuteScriptService {
 
                 //TODO может проверять если все результаты true ?
                 jobResult.isResult = true
+                jobResult.lastModifiedDate = new Date()
 
                 jobResultRepository.save(jobResult)
                 log.debug("Finish updating JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
@@ -200,8 +216,8 @@ class ExecuteScriptService {
 
         job.startTime = jobInfoSalt.startTime.date
         job.user = jobInfoSalt.user
-
         job.done = isDone
+        job.lastModifiedDate = new Date()
 
         jobRepository.save(job)
 
