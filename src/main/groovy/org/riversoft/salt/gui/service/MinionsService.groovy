@@ -134,6 +134,8 @@ class MinionsService {
 
     /**
      * Отправка данных миньонов
+     * @param signal - сигнал для отправки результатов
+     * @param status - статус миньона
      * @param map - объект/мапа с данными
      */
     void sendAllMinionsByStatuses(String signal, String status, def map) {
