@@ -23,23 +23,30 @@ export function jobResults() {
             load();
         });
 
-        let load = function() {
+        let load = () => {
             client.send('/request/job-results-counts', {}, '');
         };
 
-        let getJobResults = function (jid) {
-            client.subscribe('/queue/job-results/update-all-results-by-job', (obj) => {
+        let getJobResults = jid => {
+            let subscription = client.subscribe('/queue/job-results/update-all-results-by-job', (obj) => {
                 dispatch({
                     type: JOB_RESULTS_SCRIPT,
                     payload: JSON.parse(obj.body)
                 })
             });
             client.send('/request/find-all-results-by-job', {}, JSON.stringify({jid: jid}));
+
+            return subscription
+        };
+
+        let unSubscribeJobResults = (subscription) => {
+            subscription.unsubscribe();
         };
 
         return {
             client: client,
-            getJobResults: getJobResults
+            getJobResults: getJobResults,
+            unSubscribeJobResults: unSubscribeJobResults
         };
     }
 }

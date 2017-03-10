@@ -15,6 +15,7 @@ export default class JobResultCounters extends Component {
 
         if (tr.classList.contains('active')) {
             tr.classList.remove('active');
+            this.props.hideJobScriptsResult();
         } else {
             for (let i = 0; i < rows.length; i++) {
                 if (rows[i].classList.contains('active')) {
@@ -23,8 +24,10 @@ export default class JobResultCounters extends Component {
             }
 
             tr.classList.add('active');
-            this.props.showJobScriptResults(jid)
+            this.props.showJobScriptResults(jid);
         }
+
+        this.props.clearFilter();
     }
 
     render() {
