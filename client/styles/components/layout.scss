@@ -597,3 +597,17 @@ body {
     }
   }
 }
+
+.table__link {
+  cursor: pointer;
+}
+
+.job-results__header {
+  position: relative;
+}
+
+.arrow-back {
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+}

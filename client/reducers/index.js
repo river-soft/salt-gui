@@ -20,6 +20,7 @@ import editGroup from './editGroup';
 import removeGroup from './removeGroup';
 import executeScripts from './executeScripts';
 import jobResults from './jobResults';
+import jobDetails from './jobDetails';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -42,5 +43,6 @@ export default combineReducers({
     editGroup: editGroup,
     removeGroup: removeGroup,
     executeScripts: executeScripts,
-    jobResults: jobResults
+    jobResults: jobResults,
+    jobDetails: jobDetails
 })
