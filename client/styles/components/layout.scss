@@ -551,7 +551,7 @@ body {
       cursor: pointer;
       
       &:hover {
-        background: $blue-background;
+        background: $blue-background-light;
         color: #eee;
 
         & td {
@@ -564,7 +564,7 @@ body {
       }
 
       &.active {
-        background: $blue-background;
+        background: $blue-background-light;
         color: #eee;
 
         & td {
