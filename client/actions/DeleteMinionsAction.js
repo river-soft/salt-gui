@@ -19,13 +19,13 @@ export function deleteMinions(minions) {
             success: data => {
                 dispatch({
                     type: DELETE_MINIONS_SUCCESS,
-                    action: data.payload
+                    payload: data
                 });
             },
             error: error => {
                 dispatch({
                     type: DELETE_MINIONS_FAIL,
-                    action: error.responseJSON,
+                    payload: error.responseJSON,
                     error: true
                 });
             }

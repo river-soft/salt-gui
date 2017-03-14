@@ -120,7 +120,7 @@ export default class MinionsRejected extends Component {
                                 /></td>
                             </tr>
                         }) : <tr>
-                            <td>Данных нет</td>
+                            <td colSpan='2'>Данных нет</td>
                         </tr>}
                     </tbody>
                 </table>

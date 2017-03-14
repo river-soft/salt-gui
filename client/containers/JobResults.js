@@ -157,7 +157,7 @@ class JobResults extends Component {
                                             className='mi mi-keyboard-backspace'></i>Назад</span>
                                     </h4>
                                     {resultDetails.length ? resultDetails.map((result, i) => {
-                                            return <JobResultDetails result={result} key={i}/> //result={this.state.jobResult}
+                                            return <JobResultDetails result={result} key={i}/>
                                         }) : <p>Результатов нет</p>}
                                 </div> : null}
                         </Col>

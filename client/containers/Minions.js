@@ -52,6 +52,11 @@ class Minions extends Component {
         this.props.deleteMinions.deleted = false;
     }
 
+    setDeleteErrorFalse() {
+        this.props.deleteMinions.error = '';
+        this.setState({update: true});
+    }
+
     render() {
 
         const {getMinionsGroups} = this.props.getMinionsGroupsAction,
@@ -62,12 +67,15 @@ class Minions extends Component {
             rejectMinionsSuccess = this.props.rejectMinions.rejected,
             deleteMinionsSuccess = this.props.deleteMinions.deleted;
 
+        let deleteMinionsError = this.props.deleteMinions.error;
+
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
             acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}
-                                               deleteMinions={deleteMinions}
+                                               deleteMinions={deleteMinions} deleteMinionsError={deleteMinionsError}
                                                deleteMinionsSuccess={deleteMinionsSuccess}
-                                               setDeletedFalse={::this.setDeletedFalse}/>,
+                                               setDeletedFalse={::this.setDeletedFalse}
+                                               setDeleteErrorFalse={::this.setDeleteErrorFalse}/>,
             unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
                                                    getMinionsGroups={getMinionsGroups}
                                                    minionsGroups={this.props.minionsGroups.groups}

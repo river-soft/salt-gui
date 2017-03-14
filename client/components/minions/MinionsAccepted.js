@@ -15,7 +15,9 @@ export default class MinionsAccepted extends Component {
             rerender: false,
             checkedList: [],
             showModal: false,
-            delete: false
+            delete: false,
+            deleteMinionsError: false
+
         }
     }
 
@@ -59,6 +61,7 @@ export default class MinionsAccepted extends Component {
     }
 
     deleteMinions() {
+        this.props.setDeleteErrorFalse();
         this.setState({
             delete: true,
             showModal: true
@@ -72,7 +75,7 @@ export default class MinionsAccepted extends Component {
     }
 
     sendDeleteMinions() {
-        this.props.deleteMinions(this.state.checkedList)
+        this.props.deleteMinions(this.state.checkedList);
     }
 
     render() {
@@ -89,6 +92,7 @@ export default class MinionsAccepted extends Component {
                     return item + ' '
                 })}
                 </div>
+                {this.props.deleteMinionsError ? <span className='input_error'>{this.props.deleteMinionsError.message}</span> : null}
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendDeleteMinions}
@@ -120,7 +124,7 @@ export default class MinionsAccepted extends Component {
                                 /></td>
                             </tr>
                         }) : <tr>
-                            <td colSpan='2'>Данных нет</td>
+                            <td colSpan='3'>Данных нет</td>
                         </tr>}
                     </tbody>
                 </table>
