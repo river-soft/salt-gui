@@ -36,13 +36,39 @@ export default class JobResultDetails extends Component {
         return template
     }
 
+    parseObjName(obj) {
+
+        let template = [];
+
+        for (let key in obj) {
+
+            if (obj.hasOwnProperty(key)) {
+
+                if (key === 'cmd') {
+
+                    template.push(
+                        <p>
+                            {key}: {obj[key]}
+                        </p>
+                    )
+                }
+            }
+        }
+
+        return template
+    }
+
     render() {
 
         return <Panel className='posr'>
-            <span className='turn-off' onClick={::this.toggleMinimize} title={this.state.minimize ? 'Развернуть' : 'Свернуть'}>
+            <span className='turn-off' onClick={::this.toggleMinimize}
+                  title={this.state.minimize ? 'Развернуть' : 'Свернуть'}>
                 <i className={this.state.minimize ? 'mi mi-add' : 'mi mi-remove'}></i>
             </span>
-            <div className={this.state.minimize ? 'hidden' : ''}>{this.parseObj(this.props.result)}</div>
+            <div>
+                {/*{className={this.state.minimize ? 'hidden' : ''}> }*/}
+                {!this.state.minimize ? this.parseObj(this.props.result) : this.parseObjName(this.props.result)}
+            </div>
         </Panel>
     }
 }
