@@ -36,6 +36,7 @@ export default class RemoveScript extends Component {
             <div className='modal__content_question mui--text-center'>
                 Вы действительно хотите удалить файл {this.props.script.name}?
             </div>
+            {this.props.removeScriptError.error ? <span className='input_error'>{this.props.removeScriptError.message}</span> : null}
             <div className='modal__footer'>
                 <Divider/>
                 <Button size='small' color='primary' variant='flat' onClick={() => {

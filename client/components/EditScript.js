@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Form from 'muicss/lib/react/form';
 import Input from 'muicss/lib/react/input';
-import Divider from 'muicss/lib/react/divider';
 import Button from 'muicss/lib/react/button';
 import AceEditor from 'react-ace';
 
@@ -183,6 +182,7 @@ export default class EditScript extends Component {
                            }}/>
                     {this.state.scriptExist ?
                         <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
+                    {this.props.editScriptError.error ? <span className='input_error'>{this.props.editScriptError.error}</span> : null}
                     <AceEditor
                         mode='yaml'
                         theme='eclipse'
@@ -193,11 +193,9 @@ export default class EditScript extends Component {
                         onLoad={::this.setContentOnLoad}
                         value={this.state.content}
                     />
-
                 </div>
             </Form>
             <div>
-                <Divider />
                 <Button size='small' color='primary' variant='flat'
                         onClick={this.props.cancel} className='modal__btn mui--pull-right'>Отменить</Button>
                 <Button size='small' color='primary' variant='flat' onClick={this.editScript}
