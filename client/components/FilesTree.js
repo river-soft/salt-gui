@@ -219,7 +219,8 @@ export class FilesTree extends Component {
                                           editScriptError={_this.props.editScriptError}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={::_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
-                                  filesRequest={_this.props.filesRequest} removeScriptError={_this.props.removeScriptError}
+                                  filesRequest={_this.props.filesRequest}
+                                  removeScriptError={_this.props.removeScriptError}
                                   script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
                                   hideContent={::_this.hideContent}/>
         } else if (this.state.addScript) {
@@ -261,6 +262,7 @@ export class FilesTree extends Component {
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}
                     {_this.state.showFileDescription ? fileDescription : null}
                     {_this.state.runScript ? selectMinions : null}
+                    {_this.props.execute ? <span className="success-mess">Скрипты успешно отправлены на выполнение</span> : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={_this.state.showModal} className='modal'
