@@ -174,25 +174,34 @@ export default class TreeModalCheckboxes extends Component {
         this.setState({go: true});
     }
 
-    executeScripts() {
+    executeScripts(el) {
 
-        let scripts = [], minions = [];
+        if(!el.classList.contains('clicked')) {
+            let scripts = [], minions = [];
 
-        if (this.props.minions) {
-            scripts.push(this.props.scriptName);
+            if (this.props.minions) {
+                scripts.push(this.props.scriptName);
 
-            for (let i = 0; i < this.state.transferedList.length; i++) {
-                minions.push(this.state.transferedList[i].name);
+                for (let i = 0; i < this.state.transferedList.length; i++) {
+                    minions.push(this.state.transferedList[i].name);
+                }
+            } else {
+                minions.push(this.props.scriptName);
+
+                for (let i = 0; i < this.state.transferedList.length; i++) {
+                    scripts.push(this.state.transferedList[i].name);
+                }
             }
-        } else {
-            minions.push(this.props.scriptName);
 
-            for (let i = 0; i < this.state.transferedList.length; i++) {
-                scripts.push(this.state.transferedList[i].name);
+            this.props.executeScripts(minions, scripts);
+
+            el.classList.add('clicked');
+        } else {
+            if(this.props.executeError) {
+                el.classList.remove('clicked');
+                this.executeScripts(el);
             }
         }
-
-        this.props.executeScripts(minions, scripts);
     }
 
     render() {
@@ -229,15 +238,14 @@ export default class TreeModalCheckboxes extends Component {
                                 }}>{el.name}</li>
                             })}
                         </ul> : null }
-
+                    {this.props.executeError ? <span className='input_error'>{this.props.executeError.error}</span> : null}
                 </div>
                 {this.state.transferedList.length ? <div>
-                        <button className='button mui-btn mui--pull-right' onClick={() => {
-                            ::this.executeScripts();
+                        <button className='button mui-btn mui--pull-right' onClick={(e) => {
+                            ::this.executeScripts(e.target);
                         }}>run
                         </button>
                     </div> : null}
-
             </Col>
         </Row>
     }

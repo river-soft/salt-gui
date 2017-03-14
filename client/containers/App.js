@@ -72,6 +72,14 @@ class App extends Component {
         this.props.executeScripts.execute = false;
     }
 
+    setEditScriptFalse() {
+        this.props.editScript.error = '';
+    }
+
+    setRemoveScriptErrorFalse() {
+        this.props.scriptRemove.error = '';
+    }
+
     render() {
 
         const _this = this,
@@ -84,6 +92,10 @@ class App extends Component {
             {removeGroup} = _this.props.removeGroupAction,
             {getGroupedMinions} = _this.props.getGroupedMinionsAction,
             {executeScripts} = _this.props.executeScriptsAction;
+
+        let executeError = _this.props.executeScripts.error,
+            editScriptError = _this.props.editScript.error,
+            removeScriptError = _this.props.scriptRemove.error;
 
         if (_this.props.createGroup.group) {
 
@@ -103,20 +115,23 @@ class App extends Component {
             }
         }
 
-        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest}
-                                   removeSuccess={this.state.removeSuccess}
+        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest} executeError={executeError}
+                                   removeSuccess={_this.state.removeSuccess} removeScriptError={removeScriptError}
+                                   setRemoveScriptErrorFalse={::_this.setRemoveScriptErrorFalse}
                                    scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
                                    getScriptContent={getScriptContent} files={_this.props.filesTree.files}
-                                   error={_this.props.createGroup.error} createSuccess={this.state.createSuccess}
-                                   editScript={editScript} editSuccess={this.state.editSuccess} editGroup={editGroup}
-                                   editGroupSuccess={this.state.editGroupSuccess}
+                                   error={_this.props.createGroup.error} createSuccess={_this.state.createSuccess}
+                                   editScript={editScript} editSuccess={_this.state.editSuccess}
+                                   editScriptError={editScriptError} setEditScriptFalse={::_this.setEditScriptFalse}
+                                   editGroup={editGroup}
+                                   editGroupSuccess={_this.state.editGroupSuccess}
                                    removeGroup={removeGroup}
                                    removeGroupSuccess={_this.state.removeGroupSuccess}
                                    getGroupedMinions={getGroupedMinions}
-                                   groupedMinions={this.props.groupedMinions.groupedMinions}
+                                   groupedMinions={_this.props.groupedMinions.groupedMinions}
                                    executeScripts={executeScripts}
-                                   execute={this.props.executeScripts.execute}
-                                   setExecuteFalse={::this.setExecuteFalse}/>;
+                                   execute={_this.props.executeScripts.execute}
+                                   setExecuteFalse={::_this.setExecuteFalse}/>;
 
         return (<div className='wrapper'>
             <Header />

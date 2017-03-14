@@ -478,6 +478,10 @@ body {
   }
 }
 
+.job-details {
+  @extend .minion-details;
+}
+
 .select-items {
   position: relative;
 }
@@ -610,4 +614,12 @@ body {
   position: absolute;
   cursor: pointer;
   right: 0;
+}
+
+.turn-off {
+  position: absolute;
+  font-size: 2.5rem;
+  top: 0;
+  right: 5px;
+  cursor: pointer;
 }

@@ -3,6 +3,18 @@ import Panel from 'muicss/lib/react/panel';
 
 export default class JobResultDetails extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            minimize: false
+        }
+    }
+
+    toggleMinimize() {
+        this.setState({minimize: !this.state.minimize});
+    }
+
     parseObj(obj) {
 
         let template = [];
@@ -26,12 +38,11 @@ export default class JobResultDetails extends Component {
 
     render() {
 
-        return <div>
-            {this.props.resultDetails.length ? this.props.resultDetails.map((item, i) => {
-                    return <Panel key={i}>
-                        <span>{this.parseObj(item)}</span>
-                    </Panel>
-                }) : <span>Результатов нет</span>}
-        </div>
+        return <Panel className='posr'>
+            <span className='turn-off' onClick={::this.toggleMinimize} title={this.state.minimize ? 'Развернуть' : 'Свернуть'}>
+                <i className={this.state.minimize ? 'mi mi-add' : 'mi mi-remove'}></i>
+            </span>
+            <div className={this.state.minimize ? 'hidden' : ''}>{this.parseObj(this.props.result)}</div>
+        </Panel>
     }
 }

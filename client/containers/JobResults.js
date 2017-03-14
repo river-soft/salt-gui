@@ -156,7 +156,9 @@ class JobResults extends Component {
                                         <span className='arrow-back' onClick={::this.returnFromJobDetails}><i
                                             className='mi mi-keyboard-backspace'></i>Назад</span>
                                     </h4>
-                                    <JobResultDetails resultDetails={resultDetails} result={this.state.jobResult}/>
+                                    {resultDetails.length ? resultDetails.map((result, i) => {
+                                            return <JobResultDetails result={result} key={i}/> //result={this.state.jobResult}
+                                        }) : <p>Результатов нет</p>}
                                 </div> : null}
                         </Col>
                     </Row>

@@ -204,7 +204,7 @@ class GroupsAndMinions extends Component {
             {editMinionGroups} = this.props.editMinionGroupsAction,
             {executeScripts} = this.props.executeScriptsAction;
 
-        let treeView, modal;
+        let treeView, modal, executeError = this.props.executeScripts.error;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
@@ -265,7 +265,7 @@ class GroupsAndMinions extends Component {
                             {this.state.runScript ?
                                 <TreeViewModalCheckboxes groups={this.props.filesTree.files}
                                                          scriptName={this.state.minionName}
-                                                         executeScripts={executeScripts}
+                                                         executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
                         </Col>
                     </Row>
