@@ -24,11 +24,15 @@ export default class JobResultDetails extends Component {
                 if (key === 'id' || key === 'lastModifiedDate' || key === 'jobName') {
                     continue
                 } else {
-                    template.push(
-                        <p>
-                            {key}: {obj[key]}
-                        </p>
-                    )
+
+                    if (obj[key]) {
+
+                        template.push(
+                            <p>
+                                {key}: {obj[key]}
+                            </p>
+                        )
+                    }
                 }
             }
         }
@@ -39,7 +43,17 @@ export default class JobResultDetails extends Component {
     parseObjName(obj) {
 
         if (obj.hasOwnProperty('cmd')) {
-            return <p>{'cmd'}: {obj['cmd']}</p>;
+
+            if (obj['cmd']) {
+                return <p>{'cmd'}: {obj['cmd']}</p>;
+
+            } else {
+
+                if (obj.hasOwnProperty('comment')) {
+
+                    return <p>{'comment'}: {obj['comment']}</p>;
+                }
+            }
         }
     }
 
