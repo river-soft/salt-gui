@@ -188,25 +188,45 @@ class ExecuteScriptService {
                             log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
                                     "id [${jobResult.job.jid}].")
 
-                            JobResultDetail jobResultDetail = new JobResultDetail()
+                            //TODO провека если val не содержит key  и т.д. не брать эти значения и не писать в бд
 
-                            jobResultDetail.cmd = val["key"]
-                            jobResultDetail.name = val["value"]["name"]
-                            jobResultDetail.comment = val["value"]["comment"]
-                            jobResultDetail.result = val["value"]["result"]
-                            jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
-                            jobResultDetail.description = val["value"]["__id__"]
-                            jobResultDetail.changes = val["value"]["changes"]
-                            jobResultDetail.startTime = val["value"]["start_time"]
-                            jobResultDetail.jobResult = jobResult
-                            jobResultDetail.createDate = new Date()
-                            jobResultDetail.lastModifiedDate = new Date()
+                            if (!val instanceof String) {
 
-                            jobResult.jobResultDetails.add(jobResultDetail)
+                                JobResultDetail jobResultDetail = new JobResultDetail()
 
-                            jobResultDetailRepository.save(jobResultDetail)
-                            log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
-                                    "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
+                                jobResultDetail.cmd = val["key"]
+                                jobResultDetail.name = val["value"]["name"]
+                                jobResultDetail.comment = val["value"]["comment"]
+                                jobResultDetail.result = val["value"]["result"]
+                                jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
+                                jobResultDetail.description = val["value"]["__id__"]
+                                jobResultDetail.changes = val["value"]["changes"]
+                                jobResultDetail.startTime = val["value"]["start_time"]
+                                jobResultDetail.jobResult = jobResult
+                                jobResultDetail.createDate = new Date()
+                                jobResultDetail.lastModifiedDate = new Date()
+
+                                jobResult.jobResultDetails.add(jobResultDetail)
+
+                                jobResultDetailRepository.save(jobResultDetail)
+                                log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
+                                        "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
+                            } else {
+
+                                log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
+                                        "Reason - [${val}].")
+
+                                JobResultDetail jobResultDetail = new JobResultDetail()
+                                jobResultDetail.comment = val
+                                jobResultDetail.createDate = new Date()
+                                jobResultDetail.lastModifiedDate = new Date()
+                                jobResultDetail.jobResult = jobResult
+                                jobResultDetail.result = false
+
+                                jobResult.jobResultDetails.add(jobResultDetail)
+
+                                jobResultDetailRepository.save(jobResultDetail)
+                            }
                         }
                     }
 
