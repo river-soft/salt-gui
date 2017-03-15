@@ -392,6 +392,7 @@ body {
       color: #eee;
       text-transform: uppercase;
       border-left: 2px solid #eee;
+      @include clearfix();
 
       &:first-child {
         border-left: none;
@@ -622,4 +623,8 @@ body {
   top: 0;
   right: 5px;
   cursor: pointer;
+}
+
+.header-checkbox {
+  margin: 0;
 }

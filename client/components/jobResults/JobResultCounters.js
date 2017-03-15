@@ -8,7 +8,7 @@ export default class JobResultCounters extends Component {
         this.state = {}
     }
 
-    selectRow(el, jid) {
+    selectRow(el, jid, jobName) {
 
         let rows = document.querySelectorAll('.job-table__body_row'),
             tr = el.parentElement;
@@ -24,7 +24,7 @@ export default class JobResultCounters extends Component {
             }
 
             tr.classList.add('active');
-            this.props.showJobScriptResults(jid);
+            this.props.showJobScriptResults(jid, jobName);
         }
 
         this.props.clearFilter();
@@ -40,8 +40,8 @@ export default class JobResultCounters extends Component {
                 <td className='job-table__head mui--text-center' style={{width: '20%'}}>No connect</td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
-                    return <tr key={i} className='job-table__body_row' onClick={(e) => {
-                        ::this.selectRow(e.target, el.jid)
+                    return <tr key={i} className='job-table__body_row' title={el.jobName} onClick={(e) => {
+                        ::this.selectRow(e.target, el.jid, el.jobName);
                     }}>
                         <td className='job-table__body mui--text-center job-table__body_job-name'>{el.jobName}</td>
                         <td className='job-table__body mui--text-center job-table__body_green'>{el.trueCounts}</td>

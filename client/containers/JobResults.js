@@ -10,6 +10,7 @@ import JobAllResults from '../components/jobResults/JobAllResults';
 import JobResultDetails from '../components/jobResults/JobResultDetails';
 import * as jobResultsAction from '../actions/JobResultsAction';
 import * as jobDetailsAction from '../actions/JobDetailsAction';
+import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -26,7 +27,8 @@ class JobResults extends Component {
             subscription: '',
             clearFilter: false,
             showJobDescription: false,
-            jobResult: ''
+            jobResult: '',
+            scriptsName: ''
         }
     }
 
@@ -46,8 +48,10 @@ class JobResults extends Component {
         this.state.client.disconnect();
     }
 
-    showJobScriptResults(jid) {
+    showJobScriptResults(jid, script) {
         try {
+
+            let scripts = script.split('/');
 
             if (this.state.subscription) {
                 this.state.unSubscribeJobResults(this.state.subscription);
@@ -57,7 +61,8 @@ class JobResults extends Component {
             this.setState({
                 showJobDetails: true,
                 subscription: subscription,
-                showJobDescription: false
+                showJobDescription: false,
+                scriptsName: scripts
             });
         } catch (error) {
             new Error(error);
@@ -96,11 +101,16 @@ class JobResults extends Component {
         })
     }
 
+    setExecuteFalse() {
+        this.props.executeScripts.execute = false;
+    }
 
     render() {
 
+        const {executeScripts} = this.props.executeScriptsAction;
+
         let jobResults = this.props.jobResults.jobScriptResults, trueResults = [], falseResults = [], noConnectResults = [],
-            resultDetails = this.props.jobDetails.jobDetails;
+            executeError = this.props.executeScripts.error, resultDetails = this.props.jobDetails.jobDetails;
 
         for (let i = 0; i < jobResults.length; i++) {
             if (jobResults[i].status === 'true') {
@@ -143,11 +153,19 @@ class JobResults extends Component {
                                     <Tab className='minions-tabs' label='False'><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
-                                        resultDetails={resultDetails} showJobDetails={::this.showJobDetails}/></Tab>
+                                        resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
+                                        executeScripts={executeScripts} executeError={executeError}
+                                        scriptName={this.state.scriptsName}
+                                        execute={this.props.executeScripts.execute}
+                                        setExecuteFalse={::this.setExecuteFalse}/></Tab>
                                     <Tab className='minions-tabs' label='No connect'><JobAllResults
                                         jobResults={noConnectResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
-                                        resultDetails={resultDetails} showJobDetails={::this.showJobDetails}/></Tab>
+                                        resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
+                                        executeScripts={executeScripts} executeError={executeError}
+                                        scriptName={this.state.scriptsName}
+                                        execute={this.props.executeScripts.execute}
+                                        setExecuteFalse={::this.setExecuteFalse}/></Tab>
                                 </Tabs> : null}
                             {this.state.showJobDescription ?
                                 <div className='job-results'>
@@ -171,14 +189,16 @@ class JobResults extends Component {
 function mapStateToProps(state) {
     return {
         jobResults: state.jobResults,
-        jobDetails: state.jobDetails
+        jobDetails: state.jobDetails,
+        executeScripts: state.executeScripts
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         jobResultsAction: bindActionCreators(jobResultsAction, dispatch),
-        jobDetailsAction: bindActionCreators(jobDetailsAction, dispatch)
+        jobDetailsAction: bindActionCreators(jobDetailsAction, dispatch),
+        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
     }
 }
 
