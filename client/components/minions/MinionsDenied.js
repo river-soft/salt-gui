@@ -34,7 +34,7 @@ export default class MinionsDenied extends Component {
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>NAME</td>
+                        <td className='table__head'>Название</td>
                     </tr>
                     {deniedMinions ? deniedMinions.map((item, index) => {
                             return <tr key={index}>

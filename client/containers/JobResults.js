@@ -129,22 +129,22 @@ class JobResults extends Component {
                         <Col md='8' xs='12' lg='8'>
                             {this.state.showJobDetails ?
                                 <Tabs className='minions-tabs' justified={true}>
-                                    <Tab className='minions-tabs' label='All'>
+                                    <Tab className='minions-tabs' label='Все'>
                                         <JobAllResults jobResults={jobResults} showStatus={true}
                                                        clearFilter={this.state.clearFilter}
                                                        clearFilterFalse={::this.clearFilterFalse}
                                                        resultDetails={resultDetails}
                                                        showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='True'><JobAllResults jobResults={trueResults}
+                                    <Tab className='minions-tabs' label='Выполнено'><JobAllResults jobResults={trueResults}
                                                                                               clearFilter={this.state.clearFilter}
                                                                                               clearFilterFalse={::this.clearFilterFalse}
                                                                                               resultDetails={resultDetails}
                                                                                               showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='False'><JobAllResults
+                                    <Tab className='minions-tabs' label='Не выполнено'><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='No connect'><JobAllResults
+                                    <Tab className='minions-tabs' label='Нет соединения'><JobAllResults
                                         jobResults={noConnectResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}/></Tab>

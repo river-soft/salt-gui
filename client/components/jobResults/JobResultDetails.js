@@ -38,24 +38,9 @@ export default class JobResultDetails extends Component {
 
     parseObjName(obj) {
 
-        let template = [];
-
-        for (let key in obj) {
-
-            if (obj.hasOwnProperty(key)) {
-
-                if (key === 'cmd') {
-
-                    template.push(
-                        <p>
-                            {key}: {obj[key]}
-                        </p>
-                    )
-                }
-            }
+        if (obj.hasOwnProperty('cmd')) {
+            return <p>{'cmd'}: {obj['cmd']}</p>;
         }
-
-        return template
     }
 
     render() {

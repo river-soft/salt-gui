@@ -69,11 +69,11 @@ export default class JobAllResults extends Component {
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>Minion</td>
-                        <td className='table__head'>Group</td>
-                        <td className='table__head'>Latest Report</td>
-                        {this.props.showStatus ? <td className='table__head'>Status</td> : null}
-                        {this.props.showSelect ? <td className='table__head'>Select</td> : null}
+                        <td className='table__head'>Миньон</td>
+                        <td className='table__head'>Группа</td>
+                        <td className='table__head'>Дата обновления</td>
+                        {this.props.showStatus ? <td className='table__head'>Статус</td> : null}
+                        {this.props.showSelect ? <td className='table__head'>Выбор</td> : null}
                     </tr>
                     {jobResults.length ? jobResults.map((item, index) => {
                             return <tr key={index} ref={index}>
@@ -97,7 +97,7 @@ export default class JobAllResults extends Component {
                             disabled={!this.state.checkedList.length} onClick={() => {
                         console.log('CLICK')
                     }}>
-                        Restart
+                        Перезапустить
                     </Button>
                     : null}
 
@@ -108,6 +108,6 @@ export default class JobAllResults extends Component {
                     ::this.filter(e.target.value);
                 }}/>
                 {template}
-            </div> : <div className='right-block-list'>No results</div>
+            </div> : <div className='right-block-list'>Нет результатов</div>
     }
 }

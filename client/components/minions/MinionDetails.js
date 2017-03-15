@@ -48,7 +48,7 @@ export default class MinionDetails extends Component {
             <div className='file__footer'>
                 <button className='button mui-btn mui--pull-right' onClick={() => {
                     ::this.props.runScript(this.props.minionName);
-                }}>run</button>
+                }}>Запустить</button>
             </div>
         </Panel>
     }

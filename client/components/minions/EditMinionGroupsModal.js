@@ -61,10 +61,10 @@ export default class EditMinionGroupsModal extends Component {
 
         return <div className='modal__content'>
             <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
-            <h4 className='mui--text-center modal__header'>Edit minion groups</h4>
+            <h4 className='mui--text-center modal__header'>Редактирование групп миньона</h4>
             <div className='modal__body'>
                 <div className='block-list'>
-                    <h6 className='block-list__header'>Choose groups</h6>
+                    <h6 className='block-list__header'>Выберите группы</h6>
                     {this.props.groups.length ? this.props.groups.map((item, index) => {
                             return <Checkbox label={item.name} key={index} onChange={e => {
                                 ::this.addToGroupsList(e, item.name, item.id)
@@ -76,9 +76,9 @@ export default class EditMinionGroupsModal extends Component {
                 <Divider />
                 <Button size='small' color='primary' variant='flat'
                         className='modal__btn mui--pull-right' onClick={::this.editMinionGroups}
-                        disabled={!this.state.groupsList.length}>Edit</Button>
+                        disabled={!this.state.groupsList.length}>Сохранить</Button>
                 <Button size='small' color='primary' variant='flat' onClick={this.props.closeModal}
-                        className='modal__btn mui--pull-right'>Cancel</Button>
+                        className='modal__btn mui--pull-right'>Отменить</Button>
             </div>
         </div>
     }
