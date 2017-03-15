@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionNotFoundException
+import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.model.view.MinionGroupViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
@@ -67,23 +68,34 @@ class MinionDetailsService {
      */
     def findMinionDetails(String minionName) {
 
+        log.debug("Start getting details for minion with name [${minionName}].")
+
         Minion minion = minionRepository.findByName(minionName)
         if (!minion) {
             log.error("Minion with name [${minionName}] not found.")
             throw new MinionNotFoundException("Minion with name [${minionName}] not found.")
         }
 
-        // Set targets
-        Target<List<String>> minionList = new MinionList(minionName);
+        try {
 
-        // call Grains.item
-        Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, properties)
-                .callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
+            // Set targets
+            Target<List<String>> minionList = new MinionList(minionName);
 
-        // get result of Grains.item
-        def result = grainResults.collect { ["${it.key}": it.value?.xor?.right()?.value] }
+            // call Grains.item
+            Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, properties)
+                    .callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
 
-        return result
+            // get result of Grains.item
+            def result = grainResults.collect { ["${it.key}": it.value?.xor?.right()?.value] }
+
+            return result
+
+        } catch (Exception e) {
+
+            log.error("Error of getting minion [${minionName}] details from salt server.")
+            throw new SaltGuiException("Error of getting minion [${minionName}] details from salt server.", e,
+                    "Произошла ошибка при получении деталей миньона ${minionName}, ${e.message}")
+        }
     }
 
 }

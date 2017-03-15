@@ -100,12 +100,12 @@ export default class JobAllResults extends Component {
                 <table width='100%' className='mui-table' ref='table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>Minion</td>
-                        <td className='table__head'>Group</td>
-                        <td className='table__head'>Latest Report</td>
-                        {this.props.showStatus ? <td className='table__head'>Status</td> : null}
+                        <td className='table__head'>Миньон</td>
+                        <td className='table__head'>Группа</td>
+                        <td className='table__head'>Дата обновления</td>
+                        {this.props.showStatus ? <td className='table__head'>Статус</td> : null}
                         {this.props.showSelect ? <td className='table__head'>
-                                <span className='mui--pull-left'>Select</span>
+                                <span className='mui--pull-left'>Выбор</span>
                                 <Checkbox className='mui--pull-right header-checkbox' title='Выбрать все'
                                           ref='header-checkbox'
                                           onClick={e => {
@@ -135,7 +135,7 @@ export default class JobAllResults extends Component {
                             disabled={!this.state.checkedList.length || this.state.restarted} onClick={() => {
                         ::this.executeScripts();
                     }}>
-                        Restart
+                        Перезапустить
                     </Button>
                     : null}
             </div>;
@@ -145,6 +145,6 @@ export default class JobAllResults extends Component {
                     ::this.filter(e.target.value);
                 }}/>
                 {template}
-            </div> : <div className='right-block-list'>No results</div>
+            </div> : <div className='right-block-list'>Нет результатов</div>
     }
 }

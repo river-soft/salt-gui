@@ -34,10 +34,10 @@ export default class JobResultCounters extends Component {
         return <table width='100%' className='mui-table job-table'>
             <tbody>
             <tr>
-                <td className='job-table__head mui--text-center' style={{width: '50%'}}>Job</td>
-                <td className='job-table__head mui--text-center' style={{width: '15%'}}>True</td>
-                <td className='job-table__head mui--text-center' style={{width: '15%'}}>False</td>
-                <td className='job-table__head mui--text-center' style={{width: '20%'}}>No connect</td>
+                <td className='job-table__head mui--text-center' style={{width: '50%'}}>Работа</td>
+                <td className='job-table__head mui--text-center' style={{width: '15%'}}>Выполнено</td>
+                <td className='job-table__head mui--text-center' style={{width: '15%'}}>Не выполнено</td>
+                <td className='job-table__head mui--text-center' style={{width: '20%'}}>Нет соединения</td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
                     return <tr key={i} className='job-table__body_row' title={el.jobName} onClick={(e) => {

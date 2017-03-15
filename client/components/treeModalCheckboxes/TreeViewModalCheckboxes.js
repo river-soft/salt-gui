@@ -217,7 +217,7 @@ export default class TreeModalCheckboxes extends Component {
                 transferedList={this.state.transferedList}/>) : null;
 
         return <Row>
-            <h5 className='header__center'>{!this.props.minions ? 'Choose a scripts' : 'Choose a minions'}</h5>
+            <h5 className='header__center'>{!this.props.minions ? 'Выберите скрипты' : 'Выберите миньоны'}</h5>
             <Col md='4' xs='4' lg='4' className='posr'>
                 <div className='select-items'>
                     <ul className='list mui-list--unstyled'>{nodes}</ul>
@@ -243,7 +243,7 @@ export default class TreeModalCheckboxes extends Component {
                 {this.state.transferedList.length ? <div>
                         <button className='button mui-btn mui--pull-right' onClick={(e) => {
                             ::this.executeScripts(e.target);
-                        }}>run
+                        }}>Запустить
                         </button>
                     </div> : null}
             </Col>

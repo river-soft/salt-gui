@@ -86,9 +86,9 @@ export default class MinionsAccepted extends Component {
         if (this.state.delete) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Delete minions</h4>
+                <h4 className='mui--text-center modal__header'>Удалить миньон</h4>
                 <div className='modal__body'>
-                    Are you sure you want to delete {this.state.checkedList.map((item) => {
+                    Вы уверены что хотите удалить миньон: {this.state.checkedList.map((item) => {
                     return item + ' '
                 })}
                 </div>
@@ -96,7 +96,7 @@ export default class MinionsAccepted extends Component {
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendDeleteMinions}
-                            className='modal__btn mui--pull-right'>Delete</Button>
+                            className='modal__btn mui--pull-right'>Удалить</Button>
                 </div>
             </div>
         }
@@ -109,9 +109,9 @@ export default class MinionsAccepted extends Component {
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>NAME</td>
-                        <td className='table__head'>GROUP</td>
-                        <td className='table__head'>SELECT</td>
+                        <td className='table__head'>Название</td>
+                        <td className='table__head'>Группа</td>
+                        <td className='table__head'>Выбор</td>
                     </tr>
                     {acceptedMinions ? acceptedMinions.map((item, index) => {
                             return <tr key={index}>
@@ -131,7 +131,7 @@ export default class MinionsAccepted extends Component {
                 {acceptedMinions.length ?
                     <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                             disabled={!this.state.checkedList.length} onClick={::this.deleteMinions}>
-                        delete
+                        Удалить
                     </Button> : null}
             </div>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'

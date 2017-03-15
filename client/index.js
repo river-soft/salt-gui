@@ -15,8 +15,8 @@ export const store = configureStore();
 render(
     <Provider store={store}>
         <Router history={hashHistory}>
-            <Route path='/' component={App}/>
-            <Route path='/minions' component={Minions}/>
+            <Route path='/' component={Minions}/>
+            <Route path='/scripts' component={App}/>
             <Route path='/groups-and-minions' component={GroupsAndMinions}/>
             <Route path='/job-results' component={JobResults}/>
         </Router>
