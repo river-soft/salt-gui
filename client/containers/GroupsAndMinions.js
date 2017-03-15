@@ -83,9 +83,10 @@ class GroupsAndMinions extends Component {
 
         if(this.props.executeScripts.execute && this.state.runScript) {
             this.setState({runScript: false});
+        } else if(!this.state.runScript) {
             this.props.executeScripts.execute = false;
         }
-    }
+     }
 
     showContent(minionId, minionName) {
         const {getMinionDetails} = this.props.minionDetailsAction;
@@ -267,6 +268,7 @@ class GroupsAndMinions extends Component {
                                                          scriptName={this.state.minionName}
                                                          executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
+                            {this.props.executeScripts.execute ? <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
                         </Col>
                     </Row>
                 </Container>

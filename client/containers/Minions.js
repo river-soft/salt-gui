@@ -113,7 +113,7 @@ class Minions extends Component {
                         <Col md='9' xs='6' lg='9'>
                             <Tabs className='minions-tabs' justified={true}>
                                 <Tab className='minions-tabs' label='Принятые'>{acceptedMinions}</Tab>
-                                <Tab className='minions-tabs' label='Отказаные'>{deniedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Отказанные'>{deniedMinions}</Tab>
                                 <Tab className='minions-tabs' label='Не принятые'>{unacceptedMinions}</Tab>
                                 <Tab className='minions-tabs' label='Отклоненные'>{rejectedMinions}</Tab>
                             </Tabs>

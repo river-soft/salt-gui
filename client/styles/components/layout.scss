@@ -33,6 +33,10 @@ body {
       font-size: 1.5rem;
       margin-left: 10px;
 
+      &.active {
+        text-decoration: underline;
+      }
+
       &:first-child {
         margin-left: 0;
       }
@@ -538,8 +542,10 @@ body {
     background: $blue-background;
     color: #eee;
     border-left: 2px solid #eee;
+    font-size: 20px;
 
     &:first-child {
+      font-size: inherit;
       border-left: none;
     }
   }

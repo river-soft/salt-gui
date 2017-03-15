@@ -262,7 +262,8 @@ export class FilesTree extends Component {
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}
                     {_this.state.showFileDescription ? fileDescription : null}
                     {_this.state.runScript ? selectMinions : null}
-                    {_this.props.execute ? <span className="success-mess">Скрипты успешно отправлены на выполнение</span> : null}
+                    {_this.props.execute ?
+                        <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={_this.state.showModal} className='modal'

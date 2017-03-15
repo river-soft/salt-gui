@@ -11,7 +11,8 @@ export default class JobResultCounters extends Component {
     selectRow(el, jid, jobName) {
 
         let rows = document.querySelectorAll('.job-table__body_row'),
-            tr = el.parentElement;
+            tr = el.parentElement,
+            inputs = document.getElementsByTagName('input');
 
         if (tr.classList.contains('active')) {
             tr.classList.remove('active');
@@ -28,16 +29,25 @@ export default class JobResultCounters extends Component {
         }
 
         this.props.clearFilter();
+
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].type === 'checkbox') {
+                inputs[i].checked = false;
+            }
+        }
     }
 
     render() {
-        return <table width='100%' className='mui-table job-table'>
+        return <table className='mui-table job-table'>
             <tbody>
             <tr>
-                <td className='job-table__head mui--text-center' style={{width: '50%'}}>Работа</td>
-                <td className='job-table__head mui--text-center' style={{width: '15%'}}>Выполнено</td>
-                <td className='job-table__head mui--text-center' style={{width: '15%'}}>Не выполнено</td>
-                <td className='job-table__head mui--text-center' style={{width: '20%'}}>Нет соединения</td>
+                <td className='job-table__head mui--text-center' width='40%'>Работа</td>
+                <td className='job-table__head mui--text-center job-table__body_green' width='20%'
+                    title='Выполнено'><i className='mi mi-done'></i></td>
+                <td className='job-table__head mui--text-center job-table__body_orange' width='20%'
+                    title='Не выполнено'><i className='mi mi-close'></i></td>
+                <td className='job-table__head mui--text-center job-table__body_red' width='20%'
+                    title='Нет соединения'><i className='mi mi-cloud-off'></i></td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
                     return <tr key={i} className='job-table__body_row' title={el.jobName} onClick={(e) => {
@@ -51,6 +61,5 @@ export default class JobResultCounters extends Component {
                 }) : null}
             </tbody>
         </table>
-
     }
 }
