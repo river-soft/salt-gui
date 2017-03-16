@@ -29,6 +29,9 @@ export default class JobResultCounters extends Component {
         }
 
         this.props.clearFilter();
+        this.props.setExecuteFalse();
+        this.props.clearCheckedList();
+        this.props.setExecuteErrorFalse();
 
         for (let i = 0; i < inputs.length; i++) {
             if (inputs[i].type === 'checkbox') {

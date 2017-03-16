@@ -19,6 +19,11 @@ class JobResult extends Base {
     boolean isResult
 
     /**
+     * Флаг указывающий на перезапуск скрипта
+     */
+    boolean reExecuted
+
+    /**
      * Работа по которой береться результат
      */
     @DBRef

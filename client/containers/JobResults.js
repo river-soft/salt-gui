@@ -10,7 +10,7 @@ import JobAllResults from '../components/jobResults/JobAllResults';
 import JobResultDetails from '../components/jobResults/JobResultDetails';
 import * as jobResultsAction from '../actions/JobResultsAction';
 import * as jobDetailsAction from '../actions/JobDetailsAction';
-import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
+import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -28,7 +28,8 @@ class JobResults extends Component {
             clearFilter: false,
             showJobDescription: false,
             jobResult: '',
-            scriptsName: ''
+            scriptsName: '',
+            clearCheckedList: false
         }
     }
 
@@ -91,26 +92,39 @@ class JobResults extends Component {
             showJobDescription: true,
             showJobDetails: false,
             jobResult: jobResult
-        })
+        });
     }
 
     returnFromJobDetails() {
         this.setState({
             showJobDescription: false,
             showJobDetails: true,
-        })
+        });
     }
 
     setExecuteFalse() {
-        this.props.executeScripts.execute = false;
+        this.props.reExecuteScripts.reExecute = false;
+    }
+
+    setExecuteErrorFalse() {
+        this.props.reExecuteScripts.error = false;
+    }
+
+    clearCheckedList() {
+        this.setState({clearCheckedList: true});
+    }
+
+    clearCheckedListFalse() {
+        this.setState({clearCheckedList: false});
     }
 
     render() {
 
-        const {executeScripts} = this.props.executeScriptsAction;
+        const {reExecuteScripts} = this.props.reExecuteScriptsAction;
 
         let jobResults = this.props.jobResults.jobScriptResults, trueResults = [], falseResults = [], noConnectResults = [],
-            executeError = this.props.executeScripts.error, resultDetails = this.props.jobDetails.jobDetails;
+            executeError = this.props.reExecuteScripts.error, resultDetails = this.props.jobDetails.jobDetails,
+            executeSuccess = this.props.reExecuteScripts.reExecute;
 
         for (let i = 0; i < jobResults.length; i++) {
             if (jobResults[i].status === 'true') {
@@ -134,7 +148,10 @@ class JobResults extends Component {
                             <JobResultCounters jobResults={this.props.jobResults.result}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}
-                                               clearFilter={::this.clearFilter}/>
+                                               clearFilter={::this.clearFilter}
+                                               setExecuteFalse={::this.setExecuteFalse}
+                                               clearCheckedList={::this.clearCheckedList}
+                                               setExecuteErrorFalse={::this.setExecuteErrorFalse}/>
                         </Col>
                         <Col md='8' xs='12' lg='8'>
                             {this.state.showJobDetails ?
@@ -154,18 +171,22 @@ class JobResults extends Component {
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
-                                        executeScripts={executeScripts} executeError={executeError}
-                                        scriptName={this.state.scriptsName}
-                                        execute={this.props.executeScripts.execute}
-                                        setExecuteFalse={::this.setExecuteFalse}/></Tab>
+                                        reExecuteScripts={reExecuteScripts} executeError={executeError}
+                                        setExecuteErrorFalse={::this.setExecuteErrorFalse}
+                                        scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
+                                        setExecuteFalse={::this.setExecuteFalse}
+                                        clearCheckedListFalse={::this.clearCheckedListFalse}
+                                        clearCheckedList={this.state.clearCheckedList}/></Tab>
                                     <Tab className='minions-tabs' label='Нет соединения'><JobAllResults
                                         jobResults={noConnectResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
-                                        executeScripts={executeScripts} executeError={executeError}
-                                        scriptName={this.state.scriptsName}
-                                        execute={this.props.executeScripts.execute}
-                                        setExecuteFalse={::this.setExecuteFalse}/></Tab>
+                                        reExecuteScripts={reExecuteScripts} executeError={executeError}
+                                        setExecuteErrorFalse={::this.setExecuteErrorFalse}
+                                        scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
+                                        setExecuteFalse={::this.setExecuteFalse}
+                                        clearCheckedListFalse={::this.clearCheckedListFalse}
+                                        clearCheckedList={this.state.clearCheckedList}/></Tab>
                                 </Tabs> : null}
                             {this.state.showJobDescription ?
                                 <div className='job-results'>
@@ -190,7 +211,7 @@ function mapStateToProps(state) {
     return {
         jobResults: state.jobResults,
         jobDetails: state.jobDetails,
-        executeScripts: state.executeScripts
+        reExecuteScripts: state.reExecuteScripts
     }
 }
 
@@ -198,7 +219,7 @@ function mapDispatchToProps(dispatch) {
     return {
         jobResultsAction: bindActionCreators(jobResultsAction, dispatch),
         jobDetailsAction: bindActionCreators(jobDetailsAction, dispatch),
-        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
+        reExecuteScriptsAction: bindActionCreators(reExecuteScriptsAction, dispatch)
     }
 }
 

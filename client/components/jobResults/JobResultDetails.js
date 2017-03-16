@@ -65,7 +65,6 @@ export default class JobResultDetails extends Component {
                 <i className={this.state.minimize ? 'mi mi-add' : 'mi mi-remove'}></i>
             </span>
             <div>
-                {/*{className={this.state.minimize ? 'hidden' : ''}> }*/}
                 {!this.state.minimize ? this.parseObj(this.props.result) : this.parseObjName(this.props.result)}
             </div>
         </Panel>

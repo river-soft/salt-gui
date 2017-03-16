@@ -10,12 +10,14 @@ class JobResultViewModel {
     String minionName
     String minionGroups
     boolean isResult
+    boolean reExecuted
     String status
     String lastModifiedDate
 
     JobResultViewModel(JobResult jobResult) {
         this.id = jobResult.id
         this.isResult = jobResult.isResult
+        this.reExecuted = jobResult.reExecuted
         this.minionName = jobResult.minion.name
         this.jid = jobResult.job.jid
         this.minionGroups = jobResult.minion.groups.collect { it.name }.join(",")

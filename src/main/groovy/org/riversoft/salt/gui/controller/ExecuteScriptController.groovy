@@ -27,4 +27,9 @@ class ExecuteScriptController extends BaseRestController {
 
         executeScriptService.checkJobByJid(jid)
     }
+
+    @RequestMapping(value = '/reexecute-scripts', method = RequestMethod.POST)
+    reExecuteScripts(@RequestParam(value = "jobResultIds", required = true) String[] ids) {
+        executeScriptService.reExecuteScripts(ids)
+    }
 }

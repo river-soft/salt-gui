@@ -69,12 +69,12 @@ class ExecuteScriptService {
 
             log.debug("Sending scripts names [${scripts.join(",")}] and minions names [${minions.join(",")}] for execution to salt server.")
 
-            Target<List<String>> minionList = new MinionList(minions);
+            Target<List<String>> minionList = new MinionList(minions)
 
             LocalAsyncResult<Map<String, Result<Boolean>>> result = State.apply(scripts).callAsync(
-                    saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
+                    saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
-            log.debug("Successfully returned responce from salt server with job id [${result.jid}].")
+            log.debug("Successfully returned response from salt server with job id [${result.jid}].")
 
             //endregion
 
@@ -121,6 +121,7 @@ class ExecuteScriptService {
                         minion: minion,
                         job: job,
                         saltScripts: saltScripts,
+                        reExecuted: false,
                         createDate: new Date(),
                         lastModifiedDate: new Date()
                 )
@@ -140,6 +141,48 @@ class ExecuteScriptService {
             log.error("Error of executing scripts for minions.")
             throw new SaltGuiException("Error of executing scripts for minions.", e,
                     "Произошла ошибка при выполнении скриптов для миньонов, ${e.message}")
+        }
+    }
+
+    /**
+     * Метод перезапуска скриптов
+     * @param jobResultIds - список уникальных идентивикаторов результата работы
+     */
+    def reExecuteScripts(String[] jobResultIds) {
+
+        List<JobResult> jobResults = jobResultRepository.findAllByIdIn(jobResultIds)
+        String[] minions = []
+        String[] scripts = []
+
+        jobResults.each {
+            minions += it.minion.name
+            if(!scripts.size()) {
+                it.saltScripts.each {
+                    scripts += it.name
+                }
+            }
+        }
+
+        try {
+
+            log.debug("Start reExecuting scripts ${scripts.toString()} for minions ${minions.toString()}")
+
+            this.executeScripts(minions, scripts)
+
+            jobResults.each {
+                it.reExecuted = true
+            }
+
+            jobResultRepository.save(jobResults)
+
+            log.debug("Update JobResults with size [${jobResults.size()}], change reExecute to true")
+            log.debug("Successfully reExecuting scripts")
+
+        } catch (Exception e) {
+
+            log.error("Error of re-executing scripts for minions.")
+            throw new SaltGuiException("Error of re-executing scripts for minions.", e,
+                    "Произошла ошибка при перезапуске скриптов для миньонов, ${e.message}")
         }
     }
 
@@ -286,5 +329,4 @@ class ExecuteScriptService {
             checkJobByJid(job.jid)
         }
     }
-
 }
