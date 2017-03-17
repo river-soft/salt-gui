@@ -134,7 +134,7 @@ class App extends Component {
                                    setExecuteFalse={::_this.setExecuteFalse}/>;
 
         return (<div className='wrapper'>
-            <Header />
+            <Header header='Управление скриптами' />
             <main className='main'>
                 {filesTree}
             </main>

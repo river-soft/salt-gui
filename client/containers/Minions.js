@@ -94,11 +94,11 @@ class Minions extends Component {
                                                setDeletedFalse={::this.setDeletedFalse}/>;
 
         return <div className='wrapper'>
-            <Header />
+            <Header header='Миньоны'/>
             <main className='main'>
                 <Container>
                     <Row>
-                        <Col md='3' xs='6' lg='3'>
+                        <Col md='3' xs='12' lg='3'>
                             <Row>
                                 <Col md='12' xs='12' lg='12'>
                                     <div className='minions__state'>
@@ -110,7 +110,7 @@ class Minions extends Component {
                                 <Col md='12' xs='12' lg='12'>{countsGroup}</Col>
                             </Row>
                         </Col>
-                        <Col md='9' xs='6' lg='9'>
+                        <Col md='9' xs='12' lg='9'>
                             <Tabs className='minions-tabs' justified={true}>
                                 <Tab className='minions-tabs' label='Принятые'>{acceptedMinions}</Tab>
                                 <Tab className='minions-tabs' label='Отказанные'>{deniedMinions}</Tab>

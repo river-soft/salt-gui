@@ -139,12 +139,11 @@ class JobResults extends Component {
         }
 
         return <div className='wrapper'>
-            <Header />
+            <Header header='Результаты выполнения скриптов'/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
-                            <h4>Результаты выполнения скриптов</h4>
                             <JobResultCounters jobResults={this.props.jobResults.result}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}

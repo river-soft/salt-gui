@@ -252,11 +252,11 @@ export class FilesTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск' floatingLabel={true} onChange={::_this.filterTree}/>
+                    <Input label='Поиск скриптов' floatingLabel={true} onChange={::_this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={::_this.addScript}>добавить</button>
+                    <button className='mui-btn button' onClick={::_this.addScript}>добавить группу</button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}

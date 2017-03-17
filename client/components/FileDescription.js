@@ -13,10 +13,10 @@ export default class FileDescription extends Component {
                 <div className='file__actions'>
                     <span className='file__actions_edit file__actions_item' onClick={() => {
                         this.props.editScript(description.script, description.script.content);
-                    }}><i className='mi mi-edit'></i></span>
+                    }} title='редактировать'><i className='mi mi-edit'></i></span>
                     <span className='file__actions_remove file__actions_item' onClick={() => {
                         this.props.removeScript(description.script);
-                    }}><i className='mi mi-delete'></i></span>
+                    }} title='удалить'><i className='mi mi-delete'></i></span>
                 </div>
                 <div className='file-name'>{description.script.name}</div>
                 <pre className='file-description'>

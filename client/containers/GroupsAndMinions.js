@@ -243,18 +243,18 @@ class GroupsAndMinions extends Component {
         }
 
         return <div className='wrapper'>
-            <Header />
+            <Header header='Управление миньонами'/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='3' xs='6' lg='3'>
-                            <Input label='Поиск' floatingLabel={true} onChange={e => {
+                            <Input label='Поиск миньонов' floatingLabel={true} onChange={e => {
                                 this.filterTree(e)
                             }}/>
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
-                            <button className='mui-btn button' onClick={::this.createGroup}>добавить</button>
+                            <button className='mui-btn button' onClick={::this.createGroup}>добавить группу</button>
                         </Col>
                         <Col md='9' xs='6' lg='9'>
                             {this.state.showMinionDescription ?
