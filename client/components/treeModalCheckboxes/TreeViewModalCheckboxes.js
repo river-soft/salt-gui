@@ -238,7 +238,7 @@ export default class TreeModalCheckboxes extends Component {
                                 }}>{el.name}</li>
                             })}
                         </ul> : null }
-                    {this.props.executeError ? <span className='input_error'>{this.props.executeError.error}</span> : null}
+                    {this.props.executeError ? <span className='input_error'>{this.props.executeError.message}</span> : null}
                 </div>
                 {this.state.transferedList.length ? <div>
                         <button className='button mui-btn mui--pull-right' onClick={(e) => {

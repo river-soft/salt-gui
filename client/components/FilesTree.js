@@ -83,6 +83,7 @@ export class FilesTree extends Component {
         this.setState({
             addScript: true,
             editScript: false,
+            removeScript: false,
             showFileDescription: false
         });
     }

@@ -33,8 +33,9 @@ export default class RemoveScript extends Component {
 
         return <div className='modal__content'>
             <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
+            <h4 className='mui--text-center modal__header'>Удаление скрипта</h4>
             <div className='modal__content_question mui--text-center'>
-                Вы действительно хотите удалить файл {this.props.script.name}?
+                Вы действительно хотите удалить скрипт {this.props.script.name}?
             </div>
             {this.props.removeScriptError.error ? <span className='input_error'>{this.props.removeScriptError.message}</span> : null}
             <div className='modal__footer'>

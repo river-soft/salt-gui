@@ -218,7 +218,7 @@ export default class CreateGroup extends Component {
     }
 
     render() {
-
+debugger;
         let dropdownList = !this.state.rerenderDropdown ?
             this.props.groups.length > 0 ?
                 <ul className='group__list mui-list--unstyled' ref='dropdown'>

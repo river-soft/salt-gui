@@ -99,15 +99,18 @@ export default class JobAllResults extends Component {
 
     addAll(e) {
         if (e.target.tagName === 'INPUT') {
+
             let jobResults = this.state.filterValue ? this.state.filterList : this.props.jobResults,
                 checked = e.target.checked,
                 inputs = this.refs['table'].getElementsByTagName('input');
 
             this.state.checkedList = [];
 
-            for (let i = 0; i < jobResults.length; i++) {
-                if (!jobResults[i].reExecuted) {
-                    this.state.checkedList.push(jobResults[i].id);
+            if(checked) {
+                for (let i = 0; i < jobResults.length; i++) {
+                    if (!jobResults[i].reExecuted) {
+                        this.state.checkedList.push(jobResults[i].id);
+                    }
                 }
             }
 
