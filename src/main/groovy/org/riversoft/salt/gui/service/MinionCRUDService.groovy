@@ -78,7 +78,13 @@ class MinionCRUDService {
 
         log.debug("Start creating minion with name [${createMinion.name}].")
 
-        minion = new Minion(name: createMinion.name.trim(), groups: minionGroups)
+        minion = new Minion(
+                name: createMinion.name.trim(),
+                groups: minionGroups,
+                createDate: new Date(),
+                lastModifiedDate: new Date()
+        )
+
         minionRepository.save(minion)
 
         log.debug("Successfully created minion with name [${minion.name}].")
@@ -88,6 +94,7 @@ class MinionCRUDService {
             log.debug("Adding minion [${minion.name}] to group [${minionGroup.name}].")
 
             minionGroup.minions.add(minion)
+            minionGroup.lastModifiedDate = new Date()
             minionGroupRepository.save(minionGroup)
 
             log.debug("Successfully added minion [${minion.name}] to group [${minionGroup.name}].")
@@ -120,9 +127,11 @@ class MinionCRUDService {
 
                 minion.groups.add(minionGroup)
 
+                minion.lastModifiedDate = new Date()
                 minionRepository.save(minion)
 
                 minionGroup.minions.add(minion)
+                minionGroup.lastModifiedDate = new Date()
                 minionGroupRepository.save(minionGroup)
 
                 log.debug("Finish adding group [${minionGroup.name}] to minion [${minion.name}].")
@@ -140,9 +149,11 @@ class MinionCRUDService {
 
                 minion.groups.removeAll { it.name == group }
 
+                minion.lastModifiedDate = new Date()
                 minionRepository.save(minion)
 
                 minionGroup.minions.removeAll { it.name == minion.name }
+                minionGroup.lastModifiedDate = new Date()
                 minionGroupRepository.save(minionGroup)
 
                 log.debug("Finish deleting group [${minionGroup.name}] from minion [${minion.name}].")

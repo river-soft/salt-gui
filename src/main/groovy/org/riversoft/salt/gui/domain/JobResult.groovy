@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "jobs_results")
-class JobResult {
+class JobResult extends Base {
 
     /**
      * Уникальный номер результата работы
@@ -13,7 +13,15 @@ class JobResult {
     @Id
     String id
 
+    /**
+     * Флаг указывающий получены ли результаты
+     */
     boolean isResult
+
+    /**
+     * Флаг указывающий на перезапуск скрипта
+     */
+    boolean reExecuted
 
     /**
      * Работа по которой береться результат
@@ -30,8 +38,6 @@ class JobResult {
     /**
      * Скрипты по которому выполняется работа
      */
-//    @DBRef
-//    SaltScript saltScript
     @DBRef(lazy = true)
     List<SaltScript> saltScripts = []
 

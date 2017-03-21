@@ -52,7 +52,7 @@ export class FilesTree extends Component {
             this.setState({showModal: false});
         }
 
-        if(this.props.execute && this.state.runScript) {
+        if (this.props.execute && this.state.runScript) {
             this.setState({
                 runScript: false
             });
@@ -69,7 +69,8 @@ export class FilesTree extends Component {
 
     showContent(scriptId) {
         this.props.getScriptContent(scriptId);
-
+        this.props.setEditScriptFalse();
+        this.props.setRemoveScriptErrorFalse();
         this.setState({
             showFileDescription: true,
             addScript: false,
@@ -82,6 +83,7 @@ export class FilesTree extends Component {
         this.setState({
             addScript: true,
             editScript: false,
+            removeScript: false,
             showFileDescription: false
         });
     }
@@ -114,6 +116,7 @@ export class FilesTree extends Component {
     }
 
     editScript(script) {
+        this.props.setEditScriptFalse();
         this.setState({
             removeScript: false,
             editScript: true,
@@ -143,6 +146,9 @@ export class FilesTree extends Component {
             getFiles: true,
             showFileDescription: true
         });
+
+        this.props.setEditScriptFalse();
+        this.props.getScriptContent(this.state.editingScript.id);
     }
 
     editGroup(groupId, groupName) {
@@ -181,6 +187,7 @@ export class FilesTree extends Component {
         });
 
         this.props.getGroupedMinions();
+        this.props.setExecuteFalse();
     }
 
     render() {
@@ -209,10 +216,12 @@ export class FilesTree extends Component {
         if (_this.state.editScript) {
             createEditGroup = <EditScript closeModal={::_this.onRequestClose} script={_this.state.editingScript}
                                           cancel={::_this.cancelEditScript} groups={_this.props.files}
-                                          editScript={_this.props.editScript} editSuccess={_this.props.editSuccess}/>
+                                          editScript={_this.props.editScript} editSuccess={_this.props.editSuccess}
+                                          editScriptError={_this.props.editScriptError}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={::_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={_this.props.filesRequest}
+                                  removeScriptError={_this.props.removeScriptError}
                                   script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
                                   hideContent={::_this.hideContent}/>
         } else if (this.state.addScript) {
@@ -226,7 +235,8 @@ export class FilesTree extends Component {
                                          scriptName={_this.state.scriptName}
                                          executeScripts={_this.props.executeScripts}
                                          minions={true}
-                                         execute={_this.props.execute}/>
+                                         execute={_this.props.execute}
+                                         executeError={_this.props.executeError}/>
         }
 
         if (_this.state.showModal) {
@@ -243,16 +253,18 @@ export class FilesTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск' floatingLabel={true} onChange={::_this.filterTree}/>
+                    <Input label='Поиск скриптов' floatingLabel={true} onChange={::_this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={::_this.addScript}>добавить</button>
+                    <button className='mui-btn button' onClick={::_this.addScript}>добавить группу</button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}
                     {_this.state.showFileDescription ? fileDescription : null}
                     {_this.state.runScript ? selectMinions : null}
+                    {_this.props.execute ?
+                        <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={_this.state.showModal} className='modal'

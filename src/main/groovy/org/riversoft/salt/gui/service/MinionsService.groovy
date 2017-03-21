@@ -75,15 +75,22 @@ class MinionsService {
 
         log.trace("Start searching minions by statuses from salt server.")
 
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
+        try {
 
-        log.trace("Finish searching minions by statuses from salt server.")
+            WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+            Key.Names keys = keyResults.getData().getResult();
 
-        sendAllMinionsByStatuses("/queue/minions/update-denied-minions", "denied", keys.getDeniedMinions())
-        sendAllMinionsByStatuses("/queue/minions/update-rejected-minions", "rejected", keys.getRejectedMinions())
-        sendAllMinionsByStatuses("/queue/minions/update-unaccepted-minions", "unaccepted", keys.getUnacceptedMinions())
+            log.trace("Finish searching minions by statuses from salt server.")
+
+            sendAllMinionsByStatuses("/queue/minions/update-denied-minions", "denied", keys.getDeniedMinions())
+            sendAllMinionsByStatuses("/queue/minions/update-rejected-minions", "rejected", keys.getRejectedMinions())
+            sendAllMinionsByStatuses("/queue/minions/update-unaccepted-minions", "unaccepted", keys.getUnacceptedMinions())
+
+        } catch (Exception e) {
+
+            log.error("Error of finding and sending minions on salt server.", e)
+        }
     }
 
     /**
@@ -94,17 +101,35 @@ class MinionsService {
     def getAndSendCountsOfMinionsByStatus() {
 
         log.trace("Start getting minions counts by statuses from salt server.")
+//
+//        def counts = ["Accepted"  : "-",
+//                      "Unaccepted": "-",
+//                      "Rejected"  : "-",
+//                      "Denied"    : "-"]
 
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
+        def counts = ["Принятые"   : "-",
+                      "Не принятые": "-",
+                      "Отклоненные": "-",
+                      "Отказаные"  : "-"]
 
-        def counts = ["Accepted"  : keys.getMinions().size(),
-                      "Unaccepted": keys.getUnacceptedMinions().size(),
-                      "Rejected"  : keys.getRejectedMinions().size(),
-                      "Denied"    : keys.getDeniedMinions().size()]
+        try {
 
-        log.trace("Finish getting minions counts by statuses from salt server.")
+            WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+            Key.Names keys = keyResults.getData().getResult();
+
+            counts = ["Принятые"   : keys.getMinions().size(),
+                      "Отказаные"  : keys.getDeniedMinions().size(),
+                      "Не принятые": keys.getUnacceptedMinions().size(),
+                      "Отклоненные": keys.getRejectedMinions().size()]
+
+            log.trace("Finish getting minions counts by statuses from salt server.")
+
+        } catch (Exception e) {
+
+            log.error("Error of getting and sending counts of minions by statuses.", e)
+            log.trace("Return empty counts of minions.")
+        }
 
         sendCountsOfMinionsByStatus(counts)
     }
@@ -134,6 +159,8 @@ class MinionsService {
 
     /**
      * Отправка данных миньонов
+     * @param signal - сигнал для отправки результатов
+     * @param status - статус миньона
      * @param map - объект/мапа с данными
      */
     void sendAllMinionsByStatuses(String signal, String status, def map) {

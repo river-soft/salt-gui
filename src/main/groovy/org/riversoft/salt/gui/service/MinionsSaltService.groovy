@@ -5,6 +5,7 @@ import org.riversoft.salt.gui.AuthModule
 import org.riversoft.salt.gui.calls.WheelResult
 import org.riversoft.salt.gui.calls.wheel.Key
 import org.riversoft.salt.gui.client.SaltClient
+import org.riversoft.salt.gui.exception.SaltGuiException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -34,15 +35,22 @@ class MinionsSaltService {
 
         log.debug("Start getting accepted minions from salt server.")
 
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
+        try {
 
-        def minions = keys.getMinions()
+            WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+            Key.Names keys = keyResults.getData().getResult();
 
-        log.debug("Finish getting accepted minions from salt server. Found [${minions.size()}]")
+            def minions = keys.getMinions()
 
-        minions
+            log.debug("Finish getting accepted minions from salt server. Found [${minions.size()}]")
+
+            minions
+
+        } catch (Exception e) {
+
+            log.error("Error of getting accepted minion on salt server.", e)
+        }
     }
 
     /**
@@ -53,19 +61,28 @@ class MinionsSaltService {
 
         log.debug("Start accepting minion [${minionName}] on salt server.")
 
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
+        try {
 
-        if (!keys.getUnacceptedMinions().contains(minionName)) {
-            log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
-            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+            Key.Names keys = keyResults.getData().getResult();
+
+            if (!keys.getUnacceptedMinions().contains(minionName)) {
+                log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+                throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            }
+
+            WheelResult<Object> acceptKeyResults = Key.accept(minionName).callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+
+            log.debug("Finish accepting minion [${minionName}] on salt server.")
+
+        } catch (Exception e) {
+
+            log.error("Error of accepting minion on salt server.")
+            throw new SaltGuiException("Error of accepting minion on salt server.", e,
+                    "Произошла ошибка при принятии миньона, ${e.message}")
         }
-
-        WheelResult<Object> acceptKeyResults = Key.accept(minionName).callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-
-        log.debug("Finish accepting minion [${minionName}] on salt server.")
     }
 
     /**
@@ -76,19 +93,28 @@ class MinionsSaltService {
 
         log.debug("Start rejecting minion [${minionName}] on salt server.")
 
-        WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-        Key.Names keys = keyResults.getData().getResult();
+        try {
 
-        if (!keys.getUnacceptedMinions().contains(minionName)) {
-            log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
-            throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            WheelResult<Key.Names> keyResults = Key.listAll().callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+            Key.Names keys = keyResults.getData().getResult();
+
+            if (!keys.getUnacceptedMinions().contains(minionName)) {
+                log.error("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+                throw new Exception("Minion with name [${minionName}] don't found in list of unaccepted minions.")
+            }
+
+            WheelResult<Object> rejectResults = Key.reject(minionName).callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+
+            log.debug("Finish rejecting minion [${minionName}] on salt server.")
+
+        } catch (Exception e) {
+
+            log.error("Error of rejecting minion on salt server.")
+            throw new SaltGuiException("Error of rejecting minion on salt server.", e,
+                    "Произошла ошибка при принятии миньона, ${e.message}")
         }
-
-        WheelResult<Object> rejectResults = Key.reject(minionName).callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
-
-        log.debug("Finish rejecting minion [${minionName}] on salt server.")
     }
 
     /**
@@ -99,10 +125,18 @@ class MinionsSaltService {
 
         log.debug("Start deleting minion [${minionName}] on salt server.")
 
-        WheelResult<Object> deleteResults = Key.delete(minionName).callSync(
-                saltClient, USER, PASSWORD, AuthModule.PAM);
+        try {
 
-        log.debug("Finish deleting minion [${minionName}] on salt server.")
+            WheelResult<Object> deleteResults = Key.delete(minionName).callSync(
+                    saltClient, USER, PASSWORD, AuthModule.PAM);
+
+            log.debug("Finish deleting minion [${minionName}] on salt server.")
+
+        } catch (Exception e) {
+
+            log.error("Error of deleting minion on salt server.")
+            throw new SaltGuiException("Error of deleting minion on salt server.", e,
+                    "Произошла ошибка при удалении миньона, ${e.message}")
+        }
     }
-
 }

@@ -1,4 +1,5 @@
 import {
+    EXECUTE_SCRIPTS_REQUEST,
     EXECUTE_SCRIPTS_SUCCESS,
     EXECUTE_SCRIPTS_FAIL
 } from '../constants/ExecuteScripts';
@@ -11,6 +12,8 @@ const initialState = {
 export default (state = initialState, action) => {
 
     switch (action.type) {
+        case EXECUTE_SCRIPTS_REQUEST:
+            return {...state, error: ''};
         case EXECUTE_SCRIPTS_SUCCESS:
             return {...state, execute: true, error: ''};
         case EXECUTE_SCRIPTS_FAIL:

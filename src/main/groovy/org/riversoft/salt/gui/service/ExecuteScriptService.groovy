@@ -13,6 +13,7 @@ import org.riversoft.salt.gui.domain.JobResult
 import org.riversoft.salt.gui.domain.JobResultDetail
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.SaltScript
+import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultDetailRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
@@ -61,62 +62,128 @@ class ExecuteScriptService {
      */
     def executeScripts(String[] minions, String[] scripts) {
 
-        //TODO собрать массив названий скриптов на выполнение или же принимать прямо с фронта список из названий?
-        //region отправка миньонов и скриптов на выполнение на salt сервер
+        try {
 
-        log.debug("Sending scripts names [${scripts.join(",")}] and minions names [${minions.join(",")}] for execution to salt server.")
+            //TODO собрать массив названий скриптов на выполнение или же принимать прямо с фронта список из названий?
+            //region отправка миньонов и скриптов на выполнение на salt сервер
 
-        Target<List<String>> minionList = new MinionList(minions);
+            log.debug("Sending scripts names [${scripts.join(",")}] and minions names [${minions.join(",")}] for execution to salt server.")
 
-        LocalAsyncResult<Map<String, Result<Boolean>>> result = State.apply(scripts).callAsync(
-                saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
+            Target<List<String>> minionList = new MinionList(minions)
 
-        log.debug("Successfully returned responce from salt server with job id [${result.jid}].")
+            LocalAsyncResult<Map<String, Result<Boolean>>> result = State.apply(scripts).callAsync(
+                    saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
-        //endregion
+            log.debug("Successfully returned response from salt server with job id [${result.jid}].")
 
-        //region список скриптов
+            //endregion
 
-        List<SaltScript> saltScripts = []
+            //region список скриптов
 
-        for (String script : scripts) {
+            List<SaltScript> saltScripts = []
 
-            saltScripts.add(saltScriptService.getSaltScriptByName(script))
+            for (String script : scripts) {
+
+                saltScripts.add(saltScriptService.getSaltScriptByName(script))
+            }
+
+            //endregion
+
+            //region работа
+
+            log.debug("Start creating Job with jid [${result.jid}].")
+
+            Job job = jobRepository.save(
+                    new Job(
+                            jid: result.jid,
+                            done: false,
+                            createDate: new Date(),
+                            lastModifiedDate: new Date(),
+                            name: saltScripts.collect {
+                                it.name
+                            }.join("/")
+                    )
+            )
+
+            log.debug("Successfully created Job with jid [${result.jid}] and with name [${job.name}].")
+
+            //endregion
+
+            //region результаты скриптов
+
+            for (String minionResult : result.minions) {
+
+                Minion minion = minionCRUDService.getMinionByName(minionResult)
+
+                log.debug("Start creating JobResult for minion [${minion.name}] and job with jid [${job.jid}].")
+
+                JobResult jobResult = new JobResult(
+                        minion: minion,
+                        job: job,
+                        saltScripts: saltScripts,
+                        reExecuted: false,
+                        createDate: new Date(),
+                        lastModifiedDate: new Date()
+                )
+
+                jobResultRepository.save(jobResult)
+
+                job.results.add(jobResult)
+                jobRepository.save(job)
+
+                log.debug("Successfully created JobResult for minion [${minion.name}] and job with jid [${result.jid}].")
+            }
+
+            //endregion
+
+        } catch (Exception e) {
+
+            log.error("Error of executing scripts for minions.")
+            throw new SaltGuiException("Error of executing scripts for minions.", e,
+                    "Произошла ошибка при выполнении скриптов для миньонов, ${e.message}")
+        }
+    }
+
+    /**
+     * Метод перезапуска скриптов
+     * @param jobResultIds - список уникальных идентивикаторов результата работы
+     */
+    def reExecuteScripts(String[] jobResultIds) {
+
+        List<JobResult> jobResults = jobResultRepository.findAllByIdIn(jobResultIds)
+        String[] minions = []
+        String[] scripts = []
+
+        jobResults.each {
+            minions += it.minion.name
+            if(!scripts.size()) {
+                it.saltScripts.each {
+                    scripts += it.name
+                }
+            }
         }
 
-        //endregion
+        try {
 
-        //region работа
+            log.debug("Start reExecuting scripts ${scripts.toString()} for minions ${minions.toString()}")
 
-        log.debug("Start creating Job with jid [${result.jid}].")
+            this.executeScripts(minions, scripts)
 
-        Job job = jobRepository.save(new Job(jid: result.jid, done: false, name: saltScripts.collect {
-            it.name
-        }.join("/")))
+            jobResults.each {
+                it.reExecuted = true
+            }
 
-        log.debug("Successfully created Job with jid [${result.jid}] and with name [${job.name}].")
+            jobResultRepository.save(jobResults)
 
-        //endregion
+            log.debug("Update JobResults with size [${jobResults.size()}], change reExecute to true")
+            log.debug("Successfully reExecuting scripts")
 
-        //region результаты скриптов
+        } catch (Exception e) {
 
-        for (String minionResult : result.minions) {
-
-            Minion minion = minionCRUDService.getMinionByName(minionResult)
-
-            log.debug("Start creating JobResult for minion [${minion.name}] and job with jid [${job.jid}].")
-
-            JobResult jobResult = new JobResult(minion: minion, job: job, saltScripts: saltScripts)
-
-            jobResultRepository.save(jobResult)
-
-            job.results.add(jobResult)
-            jobRepository.save(job)
-
-            log.debug("Successfully created JobResult for minion [${minion.name}] and job with jid [${result.jid}].")
+            log.error("Error of re-executing scripts for minions.")
+            throw new SaltGuiException("Error of re-executing scripts for minions.", e,
+                    "Произошла ошибка при перезапуске скриптов для миньонов, ${e.message}")
         }
-
-        //endregion
     }
 
     /**
@@ -126,91 +193,123 @@ class ExecuteScriptService {
      */
     def checkJobByJid(String jid) {
 
-        log.debug("Start check Job by jid [${jid}].")
+        try {
 
-        // возвращает результат по самой job и результаты по миньонам такие как в job
-        def jobInfoSalt = Jobs.listJob(jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+            log.debug("Start check Job by jid [${jid}].")
 
-        //вовзращает список результатов по миньонам
-        //TODO подумать может результат все таки получать из jobInfoSalt что бы не делать два запроса на salt сервер
-        def jobResultsSalt = Jobs.lookupJid(jobInfoSalt.jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+            // возвращает результат по самой job и результаты по миньонам такие как в job
+            def jobInfoSalt = Jobs.listJob(jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
 
-        Job job = jobRepository.findOne(jobInfoSalt.jid)
+            //вовзращает список результатов по миньонам
+            //TODO подумать может результат все таки получать из jobInfoSalt что бы не делать два запроса на salt сервер
+            def jobResultsSalt = Jobs.lookupJid(jobInfoSalt.jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
 
-        boolean isDone = false
+            Job job = jobRepository.findOne(jobInfoSalt.jid)
 
-        // region update job results
+            boolean isDone = false
 
-        if (jobResultsSalt.size() == 0) {
-            log.warn("Result by job with jid [${job.jid}] not found yet.")
-        }
+            // region update job results
 
-        for (def jobResultSalt : jobResultsSalt) {
-
-            Minion minion = minionCRUDService.getMinionByName(jobResultSalt.key)
-
-            List<JobResult> jobResults = jobResultRepository.findAllByMinionIdAndJobJid(minion.id, job.jid)
-
-            for (JobResult jobResult : jobResults) {
-
-                log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
-
-                for (def jobResultSaltItem : jobResultSalt) {
-
-                    for (def val : jobResultSaltItem.value) {
-
-                        log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
-                                "id [${jobResult.job.jid}].")
-
-                        JobResultDetail jobResultDetail = new JobResultDetail()
-
-                        jobResultDetail.cmd = val["key"]
-
-                        jobResultDetail.name = val["value"]["name"]
-                        jobResultDetail.comment = val["value"]["comment"]
-                        jobResultDetail.result = val["value"]["result"]
-                        jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
-                        jobResultDetail.description = val["value"]["__id__"]
-                        jobResultDetail.changes = val["value"]["changes"]
-                        jobResultDetail.jobResult = jobResult
-
-                        jobResult.jobResultDetails.add(jobResultDetail)
-
-                        jobResultDetailRepository.save(jobResultDetail)
-                        log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
-                                "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
-                    }
-                }
-
-                //TODO может проверять если все результаты true ?
-                jobResult.isResult = true
-
-                jobResultRepository.save(jobResult)
-                log.debug("Finish updating JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
-
-                //TODO подумать когда отмечать задачу как выполненную
-                isDone = true
+            if (jobResultsSalt.size() == 0) {
+                log.warn("Result by job with jid [${job.jid}] not found yet.")
             }
+
+            for (def jobResultSalt : jobResultsSalt) {
+
+                Minion minion = minionCRUDService.getMinionByName(jobResultSalt.key)
+
+                List<JobResult> jobResults = jobResultRepository.findAllByMinionIdAndJobJid(minion.id, job.jid)
+
+                for (JobResult jobResult : jobResults) {
+
+                    log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
+
+                    for (def jobResultSaltItem : jobResultSalt) {
+
+                        for (def val : jobResultSaltItem.value) {
+
+                            log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
+                                    "id [${jobResult.job.jid}].")
+
+                            //TODO провека если val не содержит key  и т.д. не брать эти значения и не писать в бд
+
+                            if (!val instanceof String) {
+
+                                JobResultDetail jobResultDetail = new JobResultDetail()
+
+                                jobResultDetail.cmd = val["key"]
+                                jobResultDetail.name = val["value"]["name"]
+                                jobResultDetail.comment = val["value"]["comment"]
+                                jobResultDetail.result = val["value"]["result"]
+                                jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
+                                jobResultDetail.description = val["value"]["__id__"]
+                                jobResultDetail.changes = val["value"]["changes"]
+                                jobResultDetail.startTime = val["value"]["start_time"]
+                                jobResultDetail.jobResult = jobResult
+                                jobResultDetail.createDate = new Date()
+                                jobResultDetail.lastModifiedDate = new Date()
+
+                                jobResult.jobResultDetails.add(jobResultDetail)
+
+                                jobResultDetailRepository.save(jobResultDetail)
+                                log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
+                                        "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
+                            } else {
+
+                                log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
+                                        "Reason - [${val}].")
+
+                                JobResultDetail jobResultDetail = new JobResultDetail()
+                                jobResultDetail.comment = val
+                                jobResultDetail.createDate = new Date()
+                                jobResultDetail.lastModifiedDate = new Date()
+                                jobResultDetail.jobResult = jobResult
+                                jobResultDetail.result = false
+
+                                jobResult.jobResultDetails.add(jobResultDetail)
+
+                                jobResultDetailRepository.save(jobResultDetail)
+                            }
+                        }
+                    }
+
+                    //TODO может проверять если все результаты true ?
+                    jobResult.isResult = true
+                    jobResult.lastModifiedDate = new Date()
+
+                    jobResultRepository.save(jobResult)
+                    log.debug("Finish updating JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
+
+                    //TODO подумать когда отмечать задачу как выполненную
+                    isDone = true
+                }
+            }
+
+            // endregion
+
+            //region update job
+
+            job.startTime = jobInfoSalt.startTime.date
+            job.user = jobInfoSalt.user
+            job.done = isDone
+            job.lastModifiedDate = new Date()
+
+            jobRepository.save(job)
+
+            // endregion
+
+            //job2.result.values().find().members.find().value.members.find().value.members
+
+            log.debug("Finish check Job by jid [${jid}].")
+
+            return jobInfoSalt
+
+        } catch (Exception e) {
+
+            log.error("Error of checking Job by jid [${jid}].")
+            throw new SaltGuiException("Error of checking Job by jid [${jid}].", e,
+                    "Произошла ошибка при проверке работы, ${e.message}")
         }
-
-        // endregion
-
-        //region update job
-
-        job.startTime = jobInfoSalt.startTime.date
-        job.user = jobInfoSalt.user
-
-        job.done = isDone
-
-        jobRepository.save(job)
-
-        // endregion
-
-        //job2.result.values().find().members.find().value.members.find().value.members
-
-        log.debug("Finish check Job by jid [${jid}].")
-
-        return jobInfoSalt
     }
 
     /**
@@ -230,5 +329,4 @@ class ExecuteScriptService {
             checkJobByJid(job.jid)
         }
     }
-
 }

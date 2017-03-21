@@ -135,10 +135,10 @@ export default class MinionsUnaccepted extends Component {
         if (this.state.accept) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Accept minions</h4>
+                <h4 className='mui--text-center modal__header'>Принять миньон</h4>
                 <div className='modal__body'>
                     <div className='block-list'>
-                        <h6 className='block-list__header'>Choose groups</h6>
+                        <h6 className='block-list__header'>Выберите группы</h6>
                         {minionsGroups.length ? minionsGroups.map((item, index) => {
                                 return <Checkbox label={item.name} key={index} onClick={e => {
                                     ::this.addToGroupsList(e, item.name)
@@ -151,22 +151,22 @@ export default class MinionsUnaccepted extends Component {
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendAcceptedMinionsAndGroups}
                             className='modal__btn mui--pull-right'
-                            disabled={!this.state.groupsList.length}>Accept</Button>
+                            disabled={!this.state.groupsList.length}>Принять</Button>
                 </div>
             </div>
         } else if (this.state.reject) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Reject minions</h4>
+                <h4 className='mui--text-center modal__header'>Отклонить миньон</h4>
                 <div className='modal__body'>
-                    Are you sure you want to reject {this.state.checkedList.map((item) => {
+                    Вы уверены что хотите отклонить миньон: {this.state.checkedList.map((item) => {
                     return item + ' '
                 })}
                 </div>
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendRejectedMinions}
-                            className='modal__btn mui--pull-right'>Reject</Button>
+                            className='modal__btn mui--pull-right'>Отклонить</Button>
                 </div>
             </div>
         }
@@ -179,8 +179,8 @@ export default class MinionsUnaccepted extends Component {
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>NAME</td>
-                        <td className='table__head'>SELECT</td>
+                        <td className='table__head'>Название</td>
+                        <td className='table__head'>Выбор</td>
                     </tr>
                     {unacceptedMinions ? unacceptedMinions.map((item, index) => {
                             return <tr key={index}>
@@ -190,13 +190,13 @@ export default class MinionsUnaccepted extends Component {
                                 }}/></td>
                             </tr>
                         }) : <tr>
-                            <td>Данных нет</td>
+                            <td colSpan='2'>Данных нет</td>
                         </tr>}
                     </tbody>
                 </table>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
-                    reject
+                    Отклонить
                 </Button>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={
@@ -204,7 +204,7 @@ export default class MinionsUnaccepted extends Component {
                         getMinionsGroups();
                         this.acceptMinions();
                     }}>
-                    accept
+                    Принять
                 </Button>
             </div>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'

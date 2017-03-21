@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node"
+    "start": "node",
+    "build": "NODE_ENV=production webpack",
+    "server": "webpack-dev-server --inline --hot"
   },
   "author": "river-soft",
   "license": "ISC",

@@ -8,7 +8,7 @@ export default class MinionsCountsGroup extends Component {
 
 
         return <div className='block-list'>
-            <h6 className='block-list__header'>Groups</h6>
+            <h6 className='block-list__header'>Группы</h6>
             <ul className='mui-list--unstyled minions-list'>
                 {Object.keys(countsGroup).map((key, index) => {
                     return <li className='minions-list__item' key={index}><span

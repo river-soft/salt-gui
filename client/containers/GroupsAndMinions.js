@@ -83,9 +83,10 @@ class GroupsAndMinions extends Component {
 
         if(this.props.executeScripts.execute && this.state.runScript) {
             this.setState({runScript: false});
+        } else if(!this.state.runScript) {
             this.props.executeScripts.execute = false;
         }
-    }
+     }
 
     showContent(minionId, minionName) {
         const {getMinionDetails} = this.props.minionDetailsAction;
@@ -204,7 +205,7 @@ class GroupsAndMinions extends Component {
             {editMinionGroups} = this.props.editMinionGroupsAction,
             {executeScripts} = this.props.executeScriptsAction;
 
-        let treeView, modal;
+        let treeView, modal, executeError = this.props.executeScripts.error;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
@@ -242,18 +243,18 @@ class GroupsAndMinions extends Component {
         }
 
         return <div className='wrapper'>
-            <Header />
+            <Header header='Управление миньонами'/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='3' xs='6' lg='3'>
-                            <Input label='Поиск' floatingLabel={true} onChange={e => {
+                            <Input label='Поиск миньонов' floatingLabel={true} onChange={e => {
                                 this.filterTree(e)
                             }}/>
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
-                            <button className='mui-btn button' onClick={::this.createGroup}>добавить</button>
+                            <button className='mui-btn button' onClick={::this.createGroup}>добавить группу</button>
                         </Col>
                         <Col md='9' xs='6' lg='9'>
                             {this.state.showMinionDescription ?
@@ -265,8 +266,9 @@ class GroupsAndMinions extends Component {
                             {this.state.runScript ?
                                 <TreeViewModalCheckboxes groups={this.props.filesTree.files}
                                                          scriptName={this.state.minionName}
-                                                         executeScripts={executeScripts}
+                                                         executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
+                            {this.props.executeScripts.execute ? <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
                         </Col>
                     </Row>
                 </Container>

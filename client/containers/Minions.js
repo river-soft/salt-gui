@@ -52,6 +52,11 @@ class Minions extends Component {
         this.props.deleteMinions.deleted = false;
     }
 
+    setDeleteErrorFalse() {
+        this.props.deleteMinions.error = '';
+        this.setState({update: true});
+    }
+
     render() {
 
         const {getMinionsGroups} = this.props.getMinionsGroupsAction,
@@ -62,12 +67,15 @@ class Minions extends Component {
             rejectMinionsSuccess = this.props.rejectMinions.rejected,
             deleteMinionsSuccess = this.props.deleteMinions.deleted;
 
+        let deleteMinionsError = this.props.deleteMinions.error;
+
         let countsStatus = <MinionsCountsStatus countsStatus={this.props.minions.countsStatus}/>,
             countsGroup = <MinionsCountsGroup countsStatus={this.props.minions.countsGroup}/>,
             acceptedMinions = <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions}
-                                               deleteMinions={deleteMinions}
+                                               deleteMinions={deleteMinions} deleteMinionsError={deleteMinionsError}
                                                deleteMinionsSuccess={deleteMinionsSuccess}
-                                               setDeletedFalse={::this.setDeletedFalse}/>,
+                                               setDeletedFalse={::this.setDeletedFalse}
+                                               setDeleteErrorFalse={::this.setDeleteErrorFalse}/>,
             unacceptedMinions = <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
                                                    getMinionsGroups={getMinionsGroups}
                                                    minionsGroups={this.props.minionsGroups.groups}
@@ -86,11 +94,11 @@ class Minions extends Component {
                                                setDeletedFalse={::this.setDeletedFalse}/>;
 
         return <div className='wrapper'>
-            <Header />
+            <Header header='Миньоны'/>
             <main className='main'>
                 <Container>
                     <Row>
-                        <Col md='3' xs='6' lg='3'>
+                        <Col md='3' xs='12' lg='3'>
                             <Row>
                                 <Col md='12' xs='12' lg='12'>
                                     <div className='minions__state'>
@@ -102,12 +110,14 @@ class Minions extends Component {
                                 <Col md='12' xs='12' lg='12'>{countsGroup}</Col>
                             </Row>
                         </Col>
-                        <Col md='9' xs='6' lg='9'><Tabs className='minions-tabs' justified={true}>
-                            <Tab className='minions-tabs' label='Accepted'>{acceptedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Denied'>{deniedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Unaccepted'>{unacceptedMinions}</Tab>
-                            <Tab className='minions-tabs' label='Rejected'>{rejectedMinions}</Tab>
-                        </Tabs></Col>
+                        <Col md='9' xs='12' lg='9'>
+                            <Tabs className='minions-tabs' justified={true}>
+                                <Tab className='minions-tabs' label='Принятые'>{acceptedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Отказанные'>{deniedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Не принятые'>{unacceptedMinions}</Tab>
+                                <Tab className='minions-tabs' label='Отклоненные'>{rejectedMinions}</Tab>
+                            </Tabs>
+                        </Col>
                     </Row>
                 </Container>
             </main>

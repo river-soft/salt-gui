@@ -41,6 +41,8 @@ class SaltScriptGroupService {
                 log.debug("Start creating salt script group wiht name [${groupName}].")
 
                 saltScriptGroup = new SaltScriptGroup(name: groupName.trim())
+                saltScriptGroup.createDate = new Date()
+                saltScriptGroup.lastModifiedDate = new Date()
                 saltScriptGroupRepository.save(saltScriptGroup)
 
                 log.debug("Successfully created salt script group with name [${saltScriptGroup.name}].")
@@ -85,6 +87,7 @@ class SaltScriptGroupService {
             log.debug("Start updating SaltScriptGroup name, from old name [${oldName}] to [${name}].")
 
             saltScriptGroup.name = name
+            saltScriptGroup.lastModifiedDate = new Date()
 
             saltScriptGroupRepository.save(saltScriptGroup)
 

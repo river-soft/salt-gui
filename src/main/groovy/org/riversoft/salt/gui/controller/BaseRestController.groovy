@@ -2,7 +2,6 @@ package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.exception.BasicSaltGuiException
-import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -32,16 +31,18 @@ abstract class BaseRestController {
         log.error(e.message, e)
 
         def localizedMessage = e.localizedMessage
-//        if (e instanceof BasicRGambleException) {
-//
-//            try {
-//
-//                localizedMessage = localeService.getMessage(e.localizedKey)
-//            } catch (Exception ex) {
-//
-//                log.warn(ex.message)
-//            }
-//        }
+        if (e instanceof BasicSaltGuiException) {
+
+            try {
+
+                localizedMessage = e.localizedKey
+                //TODO переделать потом на локализацию localeService.getMessage(e.localizedKey)
+
+            } catch (Exception ex) {
+
+                log.warn(ex.message)
+            }
+        }
 
         [
                 timestamp: new Date(),
