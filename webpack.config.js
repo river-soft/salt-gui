@@ -82,7 +82,7 @@ module.exports = {
     },
 
     devServer: {
-        host: 'localhost',
+        host: '192.168.1.110',
         port: '8000',
         hot: true,
         proxy: {

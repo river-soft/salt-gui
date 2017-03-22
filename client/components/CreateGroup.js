@@ -55,11 +55,11 @@ export default class CreateGroup extends Component {
 
     editScript(scriptName, scriptContent) {
 
-        this.state.scripts.forEach((el, index) => {
-            if (el.name === scriptName) {
-                delete this.state.scripts[index];
+        for(let i = 0; i < this.state.scripts.length; i++) {
+            if (this.state.scripts[i].name === scriptName) {
+                this.state.scripts.splice(i, 1);
             }
-        });
+        }
 
         this.setState({
             addScript: true,
@@ -102,6 +102,7 @@ export default class CreateGroup extends Component {
             addScript: false,
             scriptName: '',
             scriptContent: '',
+            scriptExist: false
         })
     }
 
@@ -218,7 +219,7 @@ export default class CreateGroup extends Component {
     }
 
     render() {
-debugger;
+
         let dropdownList = !this.state.rerenderDropdown ?
             this.props.groups.length > 0 ?
                 <ul className='group__list mui-list--unstyled' ref='dropdown'>

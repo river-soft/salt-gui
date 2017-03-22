@@ -154,7 +154,10 @@ export default class TreeModalCheckboxes extends Component {
             }
         });
 
-        this.setState({cancelList: []});
+        this.setState({
+            cancelList: [],
+            returnFromTransfer: true
+        });
     }
 
     toggleToCancelList(item, el) {
@@ -176,7 +179,7 @@ export default class TreeModalCheckboxes extends Component {
 
     executeScripts(el) {
 
-        if(!el.classList.contains('clicked')) {
+        if (!el.classList.contains('clicked')) {
             let scripts = [], minions = [];
 
             if (this.props.minions) {
@@ -197,7 +200,7 @@ export default class TreeModalCheckboxes extends Component {
 
             el.classList.add('clicked');
         } else {
-            if(this.props.executeError) {
+            if (this.props.executeError) {
                 el.classList.remove('clicked');
                 this.executeScripts(el);
             }
@@ -214,7 +217,9 @@ export default class TreeModalCheckboxes extends Component {
                 nodes={group.scripts || group.minions}
                 group={group} key={index} selectItems={::this.selectItems}
                 transfer={this.state.transfer}
-                transferedList={this.state.transferedList}/>) : null;
+                transferedList={this.state.transferedList}
+                returnFromTransfer={this.state.returnFromTransfer}/>) :
+            null;
 
         return <Row>
             <h5 className='header__center'>{!this.props.minions ? 'Выберите скрипты' : 'Выберите миньоны'}</h5>
@@ -238,7 +243,8 @@ export default class TreeModalCheckboxes extends Component {
                                 }}>{el.name}</li>
                             })}
                         </ul> : null }
-                    {this.props.executeError ? <span className='input_error'>{this.props.executeError.message}</span> : null}
+                    {this.props.executeError ?
+                        <span className='input_error'>{this.props.executeError.message}</span> : null}
                 </div>
                 {this.state.transferedList.length ? <div>
                         <button className='button mui-btn mui--pull-right' onClick={(e) => {

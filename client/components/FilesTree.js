@@ -49,7 +49,10 @@ export class FilesTree extends Component {
         }
 
         if (this.props.editGroupSuccess || this.props.removeGroupSuccess) {
-            this.setState({showModal: false});
+            this.setState({
+                showModal: false,
+                removeGroup: false,
+            });
         }
 
         if (this.props.execute && this.state.runScript) {
