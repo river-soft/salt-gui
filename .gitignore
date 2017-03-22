@@ -28,4 +28,3 @@ nbdist/
 node_modules
 
 ### static ###
-src/main/resources/static
