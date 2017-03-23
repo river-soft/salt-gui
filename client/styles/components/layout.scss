@@ -334,6 +334,10 @@ body {
 
     &_item {
       cursor: pointer;
+
+      &.green {
+        color: $green-text;
+      }
     }
   }
 

@@ -20,7 +20,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
 
-        http.authorizeRequests().antMatchers('/login').permitAll().anyRequest().permitAll()
+        http.authorizeRequests().antMatchers('/login').permitAll().anyRequest().authenticated()
 
         http.formLogin().loginPage("/login").failureUrl("/login?error=1").successForwardUrl('/')
 
@@ -31,6 +31,6 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     void configureGlobal(AuthenticationManagerBuilder auth) {
 
-        auth.inMemoryAuthentication().withUser("user").password("").roles("USER")
+        auth.inMemoryAuthentication().withUser("user").password("1234").roles("USER")
     }
 }
