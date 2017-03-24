@@ -81,12 +81,12 @@ class GroupsAndMinions extends Component {
             getGroupedMinions();
         }
 
-        if(this.props.executeScripts.execute && this.state.runScript) {
+        if (this.props.executeScripts.execute && this.state.runScript) {
             this.setState({runScript: false});
-        } else if(!this.state.runScript) {
+        } else if (!this.state.runScript) {
             this.props.executeScripts.execute = false;
         }
-     }
+    }
 
     showContent(minionId, minionName) {
         const {getMinionDetails} = this.props.minionDetailsAction;
@@ -205,7 +205,8 @@ class GroupsAndMinions extends Component {
             {editMinionGroups} = this.props.editMinionGroupsAction,
             {executeScripts} = this.props.executeScriptsAction;
 
-        let treeView, modal, executeError = this.props.executeScripts.error;
+        let treeView, modal, executeError = this.props.executeScripts.error,
+            minionsDetailsError = this.props.minionDetails.error;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>Данных нету</div>
@@ -247,7 +248,7 @@ class GroupsAndMinions extends Component {
             <main className='main'>
                 <Container>
                     <Row>
-                        <Col md='3' xs='6' lg='3'>
+                        <Col md='6' xs='12' lg='3'>
                             <Input label='Поиск миньонов' floatingLabel={true} onChange={e => {
                                 this.filterTree(e)
                             }}/>
@@ -256,19 +257,21 @@ class GroupsAndMinions extends Component {
                             </ul>
                             <button className='mui-btn button' onClick={::this.createGroup}>добавить группу</button>
                         </Col>
-                        <Col md='9' xs='6' lg='9'>
+                        <Col md='6' xs='12' lg='9'>
                             {this.state.showMinionDescription ?
                                 <MinionDetails minionName={this.state.minionDescriptionName}
                                                details={this.props.minionDetails.minionDetails[0]}
                                                getGroups={::this.editMinionGroups}
-                                               runScript={::this.runScript}/>
+                                               runScript={::this.runScript}
+                                               error={minionsDetailsError}/>
                                 : null}
                             {this.state.runScript ?
                                 <TreeViewModalCheckboxes groups={this.props.filesTree.files}
                                                          scriptName={this.state.minionName}
                                                          executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
-                            {this.props.executeScripts.execute ? <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
+                            {this.props.executeScripts.execute ?
+                                <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
                         </Col>
                     </Row>
                 </Container>

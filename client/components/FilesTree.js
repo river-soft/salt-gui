@@ -83,6 +83,8 @@ export class FilesTree extends Component {
     }
 
     addScript() {
+        this.props.setAddGroupAndScriptErrorFalse();
+
         this.setState({
             addScript: true,
             editScript: false,

@@ -77,13 +77,14 @@ export default class CreateGroup extends Component {
     }
 
     setGroupName(name) {
-
         let input = document.getElementById('group'),
             _this = this;
 
         document.onclick = function (e) {
             if (e.target.className != input.className && _this.state.showDropdown) {
-                _this.setState({showDropdown: false});
+                if(e.target.className != 'dropdown-btn') {
+                    _this.setState({showDropdown: false});
+                }
             }
         };
 
@@ -94,6 +95,18 @@ export default class CreateGroup extends Component {
     }
 
     showDropdown() {
+
+        let input = document.getElementById('group'),
+            _this = this;
+
+        document.onclick = function (e) {
+            if (e.target.className != input.className && _this.state.showDropdown) {
+                if(e.target.className != 'dropdown-btn') {
+                    _this.setState({showDropdown: false});
+                }
+            }
+        };
+
         this.setState({showDropdown: true});
     }
 
@@ -249,8 +262,8 @@ export default class CreateGroup extends Component {
                         this.setGroupName(e.target.value)
                     }}/>
                     {this.props.error ? <span className='input_error'>{this.props.error.message}</span> : null}
-                    <div className='dropdown-btn' onClick={this.showDropdown.bind(this)}><span
-                        className='mui-caret'> </span></div>
+                    <div className='dropdown-btn' onClick={::this.showDropdown}><span
+                        className='mui-caret'></span></div>
                     {this.state.showDropdown ? dropdownList : null}
                 </div>
                 <div className='modal__content_scripts'>

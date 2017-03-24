@@ -35,21 +35,26 @@ export default class MinionDetails extends Component {
     render() {
 
         let details = this.props.details,
-            template = this.parseJson(details);
-
-        return <Panel className='minion-details'>
-            <div className='minion-details__actions'>
+            template = this.parseJson(details),
+            block = <div>
+                <div className='minion-details__actions'>
                 <span className='minion-details__action' onClick={() => {
                     this.props.getGroups(this.props.minionName);
                 }}><i className='mi mi-create'></i></span>
-            </div>
-            {template}
-            <Divider />
-            <div className='file__footer'>
-                <button className='button mui-btn mui--pull-right' onClick={() => {
-                    ::this.props.runScript(this.props.minionName);
-                }}>Запустить</button>
-            </div>
+                </div>
+                {template}
+                <Divider />
+                <div className='file__footer'>
+                    <button className='button mui-btn mui--pull-right' onClick={() => {
+                        ::this.props.runScript(this.props.minionName);
+                    }}>Запустить</button>
+                </div>
+            </div>;
+
+        return <Panel className='minion-details'>
+            {!this.props.error && !details ? 'Ожидается ответ от миньона...' : null}
+            {this.props.error ? <span className='input_error'>{this.props.error.message}</span> : null}
+            {details ? block : null}
         </Panel>
     }
 }

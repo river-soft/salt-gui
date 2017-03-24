@@ -72,6 +72,11 @@ class App extends Component {
         this.props.executeScripts.execute = false;
     }
 
+    setAddGroupAndScriptErrorFalse() {
+        this.props.createGroup.error = '';
+        this.setState({run: true});
+    }
+
     setEditScriptFalse() {
         this.props.editScript.error = '';
     }
@@ -131,7 +136,8 @@ class App extends Component {
                                    groupedMinions={_this.props.groupedMinions.groupedMinions}
                                    executeScripts={executeScripts}
                                    execute={_this.props.executeScripts.execute}
-                                   setExecuteFalse={::_this.setExecuteFalse}/>;
+                                   setExecuteFalse={::_this.setExecuteFalse}
+                                   setAddGroupAndScriptErrorFalse={::this.setAddGroupAndScriptErrorFalse}/>;
 
         return (<div className='wrapper'>
             <Header header='Управление скриптами' />

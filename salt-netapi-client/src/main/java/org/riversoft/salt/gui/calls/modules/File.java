@@ -45,6 +45,13 @@ public class File {
                 Optional.of(args), new TypeToken<String>(){});
     }
 
+    public static LocalCall<String> touch(String name) {
+        Map<String, String> args = new LinkedHashMap<>();
+        args.put("name", name);
+        return new LocalCall<>("file.touch", Optional.empty(),
+                Optional.of(args), new TypeToken<String>(){});
+    }
+
     /**
      * Set the mode of a file
      *
