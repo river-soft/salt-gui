@@ -148,7 +148,7 @@ class ExecuteScriptService {
      * Метод перезапуска скриптов
      * @param jobResultIds - список уникальных идентивикаторов результата работы
      */
-    def reExecuteScripts(String[] jobResultIds) {
+    void reExecuteScripts(String[] jobResultIds) {
 
         List<JobResult> jobResults = jobResultRepository.findAllByIdIn(jobResultIds)
         String[] minions = []
