@@ -80,9 +80,6 @@ class SaltScriptService {
         saltScript.lastModifiedDate = new Date()
         saltScriptRepository.save(saltScript)
 
-
-//        saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name, createSaltScript.content)
-
         log.debug("Successfully created salt script with name [${createSaltScript.name}].")
 
         log.debug("Adding script [${saltScript.name}] to group [${saltScriptGroup.name}].")
@@ -235,9 +232,6 @@ class SaltScriptService {
             log.error("SaltScript by id [${scriptId}] not found.")
             throw new SaltScriptNotFoundException("SaltScript by id [${scriptId}] not found.")
         }
-
-
-//        saltScriptFileService.deleteSaltScriptSlsFile(saltScript.name)
 
         SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findByName(saltScript.group.name)
 
