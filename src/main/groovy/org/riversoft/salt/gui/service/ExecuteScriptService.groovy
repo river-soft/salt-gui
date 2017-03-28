@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import sun.font.Script
 
 @Slf4j
 @Service
@@ -51,6 +52,9 @@ class ExecuteScriptService {
     private JobResultRepository jobResultRepository
 
     @Autowired
+    private SaltScriptFileService saltScriptFileService
+
+    @Autowired
     private JobResultDetailRepository jobResultDetailRepository
 
     //endregion
@@ -64,28 +68,36 @@ class ExecuteScriptService {
 
         try {
 
-            //TODO собрать массив названий скриптов на выполнение или же принимать прямо с фронта список из названий?
+            //region список скриптов и создание файлов скриптов на salt server
+
+            List<SaltScript> saltScripts = []
+
+            log.debug("Start preparing scripts files for execution on salt server.")
+
+            for (String scriptName : scripts) {
+
+                SaltScript script = saltScriptService.getSaltScriptByName(scriptName)
+
+                //создание sls файлы скрипта
+                saltScriptFileService.createSaltScriptSlsFile(script.name, script.content)
+
+                saltScripts.add(script)
+            }
+
+            log.debug("End preparing scripts files for execution on salt server.")
+
+            //endregion
+
             //region отправка миньонов и скриптов на выполнение на salt сервер
 
             log.debug("Sending scripts names [${scripts.join(",")}] and minions names [${minions.join(",")}] for execution to salt server.")
 
             Target<List<String>> minionList = new MinionList(minions)
 
-            LocalAsyncResult<Map<String, Result<Boolean>>> result = State.apply(scripts).callAsync(
+            LocalAsyncResult<Map<String, State.ApplyResult>> result = State.apply(scripts).callAsync(
                     saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
             log.debug("Successfully returned response from salt server with job id [${result.jid}].")
-
-            //endregion
-
-            //region список скриптов
-
-            List<SaltScript> saltScripts = []
-
-            for (String script : scripts) {
-
-                saltScripts.add(saltScriptService.getSaltScriptByName(script))
-            }
 
             //endregion
 
@@ -156,7 +168,7 @@ class ExecuteScriptService {
 
         jobResults.each {
             minions += it.minion.name
-            if(!scripts.size()) {
+            if (!scripts.size()) {
                 it.saltScripts.each {
                     scripts += it.name
                 }
@@ -231,9 +243,23 @@ class ExecuteScriptService {
                             log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
                                     "id [${jobResult.job.jid}].")
 
-                            //TODO провека если val не содержит key  и т.д. не брать эти значения и не писать в бд
+                            if (val instanceof String) {
 
-                            if (!val instanceof String) {
+                                log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
+                                        "Reason - [${val}].")
+
+                                JobResultDetail jobResultDetail = new JobResultDetail()
+                                jobResultDetail.comment = val
+                                jobResultDetail.createDate = new Date()
+                                jobResultDetail.lastModifiedDate = new Date()
+                                jobResultDetail.jobResult = jobResult
+                                jobResultDetail.result = false
+
+                                jobResult.jobResultDetails.add(jobResultDetail)
+
+                                jobResultDetailRepository.save(jobResultDetail)
+
+                            } else {
 
                                 JobResultDetail jobResultDetail = new JobResultDetail()
 
@@ -254,26 +280,10 @@ class ExecuteScriptService {
                                 jobResultDetailRepository.save(jobResultDetail)
                                 log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
                                         "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
-                            } else {
-
-                                log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
-                                        "Reason - [${val}].")
-
-                                JobResultDetail jobResultDetail = new JobResultDetail()
-                                jobResultDetail.comment = val
-                                jobResultDetail.createDate = new Date()
-                                jobResultDetail.lastModifiedDate = new Date()
-                                jobResultDetail.jobResult = jobResult
-                                jobResultDetail.result = false
-
-                                jobResult.jobResultDetails.add(jobResultDetail)
-
-                                jobResultDetailRepository.save(jobResultDetail)
                             }
                         }
                     }
 
-                    //TODO может проверять если все результаты true ?
                     jobResult.isResult = true
                     jobResult.lastModifiedDate = new Date()
 
@@ -297,6 +307,21 @@ class ExecuteScriptService {
             jobRepository.save(job)
 
             // endregion
+
+            if (job.done) {
+
+                log.debug("Start deleting scripts files from salt server after execution.")
+
+                List<SaltScript> saltScripts = job.results.find()?.saltScripts ?: []
+
+                //удаление sls файлов скрипов
+                for (SaltScript script : saltScripts) {
+
+                    saltScriptFileService.deleteSaltScriptSlsFile(script.name)
+                }
+
+                log.debug("End deleting scripts files from salt server after execution.")
+            }
 
             //job2.result.values().find().members.find().value.members.find().value.members
 

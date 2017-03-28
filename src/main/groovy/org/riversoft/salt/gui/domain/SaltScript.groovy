@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "salt_scripts")
-class SaltScript extends Base/*implements Serializable*/{
+class SaltScript extends Base {
 
     /**
      * Уникальный номер скрипта
@@ -21,9 +21,14 @@ class SaltScript extends Base/*implements Serializable*/{
     String name
 
     /**
+     * Содержимое скрипта
+     */
+    String content
+
+    /**
      * Полный путь к файлу скрипта
      */
-    String filePath
+//    String filePath
 
     /**
      * Группа скрипта
