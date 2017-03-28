@@ -17,12 +17,10 @@ import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultDetailRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
-import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import sun.font.Script
 
 @Slf4j
 @Service
@@ -308,6 +306,8 @@ class ExecuteScriptService {
 
             // endregion
 
+            //region delete scripts from salt server
+
             if (job.done) {
 
                 log.debug("Start deleting scripts files from salt server after execution.")
@@ -322,6 +322,8 @@ class ExecuteScriptService {
 
                 log.debug("End deleting scripts files from salt server after execution.")
             }
+
+            // endregion
 
             //job2.result.values().find().members.find().value.members.find().value.members
 

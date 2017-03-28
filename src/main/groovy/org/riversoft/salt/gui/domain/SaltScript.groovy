@@ -26,11 +26,6 @@ class SaltScript extends Base {
     String content
 
     /**
-     * Полный путь к файлу скрипта
-     */
-//    String filePath
-
-    /**
      * Группа скрипта
      */
     @DBRef
