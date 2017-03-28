@@ -33,7 +33,7 @@ class SaltScriptFileService {
     /**
      * Создание sls файла скрипта
      * @param fileName - название файла
-     * @param fileContent - содержимое файла скрипта
+     * @param file - полный путь к файлуContent - содержимое файла скрипта
      */
     void createSaltScriptSlsFile(String fileName, String fileContent) {
 
@@ -66,7 +66,7 @@ class SaltScriptFileService {
 
     /**
      * Удаление sls файла скрипта
-     * @param filePath - полный путь к файлу
+     * @param fileName - название файла
      */
     void deleteSaltScriptSlsFile(String fileName) {
 
