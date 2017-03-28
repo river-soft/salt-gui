@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "salt_scripts_group")
-class SaltScriptGroup extends Base/*implements Serializable*/ {
+class SaltScriptGroup extends Base {
 
     /**
      * Уникальный номер группы скриптов

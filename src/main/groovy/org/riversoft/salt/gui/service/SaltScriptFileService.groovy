@@ -1,6 +1,13 @@
 package org.riversoft.salt.gui.service
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.AuthModule
+import org.riversoft.salt.gui.calls.modules.File
+import org.riversoft.salt.gui.client.SaltClient
+import org.riversoft.salt.gui.datatypes.target.MinionList
+import org.riversoft.salt.gui.datatypes.target.Target
+import org.riversoft.salt.gui.results.Result
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -8,118 +15,92 @@ import org.springframework.stereotype.Service
 @Service
 class SaltScriptFileService {
 
+    @Value('${salt.user}')
+    private String USER
+
+    @Value('${salt.password}')
+    private String PASSWORD
+
     @Value('${salt.scripts.directory}')
     private String scriptsDirectory
 
-    /**
-     * Чтение sls файла скрипта
-     * @param filePath - полный путь к файлу
-     * @return содержимое файла в виде строки
-     */
-    static readSaltScriptSlsFile(String filePath) {
+    @Value('${salt.master_minion.name}')
+    private String masterMinionName
 
-        String fileContents = ""
-
-        log.debug("Start reading script file [${filePath}].")
-
-        new File(filePath).eachLine { fileContents += "${it}\n" }
-
-        //TODO FileNotFoundException выбрасывается еслил файл не найден
-
-        log.debug("End reading script file [${filePath}].")
-
-        return fileContents
-    }
+    @Autowired
+    private SaltClient saltClient
 
     /**
      * Создание sls файла скрипта
      * @param fileName - название файла
      * @param fileContent - содержимое файла скрипта
-     * @return полный путь к файлу
      */
-    String createSaltScriptSlsFile(String fileName, String fileContent) {
+    void createSaltScriptSlsFile(String fileName, String fileContent) {
 
-        def dir = new File("${scriptsDirectory}")
+        log.debug("Start creating script file with name [${fileName}] on Salt server.")
 
-        if (!dir.exists()) {
-            log.warn("Directoty ${dir.canonicalPath} is not exists, create.")
-            dir.mkdirs()
+        String canonicalFilePath = "${scriptsDirectory}/${fileName}.sls"
+
+        Target<List<String>> minionList = new MinionList([masterMinionName])
+
+        Map<String, Result<Boolean>> isDirExistResult = File.directoryExists(scriptsDirectory).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
+
+        def isDirExist = isDirExistResult.find().value?.xor?.right()?.value
+
+        if (!isDirExist) {
+
+            log.warn("Directoty ${scriptsDirectory} is not exists, create.")
+
+            File.mkdir(scriptsDirectory).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
         }
 
-        //TODO проверять существует ли файл с таким именем?
+        //File.touch(canonicalFilePath).callAsync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
+        Map<String, Result<String>> fileWriteResult = File.write(canonicalFilePath, fileContent).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
-        log.debug("Start creating script file with name [${fileName}].")
+        def fileSaltResult = fileWriteResult.find().value?.xor?.right()?.value
 
-        File file = new File("${scriptsDirectory}/${fileName}.sls")
+        log.debug("Response from Salt server on file creation [${fileSaltResult}].")
 
-        String filePath = file.canonicalPath
-
-        file.write(fileContent)
-
-        log.debug("Successfully created script file with full path [${filePath}].")
-
-        return filePath
-    }
-
-    /**
-     * Редактирование/обновление sls файла скрипта
-     * @param filePath - полный путь файла
-     * @param fileContent - содержимое файла
-     * @param newFileName - новое имя файла
-     * @return полный путь к обновленному файлу
-     */
-    String updateSaltScriptSlsFile(String filePath, String fileContent, String newFileName) {
-
-        File file = new File(filePath)
-
-        log.debug("Start updating file [${filePath}].")
-
-        file.write(fileContent)
-
-        String actualFilePath = file.canonicalPath
-
-        if (newFileName) {
-
-            String newFilePath = "${scriptsDirectory}/${newFileName}.sls"
-
-            log.debug("Start renaiming file [${filePath}] to [${newFilePath}].")
-
-            file.renameTo(newFilePath)
-
-            actualFilePath = new File(newFilePath).canonicalPath
-
-            log.debug("File renamed and new path is [${actualFilePath}].")
-        }
-
-        log.debug("File [${actualFilePath}] updated.")
-
-        return actualFilePath
+        log.debug("Successfully created script file with full path [${canonicalFilePath}] on Salt server.")
     }
 
     /**
      * Удаление sls файла скрипта
      * @param filePath - полный путь к файлу
      */
-    static boolean deleteSaltScriptSlsFile(String filePath) {
+    void deleteSaltScriptSlsFile(String fileName) {
 
-        log.debug("Start deleting file [${filePath}].")
+        String canonicalFilePath = "${scriptsDirectory}/${fileName}.sls"
 
-        File file = new File(filePath)
+        Target<List<String>> minionList = new MinionList([masterMinionName])
 
-        if (!file) {
-            log.error("File [${filePath}] not found.")
-            throw new FileNotFoundException("File [${filePath}] not found.")
+        log.debug("Start deleting file [${canonicalFilePath}] from Salt server.")
+
+        //region проверка существует ли файл
+
+        Map<String, Result<Boolean>> isFileExistResult = File.fileExists(canonicalFilePath).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
+
+        def isFileExist = isFileExistResult.find().value?.xor?.right()?.value
+        if (!isFileExist) {
+            log.error("File [${"${scriptsDirectory}/${fileName}.sls"}] not found on Salt server.")
+            throw new FileNotFoundException("File [${"${scriptsDirectory}/${fileName}.sls"}] not found on Salt server.")
         }
 
-        boolean fileSuccessfullyDeleted = file.delete()
+        //endregion
+
+        Map<String, Result<Boolean>> fileRemoveResult = File.remove(canonicalFilePath).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
+
+        def fileSuccessfullyDeleted = fileRemoveResult.find().value?.xor?.right()?.value
 
         if (fileSuccessfullyDeleted) {
-            log.debug("Successfully deleted file [${filePath}].")
-        } else {
-            log.error("File [${filePath}] not deleted.")
-            throw new Exception("File [${filePath}] not deleted.")
-        }
 
-        return fileSuccessfullyDeleted
+            log.debug("Successfully deleted file [${canonicalFilePath}] from Salt server.")
+
+        } else {
+
+            log.error("File [${canonicalFilePath}] not deleted from Salt server.")
+            throw new Exception("File [${canonicalFilePath}] not deleted from Salt server.")
+        }
     }
+
 }

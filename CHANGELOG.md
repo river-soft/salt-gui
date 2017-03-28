@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-##[Unreleased]
-####Added
+#[Unreleased]
+###Added
 
 - Добавлена страница "Миньоны". Реализовано отображение списков миньонов сгруппированых по их статусу и отображение
   количества миньонов в группах и по статусам.
@@ -20,6 +20,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ---
 
-####Change
-####Delete
-####Fix
+###Changed
+
+- Изменен принцип хранения данных о скриптах и механизм создания/удаления sls файлов скриптов на сервере salt, которые 
+создаются во время начала выполнения скриптов, и удаляются после окончания выполнения работы по скриптам.
+
+---
+
+###Deleted
+###Fixed

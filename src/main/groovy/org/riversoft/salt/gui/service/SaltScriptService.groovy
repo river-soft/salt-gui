@@ -72,12 +72,10 @@ class SaltScriptService {
                     412, "Salt script with name [${createSaltScript.name}] already exist.")
         }
 
-        //создание sls файла на сервере salt
-        String filePath = saltScriptFileService.createSaltScriptSlsFile(createSaltScript.name.trim(), createSaltScript.content)
-
         log.debug("Start creating salt script with name [${createSaltScript.name}].")
 
-        saltScript = new SaltScript(name: createSaltScript.name.trim(), filePath: filePath, group: saltScriptGroup)
+        saltScript = new SaltScript(name: createSaltScript.name.trim(), content: createSaltScript.content, group: saltScriptGroup)
+
         saltScript.createDate = new Date()
         saltScript.lastModifiedDate = new Date()
         saltScriptRepository.save(saltScript)
@@ -161,9 +159,7 @@ class SaltScriptService {
 
         log.debug("Found script with name [${saltScript.name}].")
 
-        String fileContent = saltScriptFileService.readSaltScriptSlsFile(saltScript.filePath)
-
-        new SaltScriptViewModel(saltScript, fileContent)
+        new SaltScriptViewModel(saltScript)
     }
 
     /**
@@ -208,20 +204,16 @@ class SaltScriptService {
             log.debug("Successfully added script [${saltScript.name}] to group [${newSaltScriptGroup.name}].")
         }
 
-        String newFileName = null
-
         if (saltScript.name != editSaltScript.name) {
 
             log.debug("Updating name of salt script from [${saltScript.name}] to [${editSaltScript.name}].")
 
             saltScript.name = editSaltScript.name.trim()
-
-            newFileName = editSaltScript.name.trim()
         }
 
         saltScript.lastModifiedDate = new Date()
+        saltScript.content = editSaltScript.content
 
-        saltScript.filePath = saltScriptFileService.updateSaltScriptSlsFile(saltScript.filePath, editSaltScript.content, newFileName)
         saltScriptRepository.save(saltScript)
 
         log.debug("Successfully updated salt script [${saltScript.name}].")
@@ -240,8 +232,6 @@ class SaltScriptService {
             log.error("SaltScript by id [${scriptId}] not found.")
             throw new SaltScriptNotFoundException("SaltScript by id [${scriptId}] not found.")
         }
-
-        saltScriptFileService.deleteSaltScriptSlsFile(saltScript.filePath)
 
         SaltScriptGroup saltScriptGroup = saltScriptGroupRepository.findByName(saltScript.group.name)
 

@@ -26,7 +26,8 @@ public class File {
         }
     }
 
-    private File() { }
+    private File() {
+    }
 
     /**
      * Chown a file
@@ -34,7 +35,7 @@ public class File {
      * @param path  Path to the file or directory
      * @param user  User owner
      * @param group Group owner
-     * @return      The {@link LocalCall} object to make the call
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> chown(String path, String user, String group) {
         Map<String, String> args = new LinkedHashMap<>();
@@ -42,73 +43,102 @@ public class File {
         args.put("user", user);
         args.put("group", group);
         return new LocalCall<>("file.chown", Optional.empty(),
-                Optional.of(args), new TypeToken<String>(){});
+                Optional.of(args), new TypeToken<String>() {
+        });
     }
 
+    /**
+     * Touch a file
+     *
+     * @param name Name of the file
+     * @return The {@link LocalCall} object to make the call
+     */
     public static LocalCall<String> touch(String name) {
         Map<String, String> args = new LinkedHashMap<>();
         args.put("name", name);
         return new LocalCall<>("file.touch", Optional.empty(),
-                Optional.of(args), new TypeToken<String>(){});
+                Optional.of(args), new TypeToken<String>() {
+        });
+    }
+
+    /**
+     * Write text to a file, overwriting any existing contents.
+     *
+     * @param path Path to file
+     * @param text Strings to write to the file
+     * @return The {@link LocalCall} object to make the call
+     */
+    public static LocalCall<String> write(String path, String text) {
+        Map<String, String> args = new LinkedHashMap<>();
+
+        args.put("path", path);
+        args.put("args", text);
+        return new LocalCall<>("file.write", Optional.empty(),
+                Optional.of(args), new TypeToken<String>() {
+        });
     }
 
     /**
      * Set the mode of a file
      *
-     * @param path  File or directory of which to set the mode
-     * @param mode  Mode to set the path to
-     * @return      The {@link LocalCall} object to make the call
+     * @param path File or directory of which to set the mode
+     * @param mode Mode to set the path to
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> chmod(String path, String mode) {
         return new LocalCall<>("file.set_mode", Optional.of(Arrays.asList(path, mode)),
-                Optional.empty(), new TypeToken<String>(){});
+                Optional.empty(), new TypeToken<String>() {
+        });
     }
 
     /**
      * Copy a file or directory from src to dst
      *
-     * @param src               File or directory to copy
-     * @param dst               Destination path
-     * @param recurse           Recurse flag
-     * @param removeExisting    If true, all files in the target directory are removed,
-     *                          and then the files are copied from the source
-     * @return                  The {@link LocalCall} object to make the call
+     * @param src            File or directory to copy
+     * @param dst            Destination path
+     * @param recurse        Recurse flag
+     * @param removeExisting If true, all files in the target directory are removed,
+     *                       and then the files are copied from the source
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Boolean> copy(String src, String dst, boolean recurse,
-            boolean removeExisting) {
+                                          boolean removeExisting) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("src", src);
         args.put("dst", dst);
         args.put("recurse", recurse);
         args.put("remove_existing", removeExisting);
         return new LocalCall<>("file.copy", Optional.empty(), Optional.of(args),
-                new TypeToken<Boolean>(){});
+                new TypeToken<Boolean>() {
+                });
     }
 
     /**
      * Move a file or directory from src to dst
      *
-     * @param src   File or directory to copy
-     * @param dst   Destination path
-     * @return      The {@link LocalCall} object to make the call
+     * @param src File or directory to copy
+     * @param dst Destination path
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Result> move(String src, String dst) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("src", src);
         args.put("dst", dst);
         return new LocalCall<>("file.move", Optional.empty(), Optional.of(args),
-                new TypeToken<Result>(){});
+                new TypeToken<Result>() {
+                });
     }
 
     /**
      * Remove a file
      *
-     * @param path  File path to remove
-     * @return      The {@link LocalCall} object to make the call
+     * @param path File path to remove
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Boolean> remove(String path) {
         return new LocalCall<>("file.remove", Optional.of(Collections.singletonList(path)),
-                Optional.empty(), new TypeToken<Boolean>(){});
+                Optional.empty(), new TypeToken<Boolean>() {
+        });
     }
 
     /**
@@ -116,8 +146,8 @@ public class File {
      * <p>
      * SHA256 algorithm is used by default
      *
-     * @param path      Path to the file or directory
-     * @return          The {@link LocalCall} object to make the call
+     * @param path Path to the file or directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> getHash(String path) {
         return getHash(path, Optional.empty(), Optional.empty());
@@ -126,9 +156,9 @@ public class File {
     /**
      * Get the hash sum of a file
      *
-     * @param path      Path to the file or directory
-     * @param form      Desired sum format
-     * @return          The {@link LocalCall} object to make the call
+     * @param path Path to the file or directory
+     * @param form Desired sum format
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> getHash(String path, HashType form) {
         return getHash(path, Optional.of(form), Optional.empty());
@@ -140,14 +170,14 @@ public class File {
      * @param path      Path to the file or directory
      * @param form      Desired sum format
      * @param chunkSize Amount to sum at once
-     * @return          The {@link LocalCall} object to make the call
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> getHash(String path, HashType form, long chunkSize) {
         return getHash(path, Optional.of(form), Optional.of(chunkSize));
     }
 
     private static LocalCall<String> getHash(String path, Optional<HashType> form,
-            Optional<Long> chunkSize) {
+                                             Optional<Long> chunkSize) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("path", path);
         if (form.isPresent()) {
@@ -158,56 +188,60 @@ public class File {
         }
 
         return new LocalCall<>("file.get_hash", Optional.empty(), Optional.of(args),
-                new TypeToken<String>(){});
+                new TypeToken<String>() {
+                });
     }
 
     /**
      * Tests to see if path is a valid directory
      *
-     * @param path  Path to directory
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Boolean> directoryExists(String path) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("path", path);
         return new LocalCall<>("file.directory_exists", Optional.empty(),
-                Optional.of(args), new TypeToken<Boolean>(){});
+                Optional.of(args), new TypeToken<Boolean>() {
+        });
     }
 
     /**
      * Tests to see if path is a valid file
      *
-     * @param path  Path to file
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to file
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Boolean> fileExists(String path) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("path", path);
         return new LocalCall<>("file.file_exists", Optional.empty(),
-                Optional.of(args), new TypeToken<Boolean>(){});
+                Optional.of(args), new TypeToken<Boolean>() {
+        });
     }
 
     /**
      * Return the mode of a file
      *
-     * @param path              File or directory of which to get the mode
-     * @param followSymlinks    Indicated if symlinks should be followed
-     * @return                  The {@link LocalCall}
-     *                          object to make the call
+     * @param path           File or directory of which to get the mode
+     * @param followSymlinks Indicated if symlinks should be followed
+     * @return The {@link LocalCall}
+     * object to make the call
      */
     public static LocalCall<String> getMode(String path, boolean followSymlinks) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("path", path);
         args.put("follow_symlinks", followSymlinks);
         return new LocalCall<>("file.get_mode", Optional.empty(), Optional.of(args),
-                new TypeToken<String>(){});
+                new TypeToken<String>() {
+                });
     }
 
     /**
      * Ensures that a directory is available
      *
-     * @param path  Path to directory
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> mkdir(String path) {
         return mkdir(path, Optional.empty(), Optional.empty(), Optional.empty());
@@ -216,9 +250,9 @@ public class File {
     /**
      * Ensures that a directory is available
      *
-     * @param path  Path to directory
-     * @param mode  Mode for the newly created directory
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to directory
+     * @param mode Mode for the newly created directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> mkdir(String path, String mode) {
         return mkdir(path, Optional.empty(), Optional.empty(), Optional.of(mode));
@@ -230,7 +264,7 @@ public class File {
      * @param path  Path to directory
      * @param user  Owner user
      * @param group Owner group
-     * @return      The {@link LocalCall} object to make the call
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> mkdir(String path, String user, String group) {
         return mkdir(path, Optional.of(user), Optional.of(group), Optional.empty());
@@ -243,15 +277,15 @@ public class File {
      * @param user  Owner user
      * @param group Owner group
      * @param mode  Mode for the newly created directory
-     * @return      The {@link LocalCall} object to make the call
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<String> mkdir(String path, String user, String group,
-            String mode) {
+                                          String mode) {
         return mkdir(path, Optional.of(user), Optional.of(group), Optional.of(mode));
     }
 
     private static LocalCall<String> mkdir(String path, Optional<String> user,
-            Optional<String> group, Optional<String> mode) {
+                                           Optional<String> group, Optional<String> mode) {
         Map<String, Object> args = new LinkedHashMap<>();
         args.put("dir_path", path);
         if (user.isPresent()) {
@@ -264,18 +298,20 @@ public class File {
             args.put("mode", mode.get());
         }
         return new LocalCall<>("file.mkdir", Optional.empty(), Optional.of(args),
-                new TypeToken<String>(){});
+                new TypeToken<String>() {
+                });
     }
 
     /**
      * Returns a list containing the contents of a directory
      *
-     * @param path  Path to directory
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<List<String>> readdir(String path) {
         return new LocalCall<>("file.readdir", Optional.of(Collections.singletonList(path)),
-                Optional.empty(), new TypeToken<List<String>>(){});
+                Optional.empty(), new TypeToken<List<String>>() {
+        });
     }
 
     /**
@@ -283,11 +319,12 @@ public class File {
      * <p>
      * Fails if the directory is not empty
      *
-     * @param path  Path to directory
-     * @return      The {@link LocalCall} object to make the call
+     * @param path Path to directory
+     * @return The {@link LocalCall} object to make the call
      */
     public static LocalCall<Boolean> rmdir(String path) {
         return new LocalCall<>("file.rmdir", Optional.of(Collections.singletonList(path)),
-                Optional.empty(), new TypeToken<Boolean>(){});
+                Optional.empty(), new TypeToken<Boolean>() {
+        });
     }
 }
