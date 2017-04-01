@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Panel from 'muicss/lib/react/panel';
-import Divider from 'muicss/lib/react/divider';
 
 export default class MinionDetails extends Component {
 
@@ -38,17 +37,14 @@ export default class MinionDetails extends Component {
             template = this.parseJson(details),
             block = <div>
                 <div className='minion-details__actions'>
-                <span className='minion-details__action' onClick={() => {
-                    this.props.getGroups(this.props.minionName);
-                }}><i className='mi mi-create'></i></span>
+                    <span className='file__actions_remove file__actions_item green' onClick={() => {
+                        ::this.props.runScript(this.props.minionName);
+                    }} title='запустить'><i className='mi mi-play-circle-filled'></i></span>
+                    <span className='minion-details__action' onClick={() => {
+                        this.props.getGroups(this.props.minionName);
+                    }} title='редактировать группы'><i className='mi mi-create'></i></span>
                 </div>
                 {template}
-                <Divider />
-                <div className='file__footer'>
-                    <button className='button mui-btn mui--pull-right' onClick={() => {
-                        ::this.props.runScript(this.props.minionName);
-                    }}>Запустить</button>
-                </div>
             </div>;
 
         return <Panel className='minion-details'>

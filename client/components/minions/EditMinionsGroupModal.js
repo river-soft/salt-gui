@@ -49,8 +49,6 @@ export default class EditMinionsGroupModal extends Component {
                 <Divider/>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         onClick={::this.editGroup} disabled={this.state.groupName === '' || this.state.groupExist}>Сохранить</Button>
-                <Button size='small' color='primary' variant='flat' onClick={this.props.closeModal}
-                        className='modal__btn mui--pull-right'>Отменить</Button>
             </div>
         </div>
     }

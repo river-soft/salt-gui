@@ -43,8 +43,6 @@ export default class RemoveScript extends Component {
                 <Button size='small' color='primary' variant='flat' onClick={() => {
                     this.removeScript(this.props.script);
                 }} className='modal__btn mui--pull-right'>Удалить</Button>
-                <Button size='small' color='primary' variant='flat' onClick={this.props.closeModal}
-                        className='modal__btn mui--pull-right'>Отменить</Button>
             </div>
         </div>
     }

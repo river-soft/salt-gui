@@ -3,6 +3,7 @@ import TreeNodeModalCheckBoxes from './TreeNodeModalCheckBoxes';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import clone from '../../helpers';
+import Input from 'muicss/lib/react/input';
 
 export default class TreeModalCheckboxes extends Component {
 
@@ -18,14 +19,105 @@ export default class TreeModalCheckboxes extends Component {
             removeItems: [],
             transferedList: [],
             transfer: false,
-            cancelList: []
+            cancelList: [],
+            filterItems: [],
+            reserveGroups: []
         }
     }
 
     componentDidUpdate() {
 
         if (!this.state.groups.length && this.props.groups.length) {
+            this.state.reserveGroups = clone(this.props.groups);
             this.state.groups = clone(this.props.groups);
+        }
+    }
+
+    filterTree(e) {
+        let obj = [], _this = this,
+            groups = this.props.groups;
+
+        if (e.target.value) {
+            for (let i = 0; i < groups.length; i++) {
+
+                let items = [];
+
+                if (_this.props.minions) {
+                    items = groups[i].minions.filter((item) => {
+
+                        let count = 0;
+
+                        for (let j = 0; j < _this.state.transferedList.length; j++) {
+                            if (_this.state.transferedList[j].name === item.name) {
+                                count++
+                            }
+                        }
+
+                        if (count > 0) {
+                            return false;
+                        } else {
+                            return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+                        }
+                    });
+                } else {
+                    items = groups[i].scripts.filter((item) => {
+
+                        let count = 0;
+
+                        for (let j = 0; j < _this.state.transferedList.length; j++) {
+                            if (_this.state.transferedList[j].name === item.name) {
+                                count++
+                            }
+                        }
+
+                        if (count > 0) {
+                            return false;
+                        } else {
+                            return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+                        }
+                    });
+                }
+
+                if (items.length > 0) {
+                    obj.push({
+                        group: groups[i].group,
+                        minions: items
+                    })
+                }
+            }
+
+            _this.setState({
+                filterItems: obj,
+                groups: clone(obj),
+                rerender: true
+            });
+        } else {
+
+            if (_this.state.transferedList.length) {
+                for (let i = 0; i < _this.state.transferedList.length; i++) {
+                    for (let j = 0; j < groups.length; j++) {
+                        if (groups[j].minions) {
+                            groups[j].minions.map((item, index) => {
+                                if (item.id === _this.state.transferedList[i].id) {
+                                    groups[j].minions.splice(index, 1);
+                                }
+                            });
+                        } else {
+                            groups[j].scripts.map((item, index) => {
+                                if (item.id === _this.state.transferedList[i].id) {
+                                    groups[j].scripts.splice(index, 1);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            _this.setState({
+                groups: clone(_this.state.reserveGroups),
+                filterItems: [],
+                rerender: false
+            })
         }
     }
 
@@ -82,7 +174,7 @@ export default class TreeModalCheckboxes extends Component {
 
     transferToSelected() {
         let _this = this,
-            groups = _this.props.groups,
+            groups = _this.state.rerender ? _this.state.filterItems : _this.props.groups,
             selectedList = _this.state.selectedList;
 
         if (selectedList.length) {
@@ -101,12 +193,11 @@ export default class TreeModalCheckboxes extends Component {
                             }
                         });
                     }
-
                 }
             }
 
             selectedList.map((el) => {
-                _this.state.transferedList.push(el)
+                _this.state.transferedList.push(el);
             });
 
             _this.setState({
@@ -118,6 +209,9 @@ export default class TreeModalCheckboxes extends Component {
     }
 
     returnFromTransfer() {
+
+        let groups = this.state.rerender ? this.state.filterItems : this.props.groups;
+
         this.state.groups.map((group, index) => {
 
             let items = group.minions || group.scripts;
@@ -125,8 +219,8 @@ export default class TreeModalCheckboxes extends Component {
             for (let i = 0; i < items.length; i++) {
                 for (let j = 0; j < this.state.cancelList.length; j++) {
                     if (this.state.cancelList[j].id === items[i].id) {
-                        if (this.props.groups[index].minions) {
-                            this.props.groups[index].minions.push(group.minions[i]);
+                        if (groups[index].minions) {
+                            groups[index].minions.push(group.minions[i]);
 
                             for (let z = 0; z < this.state.transferedList.length; z++) {
                                 if (group.minions[i].id === this.state.transferedList[z].id) {
@@ -134,7 +228,7 @@ export default class TreeModalCheckboxes extends Component {
                                 }
                             }
                         } else {
-                            this.props.groups[index].scripts.push(items[i]);
+                            groups[index].scripts.push(items[i]);
 
                             for (let z = 0; z < this.state.transferedList.length; z++) {
                                 if (group.scripts[i].id === this.state.transferedList[z].id) {
@@ -142,7 +236,6 @@ export default class TreeModalCheckboxes extends Component {
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -209,7 +302,7 @@ export default class TreeModalCheckboxes extends Component {
 
     render() {
 
-        let groups = this.props.groups;
+        let groups = this.state.rerender ? this.state.filterItems : this.props.groups;
 
         let nodes = groups.length ? groups.map((group, index) => <TreeNodeModalCheckBoxes
                 activeItems={this.state.activeItems}
@@ -222,8 +315,10 @@ export default class TreeModalCheckboxes extends Component {
             null;
 
         return <Row>
-            <h5 className='header__center'>{!this.props.minions ? 'Выберите скрипты' : 'Выберите миньоны'}</h5>
-            <Col md='4' xs='4' lg='4' className='posr'>
+            {/*<h5 className='header__center'>{!this.props.minions ? 'Выберите скрипты' : 'Выберите миньоны'}</h5>*/}
+            <Col md='6' xs='12' lg='4' className='posr'>
+                <Input label={this.props.minions ? 'Поиск миньонов' : 'Поиск скриптов'} floatingLabel={true}
+                       onChange={::this.filterTree}/>
                 <div className='select-items'>
                     <ul className='list mui-list--unstyled'>{nodes}</ul>
                 </div>
@@ -234,7 +329,7 @@ export default class TreeModalCheckboxes extends Component {
                         className='mi mi-arrow-back'></i></div>
                 </div>
             </Col>
-            <Col md='8' xs='8' lg='8'>
+            <Col md='6' xs='12' lg='8'>
                 <div className='added-list'>
                     {this.state.transferedList.length ? <ul className='list mui-list--inline' id='transfer__list'>
                             {this.state.transferedList.map((el, index) => {

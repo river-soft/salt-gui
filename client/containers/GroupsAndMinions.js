@@ -103,24 +103,31 @@ class GroupsAndMinions extends Component {
         let obj = [],
             groupedMinions = this.props.groupedMinions.groupedMinions;
 
-        for (let i = 0; i < groupedMinions.length; i++) {
+        if (e.target.value) {
+            for (let i = 0; i < groupedMinions.length; i++) {
 
-            let minions = groupedMinions[i].minions.filter((item) => {
-                return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
-            });
+                let minions = groupedMinions[i].minions.filter((item) => {
+                    return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+                });
 
-            if (minions.length > 0) {
-                obj.push({
-                    group: groupedMinions[i].group,
-                    minions: minions
-                })
+                if (minions.length > 0) {
+                    obj.push({
+                        group: groupedMinions[i].group,
+                        minions: minions
+                    })
+                }
             }
-        }
 
-        this.setState({
-            filterMinions: obj,
-            rerender: true
-        });
+            this.setState({
+                filterMinions: obj,
+                rerender: true
+            });
+        } else {
+            this.setState({
+                filterMinions: [],
+                rerender: false
+            })
+        }
     }
 
     createGroup() {
@@ -214,12 +221,14 @@ class GroupsAndMinions extends Component {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup}
                                  removeGroup={::this.removeGroup}
-                                 removeIfNotEmpty={true}/>;
+                                 removeIfNotEmpty={true}
+                                 rerender={true}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup}
                                  removeGroup={::this.removeGroup}
-                                 removeIfNotEmpty={true}/>;
+                                 removeIfNotEmpty={true}
+                                 rerender={false}/>;
         }
 
         if (this.state.showModal) {

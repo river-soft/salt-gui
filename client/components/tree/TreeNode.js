@@ -7,34 +7,63 @@ export default class TreeNode extends Component {
         super(props);
         this.state = {
             isVisible: false,
-            selected: ''
+            selected: '',
+            setted: false,
+            clicked: false
         };
     }
 
+    componentWillUpdate() {
+        if (this.props.createdGroup) {
+            if (this.props.createdGroup.group === this.props.group.group) {
+                this.state.isVisible = true;
+                this.state.setted = true;
+            }
+        }
+    }
+
     toggle() {
-        this.setState({isVisible: !this.state.isVisible});
+        this.setState({
+            isVisible: !this.state.isVisible,
+            clicked: true
+        });
     }
 
     setFilter(filter) {
-        if (this.state.selected != filter) {
+
+        if (this.props.selected != filter) {
             let items = document.querySelectorAll('.list__child .list__item');
-            for(let i = 0; i < items.length; i++) {
-                if(items[i].classList.contains('active')) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].classList.contains('active')) {
                     items[i].classList.remove('active');
                 }
             }
 
-            this.setState({selected: filter});
+            this.props.setSelected(filter);
         }
     }
 
     isActive(value) {
-        return 'list__item' + ((value === this.state.selected) ? ' active' : '')
+        return 'list__item' + ((value === this.props.selected) ? ' active' : '')
     }
 
     render() {
 
-        let nodes = this.props.nodes.map((file, index) => {
+        if (!this.state.setted && !this.state.clicked) {
+            this.state.isVisible = this.props.rerender;
+        }
+
+        let items = this.props.nodes.sort((a, b) => {
+            if (a.name.toLowerCase() > b.name.toLowerCase()) {
+                return 1
+            }
+            if (a.name.toLowerCase() < b.name.toLowerCase()) {
+                return -1
+            }
+            return 0
+        });
+
+        let nodes = items.map((file, index) => {
             return <li className={this.isActive(file.name)} key={index} onClick={() => {
                 typeof this.props.showContent === 'function' ? this.props.showContent(file.id, file.name) : null;
                 this.setFilter(file.name);

@@ -137,7 +137,8 @@ class App extends Component {
                                    executeScripts={executeScripts}
                                    execute={_this.props.executeScripts.execute}
                                    setExecuteFalse={::_this.setExecuteFalse}
-                                   setAddGroupAndScriptErrorFalse={::this.setAddGroupAndScriptErrorFalse}/>;
+                                   setAddGroupAndScriptErrorFalse={::this.setAddGroupAndScriptErrorFalse}
+                                   createdGroup={_this.props.createGroup.group}/>;
 
         return (<div className='wrapper'>
             <Header header='Управление скриптами' />

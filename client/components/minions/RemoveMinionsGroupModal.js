@@ -22,8 +22,6 @@ export default class RemoveMinionsGroupModal extends Component {
                         onClick={() => {
                             this.props.removeGroup(this.props.group.id)
                         }}>Удалить</Button>
-                <Button size='small' color='primary' variant='flat' onClick={this.props.closeModal}
-                        className='modal__btn mui--pull-right'>Отменить</Button>
             </div>
         </div>
     }

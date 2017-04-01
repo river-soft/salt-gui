@@ -96,24 +96,31 @@ export class FilesTree extends Component {
     filterTree(e) {
         let obj = [];
 
-        for (let i = 0; i < this.props.files.length; i++) {
+        if (e.target.value) {
+            for (let i = 0; i < this.props.files.length; i++) {
 
-            let scripts = this.props.files[i].scripts.filter((item) => {
-                return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
-            });
+                let scripts = this.props.files[i].scripts.filter((item) => {
+                    return item.name.toLowerCase().search(e.target.value.toLowerCase()) !== -1
+                });
 
-            if (scripts.length > 0) {
-                obj.push({
-                    group: this.props.files[i].group,
-                    scripts: scripts
-                })
+                if (scripts.length > 0) {
+                    obj.push({
+                        group: this.props.files[i].group,
+                        scripts: scripts
+                    })
+                }
             }
-        }
 
-        this.setState({
-            filterScripts: obj,
-            rerender: true
-        });
+            this.setState({
+                filterScripts: obj,
+                rerender: true
+            });
+        } else {
+            this.setState({
+                filterScripts: [],
+                rerender: false
+            })
+        }
     }
 
     onRequestClose() {
@@ -211,11 +218,14 @@ export class FilesTree extends Component {
         } else if (_this.state.rerender) {
             template =
                 <TreeView groups={_this.state.filterScripts} showContent={::_this.showContent} removeIfNotEmpty={false}
-                          removeGroup={::_this.removeGroup}/>;
+                          removeGroup={::_this.removeGroup} rerender={true} editGroup={::_this.editGroup}
+                          createdGroup={_this.props.createdGroup}/>;
         } else {
             template =
                 <TreeView groups={_this.props.files} showContent={::_this.showContent} editGroup={::_this.editGroup}
-                          removeIfNotEmpty={false} removeGroup={::_this.removeGroup}/>;
+                          removeIfNotEmpty={false} removeGroup={::_this.removeGroup}
+                          rerender={false}
+                          createdGroup={_this.props.createdGroup}/>;
         }
 
         if (_this.state.editScript) {
@@ -258,18 +268,20 @@ export class FilesTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label='Поиск скриптов' floatingLabel={true} onChange={::_this.filterTree}/>
+                    <Input label='Поиск скриптов' id='filter-tree' floatingLabel={true} onChange={::_this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={::_this.addScript}>добавить группу</button>
+                    <button className='mui-btn button' onClick={::_this.addScript} title='Добавить группу/скрипт'>
+                        добавить
+                    </button>
                 </Col>
                 <Col md='9' xs='6' lg='9'>
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}
                     {_this.state.showFileDescription ? fileDescription : null}
                     {_this.state.runScript ? selectMinions : null}
                     {_this.props.execute ?
-                        <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
+                        <span className='success-mess'>Скрипт успешно отправлен на выполнение</span> : null}
                 </Col>
             </Row>
             <Modal contentLabel='label' isOpen={_this.state.showModal} className='modal'

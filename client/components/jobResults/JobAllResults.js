@@ -40,14 +40,14 @@ export default class JobAllResults extends Component {
             }
         }
 
-        if(this.props.executeError) {
+        if (this.props.executeError) {
             if (this.refs['re-execute'] && this.refs['re-execute'].refs['buttonEl'].classList.contains('clicked')) {
                 this.refs['re-execute'].refs['buttonEl'].classList.remove('clicked');
                 this.refs['re-execute'].refs['buttonEl'].disabled = false;
             }
         }
 
-        if(this.props.clearCheckedList) {
+        if (this.props.clearCheckedList) {
             this.state.checkedList = [];
             this.props.clearCheckedListFalse();
         }
@@ -55,7 +55,7 @@ export default class JobAllResults extends Component {
 
     filter(value) {
         let filterResults = this.props.jobResults.filter(item => {
-            return item.minionName.toLowerCase().search(value.toLowerCase()) !== -1;
+            return item.minionName.toLowerCase().search(value.toLowerCase()) !== -1 || item.minionGroups.toLowerCase().search(value.toLowerCase()) !== -1;
         });
 
         let newCheckedList = [];
@@ -106,7 +106,7 @@ export default class JobAllResults extends Component {
 
             this.state.checkedList = [];
 
-            if(checked) {
+            if (checked) {
                 for (let i = 0; i < jobResults.length; i++) {
                     if (!jobResults[i].reExecuted) {
                         this.state.checkedList.push(jobResults[i].id);
@@ -177,9 +177,10 @@ export default class JobAllResults extends Component {
                 {jobResults.length ? jobResults.map((item, index) => {
                         if (item.reExecuted) reExecutedMinionsLength++;
                         return <tr key={index} ref={index}>
-                            <td><a className='table__link' onClick={() => {
+                            <td>{item.minionName}
+                            <a className='table__link mui--text-right' onClick={() => {
                                 ::this.showJobDetails(item);
-                            }}>{item.minionName}</a></td>
+                            }}> (log)</a></td>
                             <td>{item.minionGroups}</td>
                             <td>{item.lastModifiedDate}</td>
                             {this.props.showStatus ? <td>{item.status}</td> : null}

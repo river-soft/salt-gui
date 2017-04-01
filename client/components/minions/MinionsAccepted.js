@@ -23,7 +23,7 @@ export default class MinionsAccepted extends Component {
 
     filter(value) {
         let minions = this.props.acceptedMinions.filter(item => {
-            return item.name.toLowerCase().search(value.toLowerCase()) !== -1;
+            return item.name.toLowerCase().search(value.toLowerCase()) !== -1 || item.groups.toLowerCase().search(value.toLowerCase()) !== -1;
         });
 
         this.setState({

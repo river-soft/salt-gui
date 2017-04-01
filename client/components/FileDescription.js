@@ -25,12 +25,6 @@ export default class FileDescription extends Component {
                 <pre className='file-description'>
                     {description.script.content}
                 </pre>
-                {/*<Divider/>*/}
-                {/*<div className='file__footer'>*/}
-                    {/*<button className='button mui-btn mui--pull-right' onClick={() => {*/}
-                        {/*this.props.runScript(description.script.name);*/}
-                    {/*}}>Запустить</button>*/}
-                {/*</div>*/}
             </Panel>
         );
     }

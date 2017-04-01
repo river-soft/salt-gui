@@ -7,10 +7,12 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const NODE_ENV = process.env.NODE_ENV || 'develop';
 
 module.exports = {
+    //TODO: перед заливом засскоментить
     devtool: 'cheap-module-eval-source-map',
     entry: [
         'webpack-dev-server/client',
         'webpack/hot/only-dev-server',
+        //TODO: перед заливом засскоментить
         'webpack-hot-middleware/client?reload=true',
         'babel-polyfill',
         './client/index'
@@ -34,6 +36,7 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('/css/main.css', {allChunks: true}),
+        //TODO: перед заливом расскоментить
         // new webpack.optimize.UglifyJsPlugin({
         //     warnings: false,
         //     drop_console: true,

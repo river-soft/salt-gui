@@ -41,6 +41,8 @@ export default class CreateGroup extends Component {
                 showDropdown: false,
                 rerenderList: [],
                 rerenderDropdown: false,
+                editingScript: '',
+                editingScriptPosition: 0
             });
 
             this.props.cancel();
@@ -57,6 +59,8 @@ export default class CreateGroup extends Component {
 
         for(let i = 0; i < this.state.scripts.length; i++) {
             if (this.state.scripts[i].name === scriptName) {
+                this.state.editingScript = this.state.scripts[i];
+                this.state.editingScriptPosition = i;
                 this.state.scripts.splice(i, 1);
             }
         }
@@ -111,12 +115,20 @@ export default class CreateGroup extends Component {
     }
 
     cancelAddScript() {
+
+        if(this.state.editingScript) {
+
+            this.state.scripts.splice(this.state.editingScriptPosition, 0, this.state.editingScript);
+        }
+
         this.setState({
             addScript: false,
             scriptName: '',
             scriptContent: '',
-            scriptExist: false
-        })
+            scriptExist: false,
+            editingScript: '',
+            editingScriptPosition: ''
+        });
     }
 
     validateScript(scriptName) {

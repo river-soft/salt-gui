@@ -53,6 +53,7 @@ export default class TreeNodeModalCheckBoxes extends Component {
     }
 
     renderChilds() {
+
         return this.props.nodes.map((item, index) => {
 
             let el = this.refs[item.id] || '', className = 'list__item';
@@ -89,6 +90,10 @@ export default class TreeNodeModalCheckBoxes extends Component {
             return null
         }
 
+        if (this.props.activeItems.length != this.props.nodes.length) {
+            this.state.checkedAll = false;
+        }
+
         return <li className='tree-list__item'>
             <div className='tree-list__item_header'>
             <span
@@ -106,7 +111,8 @@ export default class TreeNodeModalCheckBoxes extends Component {
                     }} title='снять отметку со всех'><i className='mi mi-remove'></i></span>
             </div>
             <Divider />
-            <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}>{this.renderChilds()}</ul>
+            <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}
+                ref='list'>{this.renderChilds()}</ul>
         </li>
     }
 }
