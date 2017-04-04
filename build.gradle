@@ -36,6 +36,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-web'
 	compile 'org.springframework.boot:spring-boot-starter-websocket'
 	compile 'org.codehaus.groovy:groovy'
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 

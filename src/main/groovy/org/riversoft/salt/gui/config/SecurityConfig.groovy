@@ -1,36 +1,37 @@
 package org.riversoft.salt.gui.config
 
-import groovy.transform.CompileStatic
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
-@CompileStatic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityConfig extends WebSecurityConfigurerAdapter {
-
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
-        http.csrf().disable()
-
-        http.authorizeRequests().antMatchers('/login').permitAll().anyRequest().authenticated()
-
-        http.formLogin().loginPage("/login").failureUrl("/login?error=1").successForwardUrl('/')
-
-        http.logout().logoutUrl("/logout").logoutSuccessUrl("/")
-
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
+                UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JWTAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class)
     }
 
-    @Autowired
-    void configureGlobal(AuthenticationManagerBuilder auth) {
-
-        auth.inMemoryAuthentication().withUser("user").password("1234").roles("USER")
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // Create a default account
+        auth.inMemoryAuthentication()
+                .withUser("admin")
+                .password("password")
+                .roles("ADMIN")
     }
 }
