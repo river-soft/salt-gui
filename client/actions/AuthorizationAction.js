@@ -1,7 +1,7 @@
 import {
     AUTHORIZATION_REQUEST,
-    // AUTHORIZATION_SUCCESS,
-    // AUTHORIZATION_FAIL
+    AUTHORIZATION_SUCCESS,
+    AUTHORIZATION_FAIL
 } from '../constants/Authorization';
 import $ from 'jquery';
 
@@ -16,28 +16,31 @@ export function authorization(userName, password) {
         $.ajax({
             url: '/login',
             type: 'post',
-            data: JSON.stringify({
+            data: {
                 username: userName,
                 password: password
-            }),
-            contentType: 'application/json',
-            // success: data => {
-            //     debugger;
-            //     dispatch({
-            //         type: AUTHORIZATION_SUCCESS,
-            //         payload: data
-            //     });
-            // },
-            // error: error => {
-            //     dispatch({
-            //         type: AUTHORIZATION_FAIL,
-            //         payload: error,
-            //         error: true
-            //     });
-            // }
-        }).done(response => {
-            debugger;
-            console.log(response.json());
-        })
+            },
+            headers: {
+                'Authorization': 'Basic' + btoa(userName + ':' + password)
+            },
+            success: (res, status, response) => {
+                let user = {
+                    userName: response.getResponseHeader('userName'),
+                    roles: response.getResponseHeader('roles')
+                };
+
+                dispatch({
+                    type: AUTHORIZATION_SUCCESS,
+                    payload: user
+                });
+            },
+            error: error => {
+                dispatch({
+                    type: AUTHORIZATION_FAIL,
+                    payload: error,
+                    error: true
+                });
+            }
+        });
     }
 }

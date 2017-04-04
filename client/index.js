@@ -16,17 +16,18 @@ export const store = configureStore();
 const checkAuth = (nextState, replace) => {
     console.log('Next State', nextState);
     console.log('Replace', replace);
+    // let state = store.getState();
     debugger;
 };
 
 render(
     <Provider store={store}>
         <Router history={hashHistory}>
-            <Route path='/login' component={Authorization}/>
+            <Route path='/login' component={Authorization} onEnter={checkAuth}/>
             <Route path='/' component={Minions}/>
             <Route path='/scripts' onEnter={checkAuth} component={App}/>
             <Route path='/groups-and-minions' component={GroupsAndMinions}/>
-            <Route path='/job-results' component={JobResults}/>
+            <Route path='/job-results' onEnter={checkAuth} component={JobResults}/>
         </Router>
     </Provider>,
     document.getElementById('root')
