@@ -4,6 +4,7 @@ import {Header} from '../components/Header';
 import Container from 'muicss/lib/react/container';
 import Col from 'muicss/lib/react/col';
 import Row from 'muicss/lib/react/row';
+import NotFoundImg from '../styles/images/not-found.png';
 
 class NotFound extends Component {
 
@@ -16,8 +17,7 @@ class NotFound extends Component {
                     <Row>
                         <Col md='12' xs='12' lg='12'>
                             <div className='access-denied'>
-                                <img className='access-denied__img'/>
-                                Страница не найдена
+                                <img src={NotFoundImg} className='access-denied__img'/>
                             </div>
                         </Col>
                     </Row>
