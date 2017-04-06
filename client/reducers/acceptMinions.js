@@ -14,7 +14,7 @@ export default (state = initialState, action) => {
         case ACCEPT_MINIONS_SUCCESS:
             return {...state, minions: action.payload, error: ''};
         case ACCEPT_MINIONS_FAIL:
-            return {...state, error: action.payload}
+            return {...state, error: action.payload};
         default:
             return state
     }

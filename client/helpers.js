@@ -32,3 +32,16 @@ export default function clone(obj) {
 
     throw new Error('Unable to copy obj! Its type isnt supported.');
 }
+
+export function containsRole(roles, checkRoles) {
+
+    for(let i = 0; i < roles.length; i++) {
+        for(let j = 0; j < checkRoles.length; j++) {
+            if(roles[i].trim() === checkRoles[j].trim()) {
+                return true
+            }
+        }
+    }
+
+    return false
+}

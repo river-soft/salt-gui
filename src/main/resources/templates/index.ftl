@@ -10,6 +10,12 @@
 </head>
 <body>
     <div id="root"></div>
+    <#if security??>
+    <#else>
+    <script>
+        window.unAuthorized = true;
+    </script>
+    </#if>
     <script src="/js/bundle.js"></script>
 </body>
 </html>
