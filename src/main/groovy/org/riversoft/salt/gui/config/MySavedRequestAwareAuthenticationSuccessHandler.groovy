@@ -1,7 +1,6 @@
 package org.riversoft.salt.gui.config
 
 import groovy.util.logging.Slf4j
-import org.apache.http.HttpHeaders
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache
