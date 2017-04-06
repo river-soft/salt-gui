@@ -12,13 +12,13 @@ class RequestInterceptor extends HandlerInterceptorAdapter {
     @Override
     void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
-        if(!modelAndView) {
+        if (!modelAndView) {
             return
         }
 
         def security = (request.session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext)?.authentication?.principal
 
-        if(security) {
+        if (security) {
             modelAndView.addObject("security", security)
         }
 
