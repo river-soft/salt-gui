@@ -25,9 +25,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
             throws Exception {
 
         auth.inMemoryAuthentication()
-                .withUser("temporary").password("temporary").roles("ADMIN")
-                .and()
-                .withUser("user").password("userPass").roles("USER")
+                .withUser("root").password("pass").roles("ROOT")
     }
 
     @Override
@@ -46,7 +44,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 .and()
-                .logout()
+                .logout().logoutUrl('/logout').logoutSuccessUrl('/')
     }
 
     @Bean

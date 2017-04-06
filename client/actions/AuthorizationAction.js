@@ -4,6 +4,8 @@ import {
     AUTHORIZATION_FAIL
 } from '../constants/Authorization';
 import $ from 'jquery';
+import {hashHistory} from 'react-router';
+import cookie from 'react-cookie';
 
 export function authorization(userName, password) {
 
@@ -24,15 +26,23 @@ export function authorization(userName, password) {
                 'Authorization': 'Basic' + btoa(userName + ':' + password)
             },
             success: (res, status, response) => {
+
                 let user = {
                     userName: response.getResponseHeader('userName'),
-                    roles: response.getResponseHeader('roles')
+                    roles: response.getResponseHeader('roles'),
+                    expiryDate: new Date().getTime()
                 };
+
+                cookie.save('accessToken', btoa(JSON.stringify(user)));
 
                 dispatch({
                     type: AUTHORIZATION_SUCCESS,
-                    payload: user
+                    payload: status
                 });
+
+                hashHistory.push({
+                    pathname: '/'
+                })
             },
             error: error => {
                 dispatch({

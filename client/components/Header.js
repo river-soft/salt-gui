@@ -12,8 +12,8 @@ export class Header extends Component {
         return <AppBar className='header'>
             <div className='header__logo'>
                 <Link to='/' className='header__navigation_link' />
+                <Menu/>
             </div>
-            <Menu/>
             <div className='header__bottom'>
                 <Container>
                     <Row>

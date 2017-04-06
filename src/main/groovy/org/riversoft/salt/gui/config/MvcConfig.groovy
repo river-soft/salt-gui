@@ -1,14 +1,20 @@
 package org.riversoft.salt.gui.config
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @Configuration
 class MvcConfig extends WebMvcConfigurerAdapter{
 
-//    @Override
-//    void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController('/login').setViewName('login')
-//    }
+    @Bean
+    RequestInterceptor requestInterceptor() {
+        new RequestInterceptor()
+    }
+
+    @Override
+    void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestInterceptor())
+    }
 }

@@ -45,8 +45,4 @@ class MySavedRequestAwareAuthenticationSuccessHandler extends SimpleUrlAuthentic
         }
         clearAuthenticationAttributes(request)
     }
-
-    void setRequestCache(RequestCache requestCache) {
-        this.requestCache = requestCache
-    }
 }
