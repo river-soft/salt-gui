@@ -703,3 +703,14 @@ body {
 .header-checkbox {
   margin: 0;
 }
+
+.access-denied {
+
+  width: 75%;
+  margin: 0 auto;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+  }
+}
