@@ -4,9 +4,8 @@ import {Header} from '../components/Header';
 import Container from 'muicss/lib/react/container';
 import Col from 'muicss/lib/react/col';
 import Row from 'muicss/lib/react/row';
-import AccessDeniedImg from '../styles/images/access-denied.png';
 
-class AccessDenied extends Component {
+class NotFound extends Component {
 
     render() {
 
@@ -17,7 +16,8 @@ class AccessDenied extends Component {
                     <Row>
                         <Col md='12' xs='12' lg='12'>
                             <div className='access-denied'>
-                                <img src={AccessDeniedImg} className='access-denied__img'/>
+                                <img className='access-denied__img'/>
+                                Страница не найдена
                             </div>
                         </Col>
                     </Row>
@@ -27,4 +27,4 @@ class AccessDenied extends Component {
     }
 }
 
-export default connect()(AccessDenied)
+export default connect()(NotFound)

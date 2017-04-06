@@ -9,6 +9,7 @@ import GroupsAndMinions from './containers/GroupsAndMinions';
 import JobResults from './containers/JobResults';
 import Authorization from './containers/Authorization';
 import AccessDenied from './containers/AccessDenied';
+import NotFound from './containers/NotFound';
 import './styles/app.scss';
 import configureStore from './store/configureStore';
 import {containsRole} from './helpers';
@@ -80,6 +81,7 @@ render(
                 checkRole(['ROLE_PAGE_JOB_RESULTS', 'ROLE_ROOT'], replace);
             }} component={JobResults}/>
             <Route path='/access-denied' component={AccessDenied}/>
+            <Route path='*' component={NotFound}/>
         </Router>
     </Provider>,
     document.getElementById('root')
