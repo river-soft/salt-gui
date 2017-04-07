@@ -23,14 +23,24 @@ class JobResultViewModel {
         this.minionGroups = jobResult.minion.groups.collect { it.name }.join(",")
         this.lastModifiedDate = DateTimeParser.dateToString(jobResult.lastModifiedDate)
 
-        if (!jobResult.isResult) {
-            this.status = "no connected"
-        } else {
-            if (jobResult.jobResultDetails.findAll { !it.result }.size() > 0) {
+        if (jobResult.isResult) {
+
+            //TODO переводы статусов
+
+            if (jobResult.jobResultDetails.findAll { it.result == false }.size() > 0) {
                 this.status = "false"
             } else {
                 this.status = "true"
             }
+
+        } else {
+
+            if (jobResult.isResult == null) {
+                this.status = "waiting"
+            } else {
+                this.status = "no connected"
+            }
         }
+
     }
 }

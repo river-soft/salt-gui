@@ -133,6 +133,8 @@ class JobResults extends Component {
                 falseResults.push(jobResults[i]);
             } else if (jobResults[i].status === 'no connected') {
                 noConnectResults.push(jobResults[i]);
+            } else if (jobResults[i].status === 'waiting') {
+                noConnectResults.push(jobResults[i]);
             } else {
                 console.error(new Error(`Job result has no register status: ${jobResults[i].status}`));
             }
@@ -161,11 +163,12 @@ class JobResults extends Component {
                                                        clearFilterFalse={::this.clearFilterFalse}
                                                        resultDetails={resultDetails}
                                                        showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='Выполнено'><JobAllResults jobResults={trueResults}
-                                                                                              clearFilter={this.state.clearFilter}
-                                                                                              clearFilterFalse={::this.clearFilterFalse}
-                                                                                              resultDetails={resultDetails}
-                                                                                              showJobDetails={::this.showJobDetails}/></Tab>
+                                    <Tab className='minions-tabs' label='Выполнено'><JobAllResults
+                                        jobResults={trueResults}
+                                        clearFilter={this.state.clearFilter}
+                                        clearFilterFalse={::this.clearFilterFalse}
+                                        resultDetails={resultDetails}
+                                        showJobDetails={::this.showJobDetails}/></Tab>
                                     <Tab className='minions-tabs' label='Не выполнено'><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}

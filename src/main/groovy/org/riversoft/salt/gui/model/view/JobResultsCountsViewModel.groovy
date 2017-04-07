@@ -7,4 +7,5 @@ class JobResultsCountsViewModel {
     int trueCounts
     int falseCounts
     int notConnectedCounts
+    int waitingCount
 }
