@@ -10,6 +10,7 @@ import org.riversoft.salt.gui.model.view.JobResultsCountsViewModel
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Sort
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -52,7 +53,7 @@ class JobResultService {
     @Scheduled(fixedDelayString = '${salt.job_results.update_counts_interval:5000}')
     def findAllJobResultsCount() {
 
-        List<Job> jobs = jobRepository.findAll()
+        List<Job> jobs = jobRepository.findAll(new Sort(Sort.Direction.DESC, "createDate"))
 
         List<JobResultsCountsViewModel> resultsData = []
 
