@@ -52,7 +52,7 @@ export default class JobResultCounters extends Component {
                 <td className='job-table__head mui--text-center job-table__body_red' width='15%'
                     title='Нет соединения'><i className='mi mi-cloud-off'></i></td>
                 <td className='job-table__head mui--text-center job-table__body_blue' width='15%'
-                    title='Ожидают выполнения'><i className='mi mi-hourglass-empty'></i></td>
+                    title='Ожидают выполнение'><i className='mi mi-hourglass-empty'></i></td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
                     return <tr key={i} className='job-table__body_row' onClick={(e) => {
