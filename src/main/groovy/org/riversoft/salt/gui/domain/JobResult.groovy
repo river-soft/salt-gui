@@ -16,7 +16,7 @@ class JobResult extends Base {
     /**
      * Флаг указывающий получены ли результаты
      */
-    boolean isResult
+    Boolean isResult
 
     /**
      * Флаг указывающий на перезапуск скрипта

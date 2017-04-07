@@ -45,21 +45,24 @@ export default class JobResultCounters extends Component {
             <tbody>
             <tr>
                 <td className='job-table__head mui--text-center' width='40%'>Работа</td>
-                <td className='job-table__head mui--text-center job-table__body_green' width='20%'
+                <td className='job-table__head mui--text-center job-table__body_green' width='15%'
                     title='Выполнено'><i className='mi mi-done'></i></td>
-                <td className='job-table__head mui--text-center job-table__body_orange' width='20%'
+                <td className='job-table__head mui--text-center job-table__body_orange' width='15%'
                     title='Не выполнено'><i className='mi mi-close'></i></td>
-                <td className='job-table__head mui--text-center job-table__body_red' width='20%'
+                <td className='job-table__head mui--text-center job-table__body_red' width='15%'
                     title='Нет соединения'><i className='mi mi-cloud-off'></i></td>
+                <td className='job-table__head mui--text-center job-table__body_blue' width='15%'
+                    title='Ожидают выполнения'><i className='mi mi-hourglass-empty'></i></td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
-                    return <tr key={i} className='job-table__body_row' title={el.jobName} onClick={(e) => {
+                    return <tr key={i} className='job-table__body_row' onClick={(e) => {
                         ::this.selectRow(e.target, el.jid, el.jobName);
                     }}>
-                        <td className='job-table__body mui--text-center job-table__body_job-name'>{el.jobName}</td>
-                        <td className='job-table__body mui--text-center job-table__body_green'>{el.trueCounts}</td>
-                        <td className='job-table__body mui--text-center job-table__body_orange'>{el.falseCounts}</td>
-                        <td className='job-table__body mui--text-center job-table__body_red'>{el.notConnectedCounts}</td>
+                        <td className='job-table__body mui--text-center job-table__body_job-name' title={el.jobName} >{el.jobName}</td>
+                        <td className='job-table__body mui--text-center job-table__body_green' title={el.trueCounts} >{el.trueCounts}</td>
+                        <td className='job-table__body mui--text-center job-table__body_orange' title={el.falseCounts} >{el.falseCounts}</td>
+                        <td className='job-table__body mui--text-center job-table__body_red' title={el.notConnectedCounts} >{el.notConnectedCounts}</td>
+                        <td className='job-table__body mui--text-center job-table__body_blue' title={el.waitingCount} >{el.waitingCount}</td>
                     </tr>
                 }) : null}
             </tbody>

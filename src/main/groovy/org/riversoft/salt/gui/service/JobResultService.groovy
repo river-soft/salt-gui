@@ -59,19 +59,14 @@ class JobResultService {
 
         for (Job job : jobs) {
 
-            def notConnectedCount = job.results.findAll { !it.isResult }.size()
-
+            def totalCount = job.results.size()
+            def waitingCount = job.results.findAll { it.isResult == null }.size()
+            def notConnectedCount = job.results.findAll { it.isResult == false }.size()
             def falseCount = job.results.findAll {
-                it.jobResultDetails.findAll { !it.result } && it.isResult
+                it.jobResultDetails.findAll { it.result == false } && it.isResult
             }.size()
 
-            def trueCount = 0
-
-            if (!falseCount) {
-                trueCount = job.results.findAll {
-                    it.jobResultDetails.findAll { it.result } && it.isResult
-                }.size()
-            }
+            def trueCount = totalCount - notConnectedCount - falseCount - waitingCount
 
             resultsData.add(
                     new JobResultsCountsViewModel(
@@ -79,7 +74,8 @@ class JobResultService {
                             jid: job.jid,
                             notConnectedCounts: notConnectedCount,
                             falseCounts: falseCount,
-                            trueCounts: trueCount
+                            trueCounts: trueCount,
+                            waitingCount: waitingCount
                     )
             )
         }
