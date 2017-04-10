@@ -16,8 +16,9 @@ class JobResultsController extends BaseRestController {
     JobResultService jobResultService
 
     @MessageMapping('/job-results-counts')
-    findAllJobResultsCount() {
+    findAllJobResultsCount(HashMap map) {
 
+        jobResultService.updateFromDate(map["from"] as Integer)
         jobResultService.findAllJobResultsCount()
     }
 

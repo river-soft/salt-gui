@@ -23,8 +23,9 @@ export function jobResults() {
             load();
         });
 
-        let load = () => {
-            client.send('/request/job-results-counts', {}, '');
+        let load = minutes => {
+
+            client.send('/request/job-results-counts', {}, JSON.stringify({from: minutes}));
         };
 
         let getJobResults = jid => {
@@ -46,7 +47,8 @@ export function jobResults() {
         return {
             client: client,
             getJobResults: getJobResults,
-            unSubscribeJobResults: unSubscribeJobResults
+            unSubscribeJobResults: unSubscribeJobResults,
+            load: load
         };
     }
 }

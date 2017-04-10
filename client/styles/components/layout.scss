@@ -75,7 +75,7 @@ body {
         font-weight: bold;
         cursor: default;
       }
-      
+
       &-logout {
         display: inline-block;
         color: $grey-background;
@@ -717,5 +717,30 @@ body {
   &__img {
     width: 100%;
     height: 100%;
+  }
+}
+
+.date-dropdown {
+
+  & button {
+    color: #FFF;
+    background-color: $blue-background;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: #FFF;
+      background-color: $blue-background;
+    }
+  }
+
+  &__item {
+
+    & a:hover,
+    & a:focus {
+      color: $grey-background !important;
+      cursor: pointer;
+      background-color: $blue-background-light !important;
+    }
   }
 }
