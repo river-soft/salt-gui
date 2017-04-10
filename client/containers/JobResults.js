@@ -8,6 +8,7 @@ import Col from 'muicss/lib/react/col';
 import JobResultCounters from '../components/jobResults/JobResultCounters';
 import JobAllResults from '../components/jobResults/JobAllResults';
 import JobResultDetails from '../components/jobResults/JobResultDetails';
+import DateForSelect from '../components/DateForSelect';
 import * as jobResultsAction from '../actions/JobResultsAction';
 import * as jobDetailsAction from '../actions/JobDetailsAction';
 import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
@@ -29,7 +30,8 @@ class JobResults extends Component {
             showJobDescription: false,
             jobResult: '',
             scriptsName: '',
-            clearCheckedList: false
+            clearCheckedList: false,
+            load : ''
         }
     }
 
@@ -41,7 +43,8 @@ class JobResults extends Component {
         this.setState({
             client: obj.client,
             getJobResults: obj.getJobResults,
-            unSubscribeJobResults: obj.unSubscribeJobResults
+            unSubscribeJobResults: obj.unSubscribeJobResults,
+            load : obj.load
         })
     }
 
@@ -146,6 +149,7 @@ class JobResults extends Component {
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
+                            <DateForSelect loadData={this.state.load}/>
                             <JobResultCounters jobResults={this.props.jobResults.result}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}
