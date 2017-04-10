@@ -31,7 +31,7 @@ class JobResults extends Component {
             jobResult: '',
             scriptsName: '',
             clearCheckedList: false,
-            load : ''
+            load: ''
         }
     }
 
@@ -44,7 +44,7 @@ class JobResults extends Component {
             client: obj.client,
             getJobResults: obj.getJobResults,
             unSubscribeJobResults: obj.unSubscribeJobResults,
-            load : obj.load
+            load: obj.load
         })
     }
 
@@ -74,7 +74,9 @@ class JobResults extends Component {
     }
 
     hideJobScriptsResult() {
-        this.state.unSubscribeJobResults(this.state.subscription);
+        if (this.state.subscription) {
+            this.state.unSubscribeJobResults(this.state.subscription);
+        }
         this.setState({showJobDetails: false});
     }
 
@@ -149,7 +151,8 @@ class JobResults extends Component {
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
-                            <DateForSelect loadData={this.state.load}/>
+                            <DateForSelect loadData={this.state.load}
+                                           hideJobScriptsResult={::this.hideJobScriptsResult}/>
                             <JobResultCounters jobResults={this.props.jobResults.result}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}

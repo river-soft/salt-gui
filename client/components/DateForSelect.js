@@ -17,6 +17,16 @@ export default class DateForSelect extends Component {
 
         this.props.loadData(minutes);
         this.setState({label: e.target.text});
+
+        this.props.hideJobScriptsResult();
+
+        let rows = document.querySelectorAll('.job-table__body_row');
+
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].classList.contains('active')) {
+                rows[i].classList.remove('active');
+            }
+        }
     }
 
     render() {
