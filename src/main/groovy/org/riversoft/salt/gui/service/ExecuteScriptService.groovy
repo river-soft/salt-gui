@@ -224,6 +224,8 @@ class ExecuteScriptService {
                 log.warn("Result by job with jid [${job.jid}] not found yet.")
             }
 
+            List<JobResult> jobResultsNoConnection = jobResultRepository.findAllByJobJid(job.jid)
+
             for (def jobResultSalt : jobResultsSalt) {
 
                 Minion minion = minionCRUDService.getMinionByName(jobResultSalt.key)
@@ -290,6 +292,20 @@ class ExecuteScriptService {
 
                     //TODO подумать когда отмечать задачу как выполненную
                     isDone = true
+
+                    jobResultsNoConnection.removeAll { it.id == jobResult.id }
+                }
+
+                //отмечаем результаты которые не получили ответ т.е. no connected
+                for (JobResult jobResultNoConnection : jobResultsNoConnection) {
+
+                    log.debug("JobResult for minion [${jobResultNoConnection.minion.name}] and job [${jobResultNoConnection.job.jid}] don't received the response.")
+
+                    jobResultNoConnection.isResult = false
+                    jobResultNoConnection.lastModifiedDate = new Date()
+
+                    jobResultRepository.save(jobResultNoConnection)
+                    log.debug("Updated JobResult for minion [${jobResultNoConnection.minion.name}] and job [${jobResultNoConnection.job.jid}].")
                 }
             }
 

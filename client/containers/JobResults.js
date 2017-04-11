@@ -8,6 +8,7 @@ import Col from 'muicss/lib/react/col';
 import JobResultCounters from '../components/jobResults/JobResultCounters';
 import JobAllResults from '../components/jobResults/JobAllResults';
 import JobResultDetails from '../components/jobResults/JobResultDetails';
+import DateForSelect from '../components/DateForSelect';
 import * as jobResultsAction from '../actions/JobResultsAction';
 import * as jobDetailsAction from '../actions/JobDetailsAction';
 import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
@@ -31,6 +32,7 @@ class JobResults extends Component {
             jobResult: '',
             scriptsName: '',
             clearCheckedList: false,
+            load: '',
             strings: ''
         }
     }
@@ -53,7 +55,8 @@ class JobResults extends Component {
         this.setState({
             client: obj.client,
             getJobResults: obj.getJobResults,
-            unSubscribeJobResults: obj.unSubscribeJobResults
+            unSubscribeJobResults: obj.unSubscribeJobResults,
+            load: obj.load
         })
     }
 
@@ -83,7 +86,9 @@ class JobResults extends Component {
     }
 
     hideJobScriptsResult() {
-        this.state.unSubscribeJobResults(this.state.subscription);
+        if (this.state.subscription) {
+            this.state.unSubscribeJobResults(this.state.subscription);
+        }
         this.setState({showJobDetails: false});
     }
 
@@ -145,6 +150,8 @@ class JobResults extends Component {
                 falseResults.push(jobResults[i]);
             } else if (jobResults[i].status === 'no connected') {
                 noConnectResults.push(jobResults[i]);
+            } else if (jobResults[i].status === 'waiting') {
+                noConnectResults.push(jobResults[i]);
             } else {
                 console.error(new Error(`Job result has no register status: ${jobResults[i].status}`));
             }
@@ -156,6 +163,8 @@ class JobResults extends Component {
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
+                            <DateForSelect loadData={this.state.load}
+                                           hideJobScriptsResult={::this.hideJobScriptsResult}/>
                             <JobResultCounters jobResults={this.props.jobResults.result} messages={messages}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}
@@ -173,16 +182,13 @@ class JobResults extends Component {
                                                        clearFilterFalse={::this.clearFilterFalse}
                                                        resultDetails={resultDetails}
                                                        showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs'
-                                         label={messages['client.jobresults.tabs.done']}><JobAllResults
-                                        jobResults={trueResults}
+                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.done']}><JobAllResults
+                                        jobResults={trueResults} messages={messages}
                                         clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse}
                                         resultDetails={resultDetails}
-                                        showJobDetails={::this.showJobDetails}
-                                        messages={messages}/></Tab>
-                                    <Tab className='minions-tabs'
-                                         label={messages['client.jobresults.tabs.notdone']}><JobAllResults
+                                        showJobDetails={::this.showJobDetails}/></Tab>
+                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.notdone']}><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}

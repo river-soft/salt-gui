@@ -2,6 +2,7 @@ package org.riversoft.salt.gui.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
+import org.joda.time.DateTime
 import org.riversoft.salt.gui.domain.Job
 import org.riversoft.salt.gui.domain.JobResult
 import org.riversoft.salt.gui.model.view.JobResultDetailsViewModel
@@ -9,7 +10,9 @@ import org.riversoft.salt.gui.model.view.JobResultViewModel
 import org.riversoft.salt.gui.model.view.JobResultsCountsViewModel
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultRepository
+import org.riversoft.salt.gui.utils.DateTimeParser
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Sort
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Service
 class JobResultService {
 
     private String currentJid = ""
+
+    private Date fromDate
 
     //region injection
 
@@ -38,10 +43,25 @@ class JobResultService {
 
     /**
      * Обновление значения текущего jid
-     * @param jid - уникальный номер работыn
+     * @param jid - уникальный номер работы
      */
-    def updateJid(String jid) {
+    void updateJid(String jid) {
         currentJid = jid
+    }
+
+    /**
+     * Обновление значения даты с которой начинать поиск результатов работы
+     * @param from - минуты
+     */
+    void updateFromDate(Integer from = null) {
+
+        if (!from) {
+            //по умолчанию, если не указано время берется за последние 2 часа тюею 120 минут
+            from = 120
+        }
+
+        DateTime dateTime = new DateTime().minusMinutes(from)
+        fromDate = dateTime.toDate()
     }
 
     /**
@@ -52,25 +72,27 @@ class JobResultService {
     @Scheduled(fixedDelayString = '${salt.job_results.update_counts_interval:5000}')
     def findAllJobResultsCount() {
 
-        List<Job> jobs = jobRepository.findAll()
+        Sort sort = new Sort(Sort.Direction.DESC, "createDate")
+
+        if (!fromDate) {
+            updateFromDate()
+        }
+
+        //поиск по промежутку дат
+        List<Job> jobs = jobRepository.findAllByCreateDateBetween(fromDate, new Date(), sort)
 
         List<JobResultsCountsViewModel> resultsData = []
 
         for (Job job : jobs) {
 
-            def notConnectedCount = job.results.findAll { !it.isResult }.size()
-
+            def totalCount = job.results.size()
+            def waitingCount = job.results.findAll { it.isResult == null }.size()
+            def notConnectedCount = job.results.findAll { it.isResult == false }.size()
             def falseCount = job.results.findAll {
-                it.jobResultDetails.findAll { !it.result } && it.isResult
+                it.jobResultDetails.findAll { it.result == false } && it.isResult
             }.size()
 
-            def trueCount = 0
-
-            if (!falseCount) {
-                trueCount = job.results.findAll {
-                    it.jobResultDetails.findAll { it.result } && it.isResult
-                }.size()
-            }
+            def trueCount = totalCount - notConnectedCount - falseCount - waitingCount
 
             resultsData.add(
                     new JobResultsCountsViewModel(
@@ -78,7 +100,8 @@ class JobResultService {
                             jid: job.jid,
                             notConnectedCounts: notConnectedCount,
                             falseCounts: falseCount,
-                            trueCounts: trueCount
+                            trueCounts: trueCount,
+                            waitingCount: waitingCount
                     )
             )
         }
