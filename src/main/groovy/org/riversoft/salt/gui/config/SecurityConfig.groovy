@@ -35,7 +35,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
-                .authorizeRequests().antMatchers('/').permitAll()
+                .authorizeRequests().antMatchers('/', '/bundle-messages').permitAll()
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated()

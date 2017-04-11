@@ -40,7 +40,7 @@ class JobResultsController extends BaseRestController {
         jobResultService.findAllResultsByJob()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT)")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @RequestMapping(value = '/find-details-by-job-result')
     def findDetailsByJobResult(@RequestParam(value = "result_id", required = true) String resultId) {
 
