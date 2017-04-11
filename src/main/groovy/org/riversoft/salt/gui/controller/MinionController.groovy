@@ -7,6 +7,7 @@ import org.riversoft.salt.gui.service.MinionDetailsService
 import org.riversoft.salt.gui.service.MinionsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -26,12 +27,14 @@ class MinionController extends BaseRestController {
     @Autowired
     private MinionDetailsService minionDetailsService
 
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @RequestMapping('/accepted-minions')
     findAllAcceptedMinions() {
 
         minionsService.findAllAcceptedMinions()
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @MessageMapping('/minions-all-data')
     findAllMinions() {
 
@@ -41,18 +44,21 @@ class MinionController extends BaseRestController {
         minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @RequestMapping('/grouped-minions')
     def findAllGroupedMinions() {
 
         minionDetailsService.findAllGroupedMinions()
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @RequestMapping(value = '/minion-details')
     def findMinionDetails(@RequestParam(value = "name", required = true) String minionName) {
 
         minionDetailsService.findMinionDetails(minionName)
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
     @RequestMapping(value = '/change-minion-groups', method = RequestMethod.PUT)
     changeMinionGroups(@RequestBody EditMinion editMinion) {
 
