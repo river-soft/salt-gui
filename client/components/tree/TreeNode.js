@@ -70,17 +70,17 @@ export default class TreeNode extends Component {
             }}>{file.name}</li>
         }, this);
 
-        let removeGroup;
+        let removeGroup, messages = this.props.messages;
 
         if (this.props.removeIfNotEmpty) {
             removeGroup = <span className='tree-list__item_action' onClick={() => {
                 this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
-            }} title='удалить'><i className='mi mi-delete'></i></span>
+            }} title={messages['client.btn.delete']}><i className='mi mi-delete'></i></span>
         } else {
             if (!this.props.nodes.length) {
                 removeGroup = <span className='tree-list__item_action' onClick={() => {
                     this.props.removeGroup(this.props.group.id, this.props.group.group, this.props.nodes.length);
-                }} title='удалить'><i className='mi mi-delete'></i></span>
+                }} title={messages['client.btn.delete']}><i className='mi mi-delete'></i></span>
             }
         }
 
@@ -88,7 +88,7 @@ export default class TreeNode extends Component {
             <div className='tree-list__item_actions'>
                 <span className='tree-list__item_action' onClick={() => {
                     this.props.editGroup(this.props.group.id, this.props.group.group);
-                }} title='редактировать'><i className='mi mi-create'></i></span>
+                }} title={messages['client.btn.edit']}><i className='mi mi-create'></i></span>
                 {removeGroup}
             </div>
             <span className={this.state.isVisible ? 'list__header active' : 'list__header'}

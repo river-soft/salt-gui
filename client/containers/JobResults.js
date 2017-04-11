@@ -12,6 +12,7 @@ import DateForSelect from '../components/DateForSelect';
 import * as jobResultsAction from '../actions/JobResultsAction';
 import * as jobDetailsAction from '../actions/JobDetailsAction';
 import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
+import * as getMessagesAction from '../actions/GetMessagesAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
 
@@ -31,7 +32,18 @@ class JobResults extends Component {
             jobResult: '',
             scriptsName: '',
             clearCheckedList: false,
-            load: ''
+            load: '',
+            strings: ''
+        }
+    }
+
+    componentWillMount() {
+        if (!this.props.localization) {
+            const {getMessages} = this.props.getMessagesAction;
+
+            getMessages();
+        } else {
+            this.setState({strings: this.props.localization.messages});
         }
     }
 
@@ -129,7 +141,7 @@ class JobResults extends Component {
 
         let jobResults = this.props.jobResults.jobScriptResults, trueResults = [], falseResults = [], noConnectResults = [],
             executeError = this.props.reExecuteScripts.error, resultDetails = this.props.jobDetails.jobDetails,
-            executeSuccess = this.props.reExecuteScripts.reExecute;
+            executeSuccess = this.props.reExecuteScripts.reExecute, messages = this.state.strings;
 
         for (let i = 0; i < jobResults.length; i++) {
             if (jobResults[i].status === 'true') {
@@ -146,14 +158,14 @@ class JobResults extends Component {
         }
 
         return <div className='wrapper'>
-            <Header header='Результаты выполнения скриптов'/>
+            <Header header={messages['client.header.jobresults.title']} messages={messages}/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
-                            <DateForSelect loadData={this.state.load}
+                            <DateForSelect loadData={this.state.load} messages={messages}
                                            hideJobScriptsResult={::this.hideJobScriptsResult}/>
-                            <JobResultCounters jobResults={this.props.jobResults.result}
+                            <JobResultCounters jobResults={this.props.jobResults.result} messages={messages}
                                                showJobScriptResults={::this.showJobScriptResults}
                                                hideJobScriptsResult={::this.hideJobScriptsResult}
                                                clearFilter={::this.clearFilter}
@@ -164,49 +176,50 @@ class JobResults extends Component {
                         <Col md='8' xs='12' lg='8'>
                             {this.state.showJobDetails ?
                                 <Tabs className='minions-tabs' justified={true}>
-                                    <Tab className='minions-tabs' label='Все'>
+                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.all']}>
                                         <JobAllResults jobResults={jobResults} showStatus={true}
-                                                       clearFilter={this.state.clearFilter}
+                                                       clearFilter={this.state.clearFilter} messages={messages}
                                                        clearFilterFalse={::this.clearFilterFalse}
                                                        resultDetails={resultDetails}
                                                        showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='Выполнено'><JobAllResults
-                                        jobResults={trueResults}
+                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.done']}><JobAllResults
+                                        jobResults={trueResults} messages={messages}
                                         clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse}
                                         resultDetails={resultDetails}
                                         showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label='Не выполнено'><JobAllResults
+                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.notdone']}><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
                                         reExecuteScripts={reExecuteScripts} executeError={executeError}
                                         setExecuteErrorFalse={::this.setExecuteErrorFalse}
                                         scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
-                                        setExecuteFalse={::this.setExecuteFalse}
+                                        setExecuteFalse={::this.setExecuteFalse} messages={messages}
                                         clearCheckedListFalse={::this.clearCheckedListFalse}
                                         clearCheckedList={this.state.clearCheckedList}/></Tab>
-                                    <Tab className='minions-tabs' label='Нет соединения'><JobAllResults
+                                    <Tab className='minions-tabs'
+                                         label={messages['client.jobresults.noconnect']}><JobAllResults
                                         jobResults={noConnectResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
                                         reExecuteScripts={reExecuteScripts} executeError={executeError}
                                         setExecuteErrorFalse={::this.setExecuteErrorFalse}
                                         scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
-                                        setExecuteFalse={::this.setExecuteFalse}
+                                        setExecuteFalse={::this.setExecuteFalse} messages={messages}
                                         clearCheckedListFalse={::this.clearCheckedListFalse}
                                         clearCheckedList={this.state.clearCheckedList}/></Tab>
                                 </Tabs> : null}
                             {this.state.showJobDescription ?
                                 <div className='job-results'>
-                                    <h4 className='job-results__header'>Результаты выполнения скриптов для миньона
+                                    <h4 className='job-results__header'>{messages['client.jobresults.jobdetails.titile']}
                                         <strong> {this.state.jobResult.minionName}</strong>
                                         <span className='arrow-back' onClick={::this.returnFromJobDetails}><i
-                                            className='mi mi-keyboard-backspace'></i>Назад</span>
+                                            className='mi mi-keyboard-backspace'></i>{messages['client.btn.back']}</span>
                                     </h4>
                                     {resultDetails.length ? resultDetails.map((result, i) => {
-                                            return <JobResultDetails result={result} key={i}/>
-                                        }) : <p>Результатов нет</p>}
+                                            return <JobResultDetails result={result} key={i} messages={messages}/>
+                                        }) : <p>{messages['client.messages.no.data']}</p>}
                                 </div> : null}
                         </Col>
                     </Row>
@@ -220,7 +233,8 @@ function mapStateToProps(state) {
     return {
         jobResults: state.jobResults,
         jobDetails: state.jobDetails,
-        reExecuteScripts: state.reExecuteScripts
+        reExecuteScripts: state.reExecuteScripts,
+        localization: state.localization
     }
 }
 
@@ -228,7 +242,8 @@ function mapDispatchToProps(dispatch) {
     return {
         jobResultsAction: bindActionCreators(jobResultsAction, dispatch),
         jobDetailsAction: bindActionCreators(jobDetailsAction, dispatch),
-        reExecuteScriptsAction: bindActionCreators(reExecuteScriptsAction, dispatch)
+        reExecuteScriptsAction: bindActionCreators(reExecuteScriptsAction, dispatch),
+        getMessagesAction: bindActionCreators(getMessagesAction, dispatch)
     }
 }
 

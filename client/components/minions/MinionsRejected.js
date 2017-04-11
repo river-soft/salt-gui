@@ -79,36 +79,36 @@ export default class MinionsRejected extends Component {
     render() {
 
         let rejectedMinions = this.state.rerender ? this.state.filterList : this.props.rejectedMinions,
-            modal;
+            modal, messages = this.props.messages;
 
         if (this.state.delete) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Удалить миньон</h4>
+                <h4 className='mui--text-center modal__header'>{messages['client.modal.minions.delete']}</h4>
                 <div className='modal__body'>
-                    Вы уверены что хотите удалить миньон:  {this.state.checkedList.map((item) => {
+                    {messages['client.modal.minions.confirm.delete']}:  {this.state.checkedList.map((item) => {
                     return item + ' '
                 })}
                 </div>
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendDeleteMinions}
-                            className='modal__btn mui--pull-right'>Удалить</Button>
+                            className='modal__btn mui--pull-right'>{messages['client.minions.delete']}</Button>
                 </div>
             </div>
         }
 
 
         return <div className='right-block-list'>
-            <Input label='Поиск' floatingLabel={true} onChange={e => {
+            <Input label={messages['client.input.search']} floatingLabel={true} onChange={e => {
                 ::this.filter(e.target.value)
             }}/>
             <div className='block-list block-list__table'>
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>Название</td>
-                        <td className='table__head'>Выбор</td>
+                        <td className='table__head'>{messages['client.minions.table.name']}</td>
+                        <td className='table__head'>{messages['client.minions.table.select']}</td>
                     </tr>
                     {rejectedMinions ? rejectedMinions.map((item, index) => {
                             return <tr key={index}>
@@ -120,14 +120,14 @@ export default class MinionsRejected extends Component {
                                 /></td>
                             </tr>
                         }) : <tr>
-                            <td colSpan='2'>Данных нет</td>
+                            <td colSpan='2'>{messages['client.messages.no.data']}</td>
                         </tr>}
                     </tbody>
                 </table>
                 {rejectedMinions.length ?
                     <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                             disabled={!this.state.checkedList.length} onClick={::this.deleteMinions}>
-                        Удалить
+                        {messages['client.minions.delete']}
                     </Button> : null}
             </div>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'

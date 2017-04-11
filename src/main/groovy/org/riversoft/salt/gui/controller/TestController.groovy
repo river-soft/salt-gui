@@ -17,9 +17,13 @@ import org.riversoft.salt.gui.service.MinionCRUDService
 import org.riversoft.salt.gui.service.MinionGroupService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.MessageSource
+import org.springframework.context.support.MessageSourceResourceBundle
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
+
+import java.nio.charset.Charset
 
 @Slf4j
 @RestController
@@ -78,5 +82,4 @@ class TestController {
             minionCRUDService.createMinion(new CreateMinion(name: "minion${i}${i}"), [group])
         }
     }
-
 }

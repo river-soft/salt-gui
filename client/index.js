@@ -12,77 +12,49 @@ import AccessDenied from './containers/AccessDenied';
 import NotFound from './containers/NotFound';
 import './styles/app.scss';
 import configureStore from './store/configureStore';
-import {containsRole} from './helpers';
-import cookie from 'react-cookie';
+import {checkAuth, checkRole} from './helpers';
+import LocalizedStrings from 'react-localization';
+import $ from 'jquery';
+import {GET_MESSAGES_SUCCESS} from './constants/GetMessages';
 
 export const store = configureStore();
 
-const checkAuth = (nextState, replace) => {
+$.get('/bundle-messages', data => {
 
-    let token = cookie.load('accessToken'),
-        user = token ? JSON.parse(atob(token)) : null,
-        unAuthorized = window.unAuthorized;
+    let strings = new LocalizedStrings(data);
 
-    if (unAuthorized) {
-        cookie.remove('accessToken', {path: '/'});
-        window.unAuthorized = false;
-    }
+    strings.setLanguage('en');
 
-    if (!user) {
-        replace({
-            pathname: '/login'
-        })
-    }
-};
+    store.dispatch({
+        type: GET_MESSAGES_SUCCESS,
+        payload: strings
+    });
 
-const checkRole = (roles, replace) => {
+    render(
+        <Provider store={store}>
+            <Router history={hashHistory}>
+                <Route path='/login' component={Authorization}/>
+                <Route path='/' onEnter={(nextState, replace) => {
+                    checkAuth(nextState, replace);
+                    checkRole(['ROLE_PAGE_MAIN', 'ROLE_ROOT'], replace);
+                }} component={Minions}/>
+                <Route path='/scripts' onEnter={(nextState, replace) => {
+                    checkAuth(nextState, replace);
+                    checkRole(['ROLE_PAGE_SCRIPTS', 'ROLE_ROOT'], replace);
+                }} component={App}/>
+                <Route path='/groups-and-minions' onEnter={(nextState, replace) => {
+                    checkAuth(nextState, replace);
+                    checkRole(['ROLE_PAGE_GROUPS_AND_MINIONS', 'ROLE_ROOT'], replace);
+                }} component={GroupsAndMinions}/>
+                <Route path='/job-results' onEnter={(nextState, replace) => {
+                    checkAuth(nextState, replace);
+                    checkRole(['ROLE_PAGE_JOB_RESULTS', 'ROLE_ROOT'], replace);
+                }} component={JobResults}/>
+                <Route path='/access-denied' component={AccessDenied}/>
+                <Route path='*' component={NotFound}/>
+            </Router>
+        </Provider>,
+        document.getElementById('root')
+    );
 
-    let token = cookie.load('accessToken'),
-        user = token ? JSON.parse(atob(token)) : null;
-
-    if (!user) {
-        replace({
-            pathname: '/login'
-        });
-        return
-    }
-
-    if (typeof user.roles === 'string') {
-        user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
-    }
-
-    let contains = containsRole(user.roles, roles);
-
-    if (!contains) {
-        replace({
-            pathname: '/access-denied'
-        });
-    }
-};
-
-render(
-    <Provider store={store}>
-        <Router history={hashHistory}>
-            <Route path='/login' component={Authorization}/>
-            <Route path='/' onEnter={(nextState, replace) => {
-                checkAuth(nextState, replace);
-                checkRole(['ROLE_PAGE_MAIN', 'ROLE_ROOT'], replace);
-            }} component={Minions}/>
-            <Route path='/scripts' onEnter={(nextState, replace) => {
-                checkAuth(nextState, replace);
-                checkRole(['ROLE_PAGE_SCRIPTS', 'ROLE_ROOT'], replace);
-            }} component={App}/>
-            <Route path='/groups-and-minions' onEnter={(nextState, replace) => {
-                checkAuth(nextState, replace);
-                checkRole(['ROLE_PAGE_GROUPS_AND_MINIONS', 'ROLE_ROOT'], replace);
-            }} component={GroupsAndMinions}/>
-            <Route path='/job-results' onEnter={(nextState, replace) => {
-                checkAuth(nextState, replace);
-                checkRole(['ROLE_PAGE_JOB_RESULTS', 'ROLE_ROOT'], replace);
-            }} component={JobResults}/>
-            <Route path='/access-denied' component={AccessDenied}/>
-            <Route path='*' component={NotFound}/>
-        </Router>
-    </Provider>,
-    document.getElementById('root')
-);
+});

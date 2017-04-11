@@ -130,57 +130,57 @@ export default class MinionsUnaccepted extends Component {
         const getMinionsGroups = this.props.getMinionsGroups;
 
         let unacceptedMinions = this.state.rerender ? this.state.filterList : this.props.unacceptedMinions,
-            minionsGroups = this.props.minionsGroups, modal;
+            minionsGroups = this.props.minionsGroups, modal, messages = this.props.messages;
 
         if (this.state.accept) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Принять миньон</h4>
+                <h4 className='mui--text-center modal__header'>{messages['client.modal.minions.header.accept']}</h4>
                 <div className='modal__body'>
                     <div className='block-list'>
-                        <h6 className='block-list__header'>Выберите группы</h6>
+                        <h6 className='block-list__header'>{messages['client.modal.minions.select.groups']}</h6>
                         {minionsGroups.length ? minionsGroups.map((item, index) => {
                                 return <Checkbox label={item.name} key={index} onClick={e => {
                                     ::this.addToGroupsList(e, item.name)
                                 }}
                                 />
-                            }) : <span>Групп нет</span>}
+                            }) : <span>{messages['client.messages.no.data']}</span>}
                     </div>
                 </div>
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendAcceptedMinionsAndGroups}
                             className='modal__btn mui--pull-right'
-                            disabled={!this.state.groupsList.length}>Принять</Button>
+                            disabled={!this.state.groupsList.length}>{messages['client.modal.minions.btn.accept']}</Button>
                 </div>
             </div>
         } else if (this.state.reject) {
             modal = <div className='modal__content'>
                 <div className='modal__close_btn' onClick={::this.onRequestClose}>X</div>
-                <h4 className='mui--text-center modal__header'>Отклонить миньон</h4>
+                <h4 className='mui--text-center modal__header'>{messages['client.modal.minions.header.reject']}</h4>
                 <div className='modal__body'>
-                    Вы уверены что хотите отклонить миньон: {this.state.checkedList.map((item) => {
+                    {messages['client.modal.minions.confirm.reject']}: {this.state.checkedList.map((item) => {
                     return item + ' '
                 })}
                 </div>
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendRejectedMinions}
-                            className='modal__btn mui--pull-right'>Отклонить</Button>
+                            className='modal__btn mui--pull-right'>{messages['client.minions.table.btn.reject']}</Button>
                 </div>
             </div>
         }
 
         return <div className='right-block-list'>
-            <Input label='Поиск' floatingLabel={true} onChange={e => {
+            <Input label={messages['client.input.search']} floatingLabel={true} onChange={e => {
                 ::this.filter(e.target.value)
             }}/>
             <div className='block-list block-list__table'>
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>Название</td>
-                        <td className='table__head'>Выбор</td>
+                        <td className='table__head'>{messages['client.minions.table.name']}</td>
+                        <td className='table__head'>{messages['client.minions.table.select']}</td>
                     </tr>
                     {unacceptedMinions ? unacceptedMinions.map((item, index) => {
                             return <tr key={index}>
@@ -190,13 +190,13 @@ export default class MinionsUnaccepted extends Component {
                                 }}/></td>
                             </tr>
                         }) : <tr>
-                            <td colSpan='2'>Данных нет</td>
+                            <td colSpan='2'>{messages['client.messages.no.data']}</td>
                         </tr>}
                     </tbody>
                 </table>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
-                    Отклонить
+                    {messages['client.minions.table.btn.reject']}
                 </Button>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         disabled={!this.state.checkedList.length} onClick={
@@ -204,7 +204,7 @@ export default class MinionsUnaccepted extends Component {
                         getMinionsGroups();
                         this.acceptMinions();
                     }}>
-                    Принять
+                    {messages['client.modal.minions.btn.accept']}
                 </Button>
             </div>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'

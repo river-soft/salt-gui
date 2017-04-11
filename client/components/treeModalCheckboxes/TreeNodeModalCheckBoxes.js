@@ -86,6 +86,8 @@ export default class TreeNodeModalCheckBoxes extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         if (!this.props.nodes.length) {
             return null
         }
@@ -103,12 +105,12 @@ export default class TreeNodeModalCheckBoxes extends Component {
                     className={!this.state.checkedAll ? 'list__header mui--pull-right' : 'list__header hidden mui--pull-right'}
                     onClick={() => {
                         ::this.selectAll(this.props.group);
-                    }} title='выделить все'><i className='mi mi-add'></i></span>
+                    }} title={messages['client.btn.select.all']}><i className='mi mi-add'></i></span>
                 <span
                     className={this.state.checkedAll ? 'list__header mui--pull-right' : 'list__header hidden mui--pull-right'}
                     onClick={() => {
                         ::this.unSelectAll(this.props.group);
-                    }} title='снять отметку со всех'><i className='mi mi-remove'></i></span>
+                    }} title={messages['client.btn.unselect.all']}><i className='mi mi-remove'></i></span>
             </div>
             <Divider />
             <ul className={this.state.isVisible ? 'list__child mui-list--unstyled' : 'list__child hidden mui-list--unstyled'}

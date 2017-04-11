@@ -302,10 +302,11 @@ export default class TreeModalCheckboxes extends Component {
 
     render() {
 
-        let groups = this.state.rerender ? this.state.filterItems : this.props.groups;
+        let groups = this.state.rerender ? this.state.filterItems : this.props.groups,
+            messages = this.props.messages;
 
         let nodes = groups.length ? groups.map((group, index) => <TreeNodeModalCheckBoxes
-                activeItems={this.state.activeItems}
+                activeItems={this.state.activeItems} messages={messages}
                 removeItems={this.state.removeItems}
                 nodes={group.scripts || group.minions}
                 group={group} key={index} selectItems={::this.selectItems}
@@ -315,9 +316,8 @@ export default class TreeModalCheckboxes extends Component {
             null;
 
         return <Row>
-            {/*<h5 className='header__center'>{!this.props.minions ? 'Выберите скрипты' : 'Выберите миньоны'}</h5>*/}
             <Col md='6' xs='12' lg='4' className='posr'>
-                <Input label={this.props.minions ? 'Поиск миньонов' : 'Поиск скриптов'} floatingLabel={true}
+                <Input label={this.props.minions ? messages['client.input.search.minions'] : messages['client.input.search.scripts']} floatingLabel={true}
                        onChange={::this.filterTree}/>
                 <div className='select-items'>
                     <ul className='list mui-list--unstyled'>{nodes}</ul>
@@ -344,7 +344,7 @@ export default class TreeModalCheckboxes extends Component {
                 {this.state.transferedList.length ? <div>
                         <button className='button mui-btn mui--pull-right' onClick={(e) => {
                             ::this.executeScripts(e.target);
-                        }}>Запустить
+                        }}>{messages['client.btn.execute']}
                         </button>
                     </div> : null}
             </Col>

@@ -12,6 +12,7 @@ import * as editGroupAction from '../actions/GroupEditAction';
 import * as removeGroupAction from '../actions/GroupRemoveAction';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
+import * as getMessagesAction from '../actions/GetMessagesAction';
 
 class App extends Component {
 
@@ -23,8 +24,19 @@ class App extends Component {
             removeSuccess: false,
             editSuccess: false,
             editGroupSuccess: false,
-            removeGroupSuccess: false
+            removeGroupSuccess: false,
+            strings: ''
         };
+    }
+
+    componentWillMount() {
+        if(!this.props.localization) {
+            const {getMessages} = this.props.getMessagesAction;
+
+            getMessages();
+        } else {
+            this.setState({strings : this.props.localization.messages});
+        }
     }
 
     componentDidUpdate() {
@@ -100,7 +112,8 @@ class App extends Component {
 
         let executeError = _this.props.executeScripts.error,
             editScriptError = _this.props.editScript.error,
-            removeScriptError = _this.props.scriptRemove.error;
+            removeScriptError = _this.props.scriptRemove.error,
+            messages = this.state.strings;
 
         if (_this.props.createGroup.group) {
 
@@ -128,7 +141,7 @@ class App extends Component {
                                    error={_this.props.createGroup.error} createSuccess={_this.state.createSuccess}
                                    editScript={editScript} editSuccess={_this.state.editSuccess}
                                    editScriptError={editScriptError} setEditScriptFalse={::_this.setEditScriptFalse}
-                                   editGroup={editGroup}
+                                   editGroup={editGroup} messages={messages}
                                    editGroupSuccess={_this.state.editGroupSuccess}
                                    removeGroup={removeGroup}
                                    removeGroupSuccess={_this.state.removeGroupSuccess}
@@ -141,7 +154,7 @@ class App extends Component {
                                    createdGroup={_this.props.createGroup.group}/>;
 
         return (<div className='wrapper'>
-            <Header header='Управление скриптами' />
+            <Header header={messages['client.header.scripts.title']} messages={messages}/>
             <main className='main'>
                 {filesTree}
             </main>
@@ -159,7 +172,8 @@ function mapStateToProps(state) {
         editGroup: state.editGroup,
         removeGroup: state.removeGroup,
         groupedMinions: state.groupedMinions,
-        executeScripts: state.executeScripts
+        executeScripts: state.executeScripts,
+        localization: state.localization,
     }
 }
 
@@ -173,7 +187,9 @@ function mapDispatchToProps(dispatch) {
         editGroupAction: bindActionCreators(editGroupAction, dispatch),
         removeGroupAction: bindActionCreators(removeGroupAction, dispatch),
         getGroupedMinionsAction: bindActionCreators(getGroupedMinionsAction, dispatch),
-        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
+        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch),
+        getMessagesAction: bindActionCreators(getMessagesAction, dispatch),
+
     }
 }
 

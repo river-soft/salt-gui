@@ -8,8 +8,7 @@ export default class DateForSelect extends Component {
         super(props);
 
         this.state = {
-            // TODO локализацию надписей
-            label: 'По умолчанию'
+            label: this.props.messages['client.filter.default']
         }
     }
 
@@ -17,7 +16,6 @@ export default class DateForSelect extends Component {
 
         this.props.loadData(minutes);
         this.setState({label: e.target.text});
-
         this.props.hideJobScriptsResult();
 
         let rows = document.querySelectorAll('.job-table__body_row');
@@ -30,34 +28,34 @@ export default class DateForSelect extends Component {
     }
 
     render() {
-        return (
-            // TODO локализацию надписей
-            <Dropdown className='date-dropdown' color='primary' label={this.state.label}>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(30, e)
-                }}>За последние 30 минут</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(60, e)
-                }}>За последний 1 час</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(180, e)
-                }}>За последний 3 часа</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(360, e)
-                }}>За последние 6 часов</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(360, e)
-                }}>За последние 12 часов</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(1440, e)
-                }}>За последние 24 часа</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(2880, e)
-                }}>За последних 2 дня</DropdownItem>
-                <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                    ::this.updateDataByTime(10080, e)
-                }}>За последних 7 дней</DropdownItem>
-            </Dropdown>
-        );
+
+        let messages = this.props.messages;
+
+        return <Dropdown className='date-dropdown' color='primary' label={this.state.label}>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(30, e);
+            }}>{messages['client.filter.last.thirty.minutes']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(60, e);
+            }}>{messages['client.filter.last.hour']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(180, e);
+            }}>{messages['client.filter.last.three.hours']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(360, e);
+            }}>{messages['client.filter.last.six.hours']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(360, e);
+            }}>{messages['client.filter.last.twelve.hours']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(1440, e);
+            }}>{messages['client.filter.last.twenty.four.hours']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(2880, e);
+            }}>{messages['client.filter.last.two.days']}</DropdownItem>
+            <DropdownItem className='date-dropdown__item' onClick={(e) => {
+                ::this.updateDataByTime(10080, e);
+            }}>{messages['client.filter.last.seven.days']}</DropdownItem>
+        </Dropdown>
     }
 }

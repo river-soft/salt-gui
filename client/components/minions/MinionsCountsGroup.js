@@ -6,9 +6,8 @@ export default class MinionsCountsGroup extends Component {
 
         let countsGroup = this.props.countsStatus;
 
-
         return <div className='block-list'>
-            <h6 className='block-list__header'>Группы</h6>
+            <h6 className='block-list__header'>{this.props.messages['client.minions.groups']}</h6>
             <ul className='mui-list--unstyled minions-list'>
                 {Object.keys(countsGroup).map((key, index) => {
                     return <li className='minions-list__item' key={index}><span

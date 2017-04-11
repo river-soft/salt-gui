@@ -141,7 +141,8 @@ export default class JobAllResults extends Component {
 
         let jobResults = this.state.filterValue ? this.state.filterList : this.props.jobResults,
             showHeadCheckBox = true,
-            reExecutedMinionsLength = 0;
+            reExecutedMinionsLength = 0,
+            messages = this.props.messages;
 
         if (jobResults.length) {
             jobResults.map((el) => {
@@ -159,14 +160,14 @@ export default class JobAllResults extends Component {
             <table width='100%' className='mui-table' ref='table'>
                 <tbody>
                 <tr>
-                    <td className='table__head'>Миньон</td>
-                    <td className='table__head'>Группа</td>
-                    <td className='table__head'>Дата обновления</td>
-                    {this.props.showStatus ? <td className='table__head'>Статус</td> : null}
+                    <td className='table__head'>{messages['client.jobresults.table.minion']}</td>
+                    <td className='table__head'>{messages['client.jobresults.table.group']}</td>
+                    <td className='table__head'>{messages['client.jobresults.table.date.update']}</td>
+                    {this.props.showStatus ? <td className='table__head'>{messages['client.jobresults.table.status']}</td> : null}
                     {this.props.showSelect ? <td className='table__head'>
-                            <span className='mui--pull-left'>Выбор</span>
+                            <span className='mui--pull-left'>{messages['client.jobresults.table.select']}</span>
                             {!showHeadCheckBox ?
-                                <Checkbox className='mui--pull-right header-checkbox' title='Выбрать все'
+                                <Checkbox className='mui--pull-right header-checkbox' title={messages['client.jobresults.table.select.all']}
                                           ref='header-checkbox'
                                           onClick={e => {
                                               ::this.addAll(e);
@@ -185,7 +186,7 @@ export default class JobAllResults extends Component {
                             <td>{item.lastModifiedDate}</td>
                             {this.props.showStatus ? <td>{item.status}</td> : null}
                             {this.props.showSelect ?
-                                <td>{item.reExecuted ? 'Перезапущен' : <Checkbox ref={item.id} onClick={e => {
+                                <td>{item.reExecuted ? messages['client.jobresults.table.reexecuted'] : <Checkbox ref={item.id} onClick={e => {
                                         ::this.addToRestartList(e, item.id);
                                     }}/>}
                                 </td>
@@ -194,23 +195,23 @@ export default class JobAllResults extends Component {
                     }) : null}
                 </tbody>
             </table>
-            {this.props.executeError ? <span className='input_error'>Произошла ошибка перезапуска</span> : null}
-            {this.props.executeSuccess ? <span className='success-mess'>Скрипты успешно перезапущены</span> : null}
+            {this.props.executeError ? <span className='input_error'>{messages['client.error.jobresults.reexecute']}</span> : null}
+            {this.props.executeSuccess ? <span className='success-mess'>{messages['client.jobresults.reexecute.success']}</span> : null}
             {this.props.showSelect && reExecutedMinionsLength != jobResults.length ?
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         ref='re-execute'
                         disabled={!this.state.checkedList.length}
                         onClick={::this.reExecuteScripts}>
-                    Перезапустить
+                    {messages['client.btn.reexecute']}
                 </Button>
                 : null}
         </div>;
 
         return jobResults.length || this.state.filterValue ? <div className='right-block-list'>
-                <Input label='Поиск' floatingLabel={true} id='filter' onChange={e => {
+                <Input label={messages['client.input.search']} floatingLabel={true} id='filter' onChange={e => {
                     ::this.filter(e.target.value);
                 }}/>
                 {template}
-            </div> : <div className='right-block-list'>Нет результатов</div>
+            </div> : <div className='right-block-list'>{messages['no.data']}</div>
     }
 }
