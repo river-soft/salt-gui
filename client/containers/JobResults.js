@@ -163,7 +163,7 @@ class JobResults extends Component {
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
-                            <DateForSelect loadData={this.state.load}
+                            <DateForSelect loadData={this.state.load} messages={messages}
                                            hideJobScriptsResult={::this.hideJobScriptsResult}/>
                             <JobResultCounters jobResults={this.props.jobResults.result} messages={messages}
                                                showJobScriptResults={::this.showJobScriptResults}

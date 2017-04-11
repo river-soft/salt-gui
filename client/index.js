@@ -23,7 +23,7 @@ $.get('/bundle-messages', data => {
 
     let strings = new LocalizedStrings(data);
 
-    strings.setLanguage('ua');
+    strings.setLanguage('en');
 
     store.dispatch({
         type: GET_MESSAGES_SUCCESS,
