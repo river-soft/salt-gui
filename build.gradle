@@ -37,6 +37,7 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-websocket'
 	compile 'org.codehaus.groovy:groovy'
 	compile 'joda-time:joda-time:2.9.2'
+	compile "org.springframework.security:spring-security-messaging:4.0.3.RELEASE"
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 

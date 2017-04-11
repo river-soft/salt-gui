@@ -7,7 +7,10 @@ import org.riversoft.salt.gui.service.JobResultService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -37,7 +40,7 @@ class JobResultsController extends BaseRestController {
         jobResultService.findAllResultsByJob()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT)")
     @RequestMapping(value = '/find-details-by-job-result')
     def findDetailsByJobResult(@RequestParam(value = "result_id", required = true) String resultId) {
 
