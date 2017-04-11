@@ -26,21 +26,22 @@ export default class MinionsDenied extends Component {
 
     render() {
 
-        let deniedMinions = this.state.rerender ? this.state.filterList : this.props.deniedMinions;
+        let deniedMinions = this.state.rerender ? this.state.filterList : this.props.deniedMinions,
+            messages = this.props.messages;
 
         return <div className='right-block-list'>
-            <Input label='Поиск' floatingLabel={true} onChange={e => {::this.filter(e.target.value)}} />
+            <Input label={messages['client.input.search']} floatingLabel={true} onChange={e => {::this.filter(e.target.value)}} />
             <div className='block-list block-list__table'>
                 <table width='100%' className='mui-table'>
                     <tbody>
                     <tr>
-                        <td className='table__head'>Название</td>
+                        <td className='table__head'>{messages['client.minions.table.name']}</td>
                     </tr>
                     {deniedMinions ? deniedMinions.map((item, index) => {
                             return <tr key={index}>
                                 <td>{item}</td>
                             </tr>
-                        }) : <tr><td>Данных нет</td></tr>}
+                        }) : <tr><td>{messages['client.messages.no.data']}</td></tr>}
                     </tbody>
                 </table>
             </div>

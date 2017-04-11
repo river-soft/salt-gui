@@ -17,9 +17,13 @@ import org.riversoft.salt.gui.service.MinionCRUDService
 import org.riversoft.salt.gui.service.MinionGroupService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.MessageSource
+import org.springframework.context.support.MessageSourceResourceBundle
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
+
+import java.nio.charset.Charset
 
 @Slf4j
 @RestController
@@ -52,6 +56,9 @@ class TestController {
     @Autowired
     SaltClient saltClient
 
+    @Autowired
+    MessageSource messageSource
+
     @RequestMapping('/ping')
     @ResponseBody
     def findScriptByName() {
@@ -79,4 +86,23 @@ class TestController {
         }
     }
 
+    @RequestMapping("/bundle-messages")
+    getBundleMessages() {
+
+        List<String> locales = ["ru", "ua", "en"]
+        Map<String, Map<String, String>> messages = [:]
+
+        for(String locale: locales) {
+            Map<String, String> map = new HashMap<>()
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("messages", new Locale(locale))
+
+            resourceBundle.keySet().findAll {it.startsWith("client")}.each {
+                map.put(it, new String(messageSource.getMessage(it, null, new Locale(locale)).bytes, 'UTF-8'))
+            }
+
+            messages.put(locale, map)
+        }
+
+        messages
+    }
 }

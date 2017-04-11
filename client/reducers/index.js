@@ -23,6 +23,7 @@ import jobResults from './jobResults';
 import jobDetails from './jobDetails';
 import reExecuteScripts from './reExecuteScripts';
 import authorization from './authorization';
+import getMessages from './getMessages';
 
 export default combineReducers({
     getScriptContent: getScriptContent,
@@ -48,5 +49,6 @@ export default combineReducers({
     reExecuteScripts: reExecuteScripts,
     jobResults: jobResults,
     jobDetails: jobDetails,
-    auth: authorization
+    auth: authorization,
+    localization: getMessages
 })

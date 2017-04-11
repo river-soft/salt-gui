@@ -35,20 +35,22 @@ export default class CreateMinionsGroupModal extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         return <div className='modal__content'>
             <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
             <div className='modal__header mui--text-center'>
-                Создание группы
+                {messages['client.modal.minions.create.group.title']}
             </div>
-            <Input label='Название группы' floatingLabel={true} onChange={(e) => {
+            <Input label={messages['client.input.group.name']} floatingLabel={true} onChange={(e) => {
                 this.addGroupName(e.target.value);
                 this.checkGroupName(e.target.value);
             }}/>
-            {this.state.groupExist ? <span className='input_error'>Группа с таким именем уже существует</span> : null}
+            {this.state.groupExist ? <span className='input_error'>{messages['client.error.group.exists']}</span> : null}
             <div className='modal__footer'>
                 <Divider/>
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
-                        onClick={::this.createGroup} disabled={this.state.groupName === '' || this.state.groupExist}>Сохранить</Button>
+                        onClick={::this.createGroup} disabled={this.state.groupName === '' || this.state.groupExist}>{messages['client.btn.save']}</Button>
             </div>
         </div>
     }

@@ -27,7 +27,8 @@ export default class TreeView extends Component {
                                                                            rerender={this.props.rerender}
                                                                            createdGroup={this.props.createdGroup}
                                                                            setSelected={::this.setSelected}
-                                                                           selected={this.state.selected}/>) : null;
+                                                                           selected={this.state.selected}
+                                                                           messages={this.props.messages}/>) : null;
 
         return <div>{nodes}</div>
     }

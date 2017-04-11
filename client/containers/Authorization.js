@@ -8,6 +8,7 @@ import {Header} from '../components/Header';
 import Container from 'muicss/lib/react/container';
 import Col from 'muicss/lib/react/col';
 import Row from 'muicss/lib/react/row';
+import * as getMessagesAction from '../actions/GetMessagesAction';
 
 class Authorization extends Component {
 
@@ -16,7 +17,18 @@ class Authorization extends Component {
 
         this.state = {
             userName: '',
-            password: ''
+            password: '',
+            strings: ''
+        }
+    }
+
+    componentWillMount() {
+        if(!this.props.localization) {
+            const {getMessages} = this.props.getMessagesAction;
+
+            getMessages();
+        } else {
+            this.setState({strings : this.props.localization.messages});
         }
     }
 
@@ -44,8 +56,10 @@ class Authorization extends Component {
 
     render() {
 
+        let messages = this.state.strings;
+
         return <div className='wrapper'>
-            <Header/>
+            <Header messages={messages}/>
             <main className='main'>
                 <Container>
                     <Row>
@@ -53,16 +67,19 @@ class Authorization extends Component {
                             <Form className='authorization'>
                                 <legend className='authorization__header'>
                                     <p>
-                                        Авторизация
+                                        {messages['client.authorization.title']}
                                     </p>
                                 </legend>
                                 <div className='authorization__content'>
-                                    <Input label='Логин' onChange={::this.setUserName} floatingLabel={true}/>
-                                    <Input label='Пароль' type='password' floatingLabel={true}
+                                    <Input label={messages['client.login.title']} onChange={::this.setUserName} floatingLabel={true}/>
+                                    <Input label={messages['client.password.title']} type='password' floatingLabel={true}
                                            onChange={::this.setPassword}/>
-                                    {this.props.auth.error ? <span className='input_error'>Вы ввели не верный логин или пароль</span> : null}
+                                    {this.props.auth.error ?
+                                        <span className='input_error'>{messages['client.error.authorization']}</span> : null}
                                     <button className='mui-btn button authorization__btn' onClick={::this.login}
-                                            disabled={!this.state.userName.length || !this.state.password}>Авторизироваться</button>
+                                            disabled={!this.state.userName.length || !this.state.password}>
+                                        {messages['client.button.authorization']}
+                                    </button>
                                 </div>
                             </Form>
                         </Col>
@@ -75,13 +92,15 @@ class Authorization extends Component {
 
 function mapStateToProps(state) {
     return {
-        auth: state.auth
+        localization: state.localization,
+        auth: state.auth,
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        authorization: bindActionCreators(authorization, dispatch)
+        getMessagesAction: bindActionCreators(getMessagesAction, dispatch),
+        authorization: bindActionCreators(authorization, dispatch),
     }
 }
 

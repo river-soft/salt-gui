@@ -59,9 +59,11 @@ export default class JobResultDetails extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         return <Panel className='posr'>
             <span className='turn-off' onClick={::this.toggleMinimize}
-                  title={this.state.minimize ? 'Развернуть' : 'Свернуть'}>
+                  title={this.state.minimize ? messages['clients.jobresult.jobdetails.expand'] : messages['clients.jobresult.jobdetails.collapse']}>
                 <i className={this.state.minimize ? 'mi mi-add' : 'mi mi-remove'}></i>
             </span>
             <div>

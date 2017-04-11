@@ -31,18 +31,20 @@ export default class RemoveScript extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         return <div className='modal__content'>
             <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
-            <h4 className='mui--text-center modal__header'>Удаление скрипта</h4>
+            <h4 className='mui--text-center modal__header'>{messages['client.modal.scripts.delete']}</h4>
             <div className='modal__content_question mui--text-center'>
-                Вы действительно хотите удалить скрипт {this.props.script.name}?
+                {messages['client.modal.scripts.confirm.delete']} {this.props.script.name}?
             </div>
             {this.props.removeScriptError.error ? <span className='input_error'>{this.props.removeScriptError.message}</span> : null}
             <div className='modal__footer'>
                 <Divider/>
                 <Button size='small' color='primary' variant='flat' onClick={() => {
                     this.removeScript(this.props.script);
-                }} className='modal__btn mui--pull-right'>Удалить</Button>
+                }} className='modal__btn mui--pull-right'>{messages['client.btn.delete']}</Button>
             </div>
         </div>
     }

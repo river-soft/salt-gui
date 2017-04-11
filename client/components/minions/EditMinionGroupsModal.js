@@ -59,24 +59,26 @@ export default class EditMinionGroupsModal extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         return <div className='modal__content'>
             <div className='modal__close_btn' onClick={this.props.closeModal}>X</div>
-            <h4 className='mui--text-center modal__header'>Редактирование групп миньона</h4>
+            <h4 className='mui--text-center modal__header'>{messages['client.modal.minions.group.edit.title']}</h4>
             <div className='modal__body'>
                 <div className='block-list'>
-                    <h6 className='block-list__header'>Выберите группы</h6>
+                    <h6 className='block-list__header'>{messages['client.modal.minions.select.groups']}</h6>
                     {this.props.groups.length ? this.props.groups.map((item, index) => {
                             return <Checkbox label={item.name} key={index} onChange={e => {
                                 ::this.addToGroupsList(e, item.name, item.id)
                             }} defaultChecked={item.checked}/>
-                        }) : <span>Групп нет</span>}
+                        }) : <span>{messages['client.messages.no.data']}</span>}
                 </div>
             </div>
             <div className='modal__footer'>
                 <Divider />
                 <Button size='small' color='primary' variant='flat'
                         className='modal__btn mui--pull-right' onClick={::this.editMinionGroups}
-                        disabled={!this.state.groupsList.length}>Сохранить</Button>
+                        disabled={!this.state.groupsList.length}>{messages['client.btn.save']}</Button>
             </div>
         </div>
     }

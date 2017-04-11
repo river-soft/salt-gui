@@ -1,3 +1,5 @@
+import cookie from 'react-cookie';
+
 export default function clone(obj) {
 
     let copy;
@@ -35,13 +37,56 @@ export default function clone(obj) {
 
 export function containsRole(roles, checkRoles) {
 
-    for(let i = 0; i < roles.length; i++) {
-        for(let j = 0; j < checkRoles.length; j++) {
-            if(roles[i].trim() === checkRoles[j].trim()) {
+    for (let i = 0; i < roles.length; i++) {
+        for (let j = 0; j < checkRoles.length; j++) {
+            if (roles[i].trim() === checkRoles[j].trim()) {
                 return true
             }
         }
     }
 
     return false
+}
+
+export function checkAuth(nextState, replace) {
+
+    let token = cookie.load('accessToken'),
+        user = token ? JSON.parse(atob(token)) : null,
+        unAuthorized = window.unAuthorized;
+
+    if (unAuthorized) {
+        cookie.remove('accessToken', {path: '/'});
+        window.unAuthorized = false;
+    }
+
+    if (!user) {
+        replace({
+            pathname: '/login'
+        })
+    }
+}
+
+export function checkRole(roles, replace) {
+
+    let token = cookie.load('accessToken'),
+        user = token ? JSON.parse(atob(token)) : null;
+
+    if (!user) {
+        replace({
+            pathname: '/login'
+        });
+        return
+    }
+
+    if (typeof user.roles === 'string') {
+        user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
+    }
+
+    let contains = containsRole(user.roles, roles);
+
+    if (!contains) {
+        replace({
+            pathname: '/access-denied'
+        });
+    }
 }

@@ -41,16 +41,19 @@ export default class JobResultCounters extends Component {
     }
 
     render() {
+
+        let messages = this.props.messages;
+
         return <table className='mui-table job-table'>
             <tbody>
             <tr>
-                <td className='job-table__head mui--text-center' width='40%'>Работа</td>
+                <td className='job-table__head mui--text-center' width='40%'>{messages['client.jobresults.job']}</td>
                 <td className='job-table__head mui--text-center job-table__body_green' width='20%'
-                    title='Выполнено'><i className='mi mi-done'></i></td>
+                    title={messages['client.jobresults.tabs.done']}><i className='mi mi-done'></i></td>
                 <td className='job-table__head mui--text-center job-table__body_orange' width='20%'
-                    title='Не выполнено'><i className='mi mi-close'></i></td>
+                    title={messages['client.jobresults.tabs.notdone']}><i className='mi mi-close'></i></td>
                 <td className='job-table__head mui--text-center job-table__body_red' width='20%'
-                    title='Нет соединения'><i className='mi mi-cloud-off'></i></td>
+                    title={messages['client.jobresults.noconnect']}><i className='mi mi-cloud-off'></i></td>
             </tr>
             {this.props.jobResults ? this.props.jobResults.map((el, i) => {
                     return <tr key={i} className='job-table__body_row' title={el.jobName} onClick={(e) => {

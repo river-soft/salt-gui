@@ -10,9 +10,9 @@ module.exports = {
     //TODO: перед заливом закоментить
     devtool: 'cheap-module-eval-source-map',
     entry: [
+        //TODO: перед заливом закоментить
         'webpack-dev-server/client',
         'webpack/hot/only-dev-server',
-        //TODO: перед заливом засскоментить
         'webpack-hot-middleware/client?reload=true',
         'babel-polyfill',
         './client/index'
@@ -41,7 +41,7 @@ module.exports = {
         //     warnings: false,
         //     drop_console: true,
         //     unsafe: true
-        // })
+        // }),
         // new webpack.NoErrorsPlugin()
     ],
     module: {
@@ -70,8 +70,11 @@ module.exports = {
                 loader: 'file?name=/fonts/[name].[ext]'
             },
             {
-                test: /\.(png|jpg|svg)$/,
-                loader: 'file?name=/img/[name].[ext]'
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                loaders: [
+                    'file-loader?hash=sha512&digest=hex&name=/img/[name].[ext]',
+                    'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+                ]
             },
             {
                 test: /\.scss$/,

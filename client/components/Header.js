@@ -12,7 +12,7 @@ export class Header extends Component {
         return <AppBar className='header'>
             <div className='header__logo'>
                 <Link to='/' className='header__navigation_link' />
-                <Menu/>
+                <Menu messages={this.props.messages}/>
             </div>
             <div className='header__bottom'>
                 <Container>

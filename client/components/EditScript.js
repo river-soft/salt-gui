@@ -142,6 +142,8 @@ export default class EditScript extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         let dropdownList = !this.state.rerenderDropdown ?
             this.props.groups.length > 0 ?
                 <ul className='group__list mui-list--unstyled' ref='dropdown'>
@@ -161,10 +163,10 @@ export default class EditScript extends Component {
                 </ul> : null;
 
         return <div className='modal__content'>
-            <h4 className='mui--text-center modal__header'>Редактирование скрипта</h4>
+            <h4 className='mui--text-center modal__header'>{messages['client.modal.scripts.editing']}</h4>
             <Form className='modal__form'>
                 <div className='modal__form_group'>
-                    <Input label='Название группы' floatingLabel={true} name='group' id='group'
+                    <Input label={messages['client.input.group.name']} floatingLabel={true} name='group' id='group'
                            defaultValue={this.props.script.group || ''}
                            onChange={(e) => {
                                this.setGroup(e.target.value);
@@ -175,13 +177,13 @@ export default class EditScript extends Component {
                     <div className='dropdown-btn' onClick={this.showDropdown.bind(this)}><span
                         className='mui-caret'> </span></div>
                     {this.state.showDropdown ? dropdownList : null}
-                    <Input label='Название скрипта' floatingLabel={true} defaultValue={this.props.script.name || ''}
+                    <Input label={messages['client.input.script.name']} floatingLabel={true} defaultValue={this.props.script.name || ''}
                            onChange={(e) => {
                                this.setName(e.target.value);
                                this.validateScript(e.target.value);
                            }}/>
                     {this.state.scriptExist ?
-                        <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
+                        <span className='input_error'>{messages['client.error.script.exists']}</span> : null}
                     {this.props.editScriptError.error ? <span className='input_error'>{this.props.editScriptError.error}</span> : null}
                     <AceEditor
                         mode='yaml'
@@ -197,9 +199,9 @@ export default class EditScript extends Component {
             </Form>
             <div>
                 <Button size='small' color='primary' variant='flat'
-                        onClick={this.props.cancel} className='modal__btn mui--pull-right'>Отменить</Button>
+                        onClick={this.props.cancel} className='modal__btn mui--pull-right'>{messages['client.btn.cancel']}</Button>
                 <Button size='small' color='primary' variant='flat' onClick={this.editScript}
-                        className='modal__btn mui--pull-right'>Сохранить</Button>
+                        className='modal__btn mui--pull-right'>{messages['client.btn.save']}</Button>
             </div>
         </div>
     }

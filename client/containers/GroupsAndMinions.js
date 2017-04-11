@@ -15,6 +15,7 @@ import * as getGroupsByMinionAction from '../actions/GetGroupsByMinionAction';
 import * as editMinionGroupsAction from '../actions/EditMinionGroupsAction';
 import * as filesTreeActions from '../actions/FilesTreeActions';
 import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
+import * as getMessagesAction from '../actions/GetMessagesAction';
 import TreeView from '../components/tree/TreeView';
 import MinionDetails from '../components/minions/MinionDetails';
 import CreateMinionsGroupModal from '../components/minions/CreateMinionsGroupModal';
@@ -42,7 +43,18 @@ class GroupsAndMinions extends Component {
             editMinionsGroupModal: false,
             editMinionGroupsModal: false,
             runScript: false,
-            minionName: ''
+            minionName: '',
+            strings: ''
+        }
+    }
+
+    componentWillMount() {
+        if(!this.props.localization) {
+            const {getMessages} = this.props.getMessagesAction;
+
+            getMessages();
+        } else {
+            this.setState({strings : this.props.localization.messages});
         }
     }
 
@@ -213,19 +225,20 @@ class GroupsAndMinions extends Component {
             {executeScripts} = this.props.executeScriptsAction;
 
         let treeView, modal, executeError = this.props.executeScripts.error,
-            minionsDetailsError = this.props.minionDetails.error;
+            minionsDetailsError = this.props.minionDetails.error,
+            messages = this.state.strings;
 
         if (this.props.groupedMinions.groupedMinions.length === 0) {
-            treeView = <div>Данных нету</div>
+            treeView = <div>{messages['client.messages.no.data']}</div>
         } else if (this.state.rerender) {
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
-                                 editGroup={::this.editGroup}
+                                 editGroup={::this.editGroup} messages={messages}
                                  removeGroup={::this.removeGroup}
                                  removeIfNotEmpty={true}
                                  rerender={true}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
-                                 editGroup={::this.editGroup}
+                                 editGroup={::this.editGroup} messages={messages}
                                  removeGroup={::this.removeGroup}
                                  removeIfNotEmpty={true}
                                  rerender={false}/>;
@@ -234,53 +247,53 @@ class GroupsAndMinions extends Component {
         if (this.state.showModal) {
             if (this.state.createMinionsGroupModal) {
                 modal = <CreateMinionsGroupModal groups={this.props.groupedMinions.groupedMinions}
-                                                 createMinionsGroup={createMinionsGroup}
+                                                 createMinionsGroup={createMinionsGroup} messages={messages}
                                                  closeModal={::this.onRequestClose}/>
             } else if (this.state.removeMinionsGroupModal) {
                 modal = <RemoveMinionsGroupModal group={this.state.removedGroup} closeModal={::this.onRequestClose}
-                                                 removeGroup={removeMinionsGroup}
+                                                 removeGroup={removeMinionsGroup} messages={messages}
                                                  error={this.props.removeMinionsGroup.error}/>
             } else if (this.state.editMinionsGroupModal) {
                 modal = <EditMinionsGroupModal group={this.state.editedGroup} closeModal={::this.onRequestClose}
-                                               groups={this.props.groupedMinions.groupedMinions}
+                                               groups={this.props.groupedMinions.groupedMinions} messages={messages}
                                                edit={editMinionsGroup}/>
             } else if (this.state.editMinionGroupsModal) {
                 modal = <EditMinionGroupsModal closeModal={::this.onRequestClose}
                                                groups={this.props.getGroupsByMinion.groups}
                                                minion={this.state.minionDescriptionName}
-                                               edit={editMinionGroups}/>
+                                               edit={editMinionGroups} messages={messages} />
             }
         }
 
         return <div className='wrapper'>
-            <Header header='Управление миньонами'/>
+            <Header header={messages['client.header.minions.groups.title']} messages={messages}/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='6' xs='12' lg='3'>
-                            <Input label='Поиск миньонов' floatingLabel={true} onChange={e => {
+                            <Input label={messages['client.input.search.minions']} floatingLabel={true} onChange={e => {
                                 this.filterTree(e)
                             }}/>
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
-                            <button className='mui-btn button' onClick={::this.createGroup}>добавить группу</button>
+                            <button className='mui-btn button' onClick={::this.createGroup}>{messages['client.minions.btn.add.group']}</button>
                         </Col>
                         <Col md='6' xs='12' lg='9'>
                             {this.state.showMinionDescription ?
                                 <MinionDetails minionName={this.state.minionDescriptionName}
                                                details={this.props.minionDetails.minionDetails[0]}
                                                getGroups={::this.editMinionGroups}
-                                               runScript={::this.runScript}
+                                               runScript={::this.runScript} messages={messages}
                                                error={minionsDetailsError}/>
                                 : null}
                             {this.state.runScript ?
                                 <TreeViewModalCheckboxes groups={this.props.filesTree.files}
-                                                         scriptName={this.state.minionName}
+                                                         scriptName={this.state.minionName} messages={messages}
                                                          executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
                             {this.props.executeScripts.execute ?
-                                <span className='success-mess'>Скрипты успешно отправлены на выполнение</span> : null}
+                                <span className='success-mess'>{messages['client.message.scripts.run.success']}</span> : null}
                         </Col>
                     </Row>
                 </Container>
@@ -304,7 +317,8 @@ function mapStateToProps(state) {
         getGroupsByMinion: state.getGroupsByMinion,
         editMinionGroups: state.editMinionGroups,
         filesTree: state.filesTree,
-        executeScripts: state.executeScripts
+        executeScripts: state.executeScripts,
+        localization: state.localization
     }
 }
 
@@ -318,8 +332,8 @@ function mapDispatchToProps(dispatch) {
         getGroupsByMinionAction: bindActionCreators(getGroupsByMinionAction, dispatch),
         editMinionGroupsAction: bindActionCreators(editMinionGroupsAction, dispatch),
         filesTreeActions: bindActionCreators(filesTreeActions, dispatch),
-        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch)
-
+        executeScriptsAction: bindActionCreators(executeScriptsAction, dispatch),
+        getMessagesAction: bindActionCreators(getMessagesAction, dispatch)
     }
 }
 

@@ -186,11 +186,13 @@ export default class CreateGroup extends Component {
 
     addScriptForm() {
 
-        return <div><Input label='Название скрипта' floatingLabel={true} onChange={(e) => {
+        let messages = this.props.messages;
+
+        return <div><Input label={messages['client.input.script.name']} floatingLabel={true} onChange={(e) => {
             this.setScriptName(e.target.value);
             this.validateScript(e.target.value);
         }} defaultValue={this.state.scriptName || ''}/>
-            {this.state.scriptExist ? <span className='input_error'>Скрипт с таким именем уже существует</span> : null}
+            {this.state.scriptExist ? <span className='input_error'>{messages['client.error.script.exists']}</span> : null}
 
             <AceEditor
                 mode='yaml'
@@ -207,10 +209,10 @@ export default class CreateGroup extends Component {
                         this.addScript();
                         this.createScriptStore();
                     }} className='modal__btn'
-                    disabled={!this.state.scriptName.length || !this.state.scriptContent || this.state.scriptExist}>Добавить</Button>
+                    disabled={!this.state.scriptName.length || !this.state.scriptContent || this.state.scriptExist}>{messages['client.btn.add']}</Button>
             <Button size='small' color='primary' variant='flat' onClick={() => {
                 this.cancelAddScript();
-            }} className='modal__btn'>Отмена</Button>
+            }} className='modal__btn'>{messages['client.btn.cancel']}</Button>
         </div>
     }
 
@@ -245,6 +247,8 @@ export default class CreateGroup extends Component {
 
     render() {
 
+        let messages = this.props.messages;
+
         let dropdownList = !this.state.rerenderDropdown ?
             this.props.groups.length > 0 ?
                 <ul className='group__list mui-list--unstyled' ref='dropdown'>
@@ -264,10 +268,10 @@ export default class CreateGroup extends Component {
                 </ul> : null;
 
         return <div className='modal__content'>
-            <h4 className='mui--text-center modal__header'>Создание группы и скриптов</h4>
+            <h4 className='mui--text-center modal__header'>{messages['client.scripts.create.title']}</h4>
             <Form className='modal__form'>
                 <div className='modal__form_group'>
-                    <Input label='Название группы' floatingLabel={true} name='group' id='group' onChange={(e) => {
+                    <Input label={messages['client.input.group.name']} floatingLabel={true} name='group' id='group' onChange={(e) => {
                         this.setGroupName(e.target.value);
                         this.rerenderGroupList(e.target.value);
                     }} onFocus={(e) => {
@@ -290,7 +294,7 @@ export default class CreateGroup extends Component {
                     {this.state.addScript ? null :
                         <Button size='small' color='primary' variant='flat' onClick={::this.addScript}
                                 className='modal__btn mui--pull-right'>
-                            Добавить скрипт
+                            {messages['client.btn.add.script']}
                         </Button>}
                 </div>
                 {this.state.addScript ? this.addScriptForm() : null}
@@ -299,10 +303,10 @@ export default class CreateGroup extends Component {
                 <div>
                     <Divider />
                     <Button size='small' color='primary' variant='flat'
-                            onClick={this.props.cancel} className='modal__btn mui--pull-right'>Отменить</Button>
+                            onClick={this.props.cancel} className='modal__btn mui--pull-right'>{messages['client.btn.cancel']}</Button>
                     <Button size='small' color='primary' variant='flat'
                             onClick={this.createModel} className='modal__btn mui--pull-right'
-                            disabled={!this.state.groupName}>Сохранить</Button>
+                            disabled={!this.state.groupName}>{messages['client.btn.save']}</Button>
                 </div> : null}
         </div>
     }
