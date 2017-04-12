@@ -24,7 +24,7 @@ class SaltScriptController extends BaseRestController {
     @Autowired
     private SaltScriptService saltScriptCRUDService
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_GROUPED_SCRIPTS', 'ROLE_PAGE_SCRIPTS')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_GROUPED_SCRIPTS', 'ROLE_PAGE_SCRIPTS')")
     @RequestMapping('/grouped-scripts')
     def findGroupedScripts() {
 
@@ -38,7 +38,7 @@ class SaltScriptController extends BaseRestController {
         saltScriptGroupService.createSaltScriptGroupAndScripts(createSaltScriptGroup)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EDIT_SCRIPT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_SCRIPT_DETAILS')")
     @RequestMapping('/script-by-id')
     def findScriptByName(@RequestParam(value = "id", required = true) String id) {
 
@@ -58,5 +58,4 @@ class SaltScriptController extends BaseRestController {
 
         saltScriptGroupService.deleteSaltScript(scriptId)
     }
-
 }

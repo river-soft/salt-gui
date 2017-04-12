@@ -15,7 +15,8 @@ import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
 import * as getMessagesAction from '../actions/GetMessagesAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
-import {changeLanguage} from '../helpers';
+import {containsRole, changeLanguage} from '../helpers';
+import cookie from 'react-cookie';
 
 class JobResults extends Component {
 
@@ -144,6 +145,13 @@ class JobResults extends Component {
 
     render() {
 
+        let token = cookie.load('accessToken'),
+            user = token ? JSON.parse(atob(token)) : null;
+
+        if (user && typeof user.roles === 'string') {
+            user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
+        }
+
         const {reExecuteScripts} = this.props.reExecuteScriptsAction;
 
         let jobResults = this.props.jobResults.jobScriptResults, trueResults = [], falseResults = [], noConnectResults = [],
@@ -165,20 +173,27 @@ class JobResults extends Component {
         }
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.jobresults.title']} messages={messages} setLanguage={::this.setLanguage}/>
+            <Header header={messages['client.header.jobresults.title']} messages={messages}
+                    setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>
                         <Col md='4' xs='12' lg='4'>
-                            <DateForSelect loadData={this.state.load} messages={messages}
-                                           hideJobScriptsResult={::this.hideJobScriptsResult}/>
-                            <JobResultCounters jobResults={this.props.jobResults.result} messages={messages}
-                                               showJobScriptResults={::this.showJobScriptResults}
-                                               hideJobScriptsResult={::this.hideJobScriptsResult}
-                                               clearFilter={::this.clearFilter}
-                                               setExecuteFalse={::this.setExecuteFalse}
-                                               clearCheckedList={::this.clearCheckedList}
-                                               setExecuteErrorFalse={::this.setExecuteErrorFalse}/>
+                            {containsRole(user.roles, ['ROLE_FILTER_JOB_RESULTS', 'ROLE_ROOT']) ?
+                                <DateForSelect loadData={this.state.load} messages={messages}
+                                               hideJobScriptsResult={::this.hideJobScriptsResult}/>
+                                : null}
+
+                            {containsRole(user.roles, ['ROLE_SHOW_JOB_RESULTS_COUNTERS', 'ROLE_ROOT']) ?
+                                <JobResultCounters jobResults={this.props.jobResults.result} messages={messages}
+                                                   showJobScriptResults={::this.showJobScriptResults}
+                                                   hideJobScriptsResult={::this.hideJobScriptsResult}
+                                                   clearFilter={::this.clearFilter}
+                                                   setExecuteFalse={::this.setExecuteFalse}
+                                                   clearCheckedList={::this.clearCheckedList}
+                                                   setExecuteErrorFalse={::this.setExecuteErrorFalse}
+                                                   user={user}/>
+                                : null}
                         </Col>
                         <Col md='8' xs='12' lg='8'>
                             {this.state.showJobDetails ?
@@ -188,14 +203,18 @@ class JobResults extends Component {
                                                        clearFilter={this.state.clearFilter} messages={messages}
                                                        clearFilterFalse={::this.clearFilterFalse}
                                                        resultDetails={resultDetails}
-                                                       showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.done']}><JobAllResults
+                                                       showJobDetails={::this.showJobDetails}
+                                                       user={user}/></Tab>
+                                    <Tab className='minions-tabs'
+                                         label={messages['client.jobresults.tabs.done']}><JobAllResults
                                         jobResults={trueResults} messages={messages}
                                         clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse}
                                         resultDetails={resultDetails}
-                                        showJobDetails={::this.showJobDetails}/></Tab>
-                                    <Tab className='minions-tabs' label={messages['client.jobresults.tabs.notdone']}><JobAllResults
+                                        showJobDetails={::this.showJobDetails}
+                                        user={user}/></Tab>
+                                    <Tab className='minions-tabs'
+                                         label={messages['client.jobresults.tabs.notdone']}><JobAllResults
                                         jobResults={falseResults} clearFilter={this.state.clearFilter}
                                         clearFilterFalse={::this.clearFilterFalse} showSelect={true}
                                         resultDetails={resultDetails} showJobDetails={::this.showJobDetails}
@@ -204,7 +223,8 @@ class JobResults extends Component {
                                         scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
                                         setExecuteFalse={::this.setExecuteFalse} messages={messages}
                                         clearCheckedListFalse={::this.clearCheckedListFalse}
-                                        clearCheckedList={this.state.clearCheckedList}/></Tab>
+                                        clearCheckedList={this.state.clearCheckedList}
+                                        user={user}/></Tab>
                                     <Tab className='minions-tabs'
                                          label={messages['client.jobresults.noconnect']}><JobAllResults
                                         jobResults={noConnectResults} clearFilter={this.state.clearFilter}
@@ -215,7 +235,8 @@ class JobResults extends Component {
                                         scriptName={this.state.scriptsName} executeSuccess={executeSuccess}
                                         setExecuteFalse={::this.setExecuteFalse} messages={messages}
                                         clearCheckedListFalse={::this.clearCheckedListFalse}
-                                        clearCheckedList={this.state.clearCheckedList}/></Tab>
+                                        clearCheckedList={this.state.clearCheckedList}
+                                        user={user}/></Tab>
                                 </Tabs> : null}
                             {this.state.showJobDescription ?
                                 <div className='job-results'>

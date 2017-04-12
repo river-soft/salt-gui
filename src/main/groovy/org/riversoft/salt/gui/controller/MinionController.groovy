@@ -27,7 +27,7 @@ class MinionController extends BaseRestController {
     @Autowired
     private MinionDetailsService minionDetailsService
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_MAIN_MINIONS_ACCEPTED_TAB')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_ACCEPTED_MINIONS')")
     @RequestMapping('/accepted-minions')
     findAllAcceptedMinions() {
 
@@ -35,7 +35,7 @@ class MinionController extends BaseRestController {
     }
 
     //TODO подумтаь какую сюда роль или перечень ролей для каждого из блоков страницы
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_MAIN_MINIONS_COUNTS_STATUS')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_MINIONS_COUNTS_STATUS')")
     @MessageMapping('/minions-all-data')
     findAllMinions() {
 
@@ -45,7 +45,7 @@ class MinionController extends BaseRestController {
         minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_GROUPED_MINIONS')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_GROUPED_MINIONS')")
     @RequestMapping('/grouped-minions')
     def findAllGroupedMinions() {
 

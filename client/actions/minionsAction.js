@@ -26,7 +26,7 @@ export function minions() {
 
         client.connect({}, () => {
 
-                if (containsRole(user.roles, ['ROLE_MAIN_MINIONS_COUNTS_STATUS', 'ROLE_ROOT'])) {
+                if (containsRole(user.roles, ['ROLE_SHOW_MINIONS_COUNTS_STATUS', 'ROLE_ROOT'])) {
 
                     client.subscribe('/queue/minions/update-counts-status', obj => {
                         dispatch({
@@ -36,7 +36,7 @@ export function minions() {
                     });
                 }
 
-                if (containsRole(user.roles, ['ROLE_MAIN_MINIONS_COUNTS_GROUP', 'ROLE_ROOT'])) {
+                if (containsRole(user.roles, ['ROLE_SHOW_MINIONS_COUNTS_GROUP', 'ROLE_ROOT'])) {
 
                     client.subscribe('/queue/minions/update-counts-group', obj => {
                         dispatch({
@@ -46,7 +46,7 @@ export function minions() {
                     });
                 }
 
-                containsRole(user.roles, ['ROLE_MAIN_MINIONS_ACCEPTED_TAB', 'ROLE_ROOT']) ?
+                containsRole(user.roles, ['ROLE_SHOW_ACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                     client.subscribe('/queue/minions/update-accepted-minions', obj => {
                         dispatch({
                             type: ACCEPTED_MINIONS,
@@ -54,7 +54,7 @@ export function minions() {
                         })
                     }) : null;
 
-                if (containsRole(user.roles, ['ROLE_MAIN_MINIONS_DENIED_TAB', 'ROLE_ROOT'])) {
+                if (containsRole(user.roles, ['ROLE_SHOW_DENIED_MINIONS', 'ROLE_ROOT'])) {
 
                     client.subscribe('/queue/minions/update-denied-minions', obj => {
                         dispatch({
@@ -64,7 +64,7 @@ export function minions() {
                     });
                 }
 
-                if (containsRole(user.roles, ['ROLE_MAIN_MINIONS_REJECTED_TAB', 'ROLE_ROOT'])) {
+                if (containsRole(user.roles, ['ROLE_SHOW_REJECTED_MINIONS', 'ROLE_ROOT'])) {
                     client.subscribe('/queue/minions/update-rejected-minions', obj => {
                         dispatch({
                             type: REJECTED_MINIONS,
@@ -73,7 +73,7 @@ export function minions() {
                     });
                 }
 
-                if (containsRole(user.roles, ['ROLE_MAIN_MINIONS_UNACCEPTED_TAB', 'ROLE_ROOT'])) {
+                if (containsRole(user.roles, ['ROLE_SHOW_UNACCEPTED_MINIONS', 'ROLE_ROOT'])) {
 
                     client.subscribe('/queue/minions/update-unaccepted-minions', obj => {
                         dispatch({

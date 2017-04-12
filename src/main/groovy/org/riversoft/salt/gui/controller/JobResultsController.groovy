@@ -24,7 +24,7 @@ class JobResultsController extends BaseRestController {
     @Autowired
     JobResultService jobResultService
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_JOB_RESULTS_COUNTERS')")
     @MessageMapping('/job-results-counts')
     findAllJobResultsCount(HashMap map) {
 
@@ -32,7 +32,7 @@ class JobResultsController extends BaseRestController {
         jobResultService.findAllJobResultsCount()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_RESULTS_BY_JOB')")
     @MessageMapping('/find-all-results-by-job')
     findAllResultsByJob(HashMap map) {
 
@@ -40,7 +40,7 @@ class JobResultsController extends BaseRestController {
         jobResultService.findAllResultsByJob()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_RESULT_DETAILS')")
     @RequestMapping(value = '/find-details-by-job-result')
     def findDetailsByJobResult(@RequestParam(value = "result_id", required = true) String resultId) {
 

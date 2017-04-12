@@ -97,13 +97,13 @@ class Minions extends Component {
         let deleteMinionsError = this.props.deleteMinions.error,
             messages = this.state.strings;
 
-        let countsStatus = containsRole(user.roles, ['ROLE_MAIN_MINIONS_COUNTS_STATUS', 'ROLE_ROOT']) ?
+        let countsStatus = containsRole(user.roles, ['ROLE_SHOW_MINIONS_COUNTS_STATUS', 'ROLE_ROOT']) ?
                 <MinionsCountsStatus countsStatus={this.props.minions.countsStatus} messages={messages}/> : null,
 
-            countsGroup = containsRole(user.roles, ['ROLE_MAIN_MINIONS_COUNTS_GROUP', 'ROLE_ROOT']) ?
+            countsGroup = containsRole(user.roles, ['ROLE_SHOW_MINIONS_COUNTS_GROUP', 'ROLE_ROOT']) ?
                 <MinionsCountsGroup countsStatus={this.props.minions.countsGroup} messages={messages}/> : null,
 
-            acceptedMinions = containsRole(user.roles, ['ROLE_MAIN_MINIONS_ACCEPTED_TAB', 'ROLE_ROOT']) ?
+            acceptedMinions = containsRole(user.roles, ['ROLE_SHOW_ACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                 <MinionsAccepted acceptedMinions={this.props.minions.acceptedMinions} messages={messages}
                                  deleteMinions={deleteMinions} deleteMinionsError={deleteMinionsError}
                                  deleteMinionsSuccess={deleteMinionsSuccess}
@@ -111,7 +111,7 @@ class Minions extends Component {
                                  setDeleteErrorFalse={::this.setDeleteErrorFalse}
                                  user={user}/> : null,
 
-            unacceptedMinions = containsRole(user.roles, ['ROLE_MAIN_MINIONS_UNACCEPTED_TAB', 'ROLE_ROOT']) ?
+            unacceptedMinions = containsRole(user.roles, ['ROLE_SHOW_UNACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                 <MinionsUnaccepted unacceptedMinions={this.props.minions.unacceptedMinions}
                                    getMinionsGroups={getMinionsGroups} messages={messages}
                                    minionsGroups={this.props.minionsGroups.groups}
@@ -122,13 +122,13 @@ class Minions extends Component {
                                    setRejectedFalse={::this.setRejectedFalse}
                                    user={user}/> : null,
 
-            deniedMinions = containsRole(user.roles, ['ROLE_MAIN_MINIONS_DENIED_TAB', 'ROLE_ROOT']) ?
+            deniedMinions = containsRole(user.roles, ['ROLE_SHOW_DENIED_MINIONS', 'ROLE_ROOT']) ?
                 <MinionsDenied deniedMinions={this.props.minions.deniedMinions} messages={messages}
                                deleteMinions={deleteMinions}
                                deleteMinionsSuccess={deleteMinionsSuccess}
                                setDeletedFalse={::this.setDeletedFalse}/> : null,
 
-            rejectedMinions = containsRole(user.roles, ['ROLE_MAIN_MINIONS_REJECTED_TAB', 'ROLE_ROOT']) ?
+            rejectedMinions = containsRole(user.roles, ['ROLE_SHOW_REJECTED_MINIONS', 'ROLE_ROOT']) ?
                 <MinionsRejected rejectedMinions={this.props.minions.rejectedMinions}
                                  deleteMinions={deleteMinions} messages={messages}
                                  deleteMinionsSuccess={deleteMinionsSuccess}
@@ -155,19 +155,19 @@ class Minions extends Component {
                         <Col md='9' xs='12' lg='9'>
                             <Tabs className='minions-tabs' justified={true}>
 
-                                {containsRole(user.roles, ['ROLE_MAIN_MINIONS_ACCEPTED_TAB', 'ROLE_ROOT']) ?
+                                {containsRole(user.roles, ['ROLE_SHOW_ACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.accepted']}>{acceptedMinions}</Tab> : null}
 
-                                {containsRole(user.roles, ['ROLE_MAIN_MINIONS_DENIED_TAB', 'ROLE_ROOT']) ?
+                                {containsRole(user.roles, ['ROLE_SHOW_DENIED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.denied']}>{deniedMinions}</Tab> : null}
 
-                                {containsRole(user.roles, ['ROLE_MAIN_MINIONS_UNACCEPTED_TAB', 'ROLE_ROOT']) ?
+                                {containsRole(user.roles, ['ROLE_SHOW_UNACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.unaccepted']}>{unacceptedMinions}</Tab> : null}
 
-                                {containsRole(user.roles, ['ROLE_MAIN_MINIONS_REJECTED_TAB', 'ROLE_ROOT']) ?
+                                {containsRole(user.roles, ['ROLE_SHOW_REJECTED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.rejected']}>{rejectedMinions}</Tab> : null}
                             </Tabs>
