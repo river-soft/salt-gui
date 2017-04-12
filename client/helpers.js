@@ -1,4 +1,5 @@
 import cookie from 'react-cookie';
+import $ from 'jquery';
 
 export default function clone(obj) {
 
@@ -89,4 +90,9 @@ export function checkRole(roles, replace) {
             pathname: '/access-denied'
         });
     }
+}
+
+export function changeLanguage(locale) {
+    $.get('/', {lang: locale});
+    cookie.save('locale', locale);
 }

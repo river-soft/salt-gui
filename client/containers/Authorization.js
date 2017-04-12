@@ -9,6 +9,7 @@ import Container from 'muicss/lib/react/container';
 import Col from 'muicss/lib/react/col';
 import Row from 'muicss/lib/react/row';
 import * as getMessagesAction from '../actions/GetMessagesAction';
+import {changeLanguage} from '../helpers';
 
 class Authorization extends Component {
 
@@ -30,6 +31,12 @@ class Authorization extends Component {
         } else {
             this.setState({strings : this.props.localization.messages});
         }
+    }
+
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
     }
 
     setUserName(e) {
@@ -59,7 +66,7 @@ class Authorization extends Component {
         let messages = this.state.strings;
 
         return <div className='wrapper'>
-            <Header messages={messages}/>
+            <Header messages={messages} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>

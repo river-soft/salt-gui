@@ -15,6 +15,7 @@ import * as reExecuteScriptsAction from '../actions/ReExecuteScripts';
 import * as getMessagesAction from '../actions/GetMessagesAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
+import {changeLanguage} from '../helpers';
 
 class JobResults extends Component {
 
@@ -62,6 +63,12 @@ class JobResults extends Component {
 
     componentWillUnmount() {
         this.state.client.disconnect();
+    }
+
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
     }
 
     showJobScriptResults(jid, script) {
@@ -158,7 +165,7 @@ class JobResults extends Component {
         }
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.jobresults.title']} messages={messages}/>
+            <Header header={messages['client.header.jobresults.title']} messages={messages} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>

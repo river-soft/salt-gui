@@ -2,6 +2,7 @@ package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
 import org.riversoft.salt.gui.exception.BasicSaltGuiException
+import org.riversoft.salt.gui.service.LocaleService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -18,9 +19,8 @@ abstract class BaseRestController {
     @Autowired
     MessageSource messageSource
 
-    //TODO?
-//    @Autowired
-//    LocaleService localeService
+    @Autowired
+    LocaleService localeService
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception)
@@ -35,7 +35,8 @@ abstract class BaseRestController {
 
             try {
 
-                localizedMessage = e.localizedKey
+//                localizedMessage = e.localizedKey
+                localizedMessage = localeService.getMessage(e.localizedKey)
                 //TODO переделать потом на локализацию localeService.getMessage(e.localizedKey)
 
             } catch (Exception ex) {
