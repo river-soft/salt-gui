@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {FilesTree} from '../components/FilesTree';
+import {ScriptsTree} from '../components/scripts/ScriptsTree';
 import {Header} from '../components/Header';
 import * as filesTreeActions from '../actions/FilesTreeActions';
 import * as createGroupActions from '../actions/GroupCreateActions';
@@ -14,7 +14,7 @@ import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
 import * as getMessagesAction from '../actions/GetMessagesAction';
 
-class App extends Component {
+class Scripts extends Component {
 
     constructor(props) {
         super(props);
@@ -133,7 +133,7 @@ class App extends Component {
             }
         }
 
-        let filesTree = <FilesTree createGroup={createGroup} filesRequest={filesRequest} executeError={executeError}
+        let filesTree = <ScriptsTree createGroup={createGroup} filesRequest={filesRequest} executeError={executeError}
                                    removeSuccess={_this.state.removeSuccess} removeScriptError={removeScriptError}
                                    setRemoveScriptErrorFalse={::_this.setRemoveScriptErrorFalse}
                                    scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
@@ -193,4 +193,4 @@ function mapDispatchToProps(dispatch) {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(Scripts)

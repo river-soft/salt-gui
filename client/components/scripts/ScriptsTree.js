@@ -1,19 +1,21 @@
 import React, {Component} from 'react';
-import FileDescription from '../components/FileDescription';
+import ScriptDetails from './ScriptDetails';
 import Row from 'muicss/lib/react/row';
 import Col from 'muicss/lib/react/col';
 import Container from 'muicss/lib/react/container';
-import TreeView from './tree/TreeView';
+import TreeView from '../tree/TreeView';
 import Input from 'muicss/lib/react/input';
-import CreateGroup from './CreateGroup';
+import CreateScriptGroup from './CreateScriptGroup';
 import Modal from 'react-modal';
 import EditScript from './EditScript';
 import RemoveScript from './RemoveScript';
-import EditMinionsGroup from './minions/EditMinionsGroupModal';
-import RemoveMinionsGroupModal from './minions/RemoveMinionsGroupModal';
-import TreeViewModalCheckboxes from './treeModalCheckboxes/TreeViewModalCheckboxes';
+import EditMinionsGroup from '../minions/EditMinionsGroupModal';
+import RemoveMinionsGroupModal from '../minions/RemoveMinionsGroupModal';
+import TreeViewModalCheckboxes from '../treeModalCheckboxes/TreeViewModalCheckboxes';
+import {containsRole} from '../../helpers';
+import cookie from 'react-cookie';
 
-export class FilesTree extends Component {
+export class ScriptsTree extends Component {
 
     constructor(props) {
         super(props);
@@ -204,13 +206,27 @@ export class FilesTree extends Component {
 
     render() {
 
+        let token = cookie.load('accessToken'),
+            user = token ? JSON.parse(atob(token)) : null;
+
+        if (user && typeof user.roles === 'string') {
+            user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
+        }
+
         let _this = this, template, modal, createEditGroup, fileDescription, selectMinions, messages = this.props.messages;
+
+        let permittedRoles = {
+            edit: ['ROLE_EDIT_SCRIPTS_GROUP', 'ROLE_ROOT'],
+            delete: ['ROLE_DELETE_SCRIPTS_GROUP', 'ROLE_ROOT'],
+            create: ['ROLE_CREATE_SCRIPT_AND_GROUP', 'ROLE_ROOT']
+        };
 
         if (_this.state.showFileDescription) {
 
-            fileDescription = <FileDescription scriptContent={_this.props.scriptContent} editScript={::_this.editScript}
+            fileDescription = <ScriptDetails scriptContent={_this.props.scriptContent} editScript={::_this.editScript}
                                                removeScript={::_this.removeScriptState} script={_this.props.script}
-                                               runScript={::_this.runScript} messages={messages}/>;
+                                               runScript={::_this.runScript} messages={messages}
+                                               user={user}/>;
         }
 
         if (_this.props.files.length === 0) {
@@ -219,28 +235,32 @@ export class FilesTree extends Component {
             template =
                 <TreeView groups={_this.state.filterScripts} showContent={::_this.showContent} removeIfNotEmpty={false}
                           removeGroup={::_this.removeGroup} rerender={true} editGroup={::_this.editGroup}
-                          createdGroup={_this.props.createdGroup} messages={messages}/>;
+                          createdGroup={_this.props.createdGroup} messages={messages}
+                          permittedRoles={permittedRoles}
+                          user={user}/>;
         } else {
             template =
                 <TreeView groups={_this.props.files} showContent={::_this.showContent} editGroup={::_this.editGroup}
                           removeIfNotEmpty={false} removeGroup={::_this.removeGroup}
                           rerender={false} messages={messages}
-                          createdGroup={_this.props.createdGroup}/>;
+                          createdGroup={_this.props.createdGroup}
+                          permittedRoles={permittedRoles}
+                          user={user}/>;
         }
 
         if (_this.state.editScript) {
             createEditGroup = <EditScript closeModal={::_this.onRequestClose} script={_this.state.editingScript}
                                           cancel={::_this.cancelEditScript} groups={_this.props.files}
                                           editScript={_this.props.editScript} editSuccess={_this.props.editSuccess}
-                                          editScriptError={_this.props.editScriptError} messages={messages} />
+                                          editScriptError={_this.props.editScriptError} messages={messages}/>
         } else if (_this.state.removeScript) {
             modal = <RemoveScript closeModal={::_this.onRequestClose} scriptRemove={_this.props.scriptRemove}
                                   filesRequest={_this.props.filesRequest}
                                   removeScriptError={_this.props.removeScriptError}
                                   script={_this.state.editingScript} removeSuccess={_this.props.removeSuccess}
-                                  hideContent={::_this.hideContent} messages={messages} />
+                                  hideContent={::_this.hideContent} messages={messages}/>
         } else if (this.state.addScript) {
-            createEditGroup = <CreateGroup createGroup={_this.props.createGroup} groups={_this.props.files}
+            createEditGroup = <CreateScriptGroup createGroup={_this.props.createGroup} groups={_this.props.files}
                                            error={_this.props.error} messages={messages}
                                            createSuccess={_this.props.createSuccess}
                                            cancel={::_this.cancelAddGroupAndScript}/>
@@ -257,7 +277,7 @@ export class FilesTree extends Component {
         if (_this.state.showModal) {
             if (_this.state.removeGroup) {
                 modal = <RemoveMinionsGroupModal group={_this.state.removedGroup} closeModal={::_this.onRequestClose}
-                                                 removeGroup={_this.props.removeGroup} messages={messages} />
+                                                 removeGroup={_this.props.removeGroup} messages={messages}/>
             } else if (_this.state.editGroup) {
                 modal = <EditMinionsGroup group={_this.state.editedGroup} closeModal={::_this.onRequestClose}
                                           groups={_this.props.files} messages={messages}
@@ -268,13 +288,21 @@ export class FilesTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label={messages['client.input.search.scripts']} id='filter-tree' floatingLabel={true} onChange={::_this.filterTree}/>
+                    <Input label={messages['client.input.search.scripts']} id='filter-tree' floatingLabel={true}
+                           onChange={::_this.filterTree}/>
                     <ul className='list mui-list--unstyled'>
                         {template}
                     </ul>
-                    <button className='mui-btn button' onClick={::_this.addScript} title={messages['client.scripts.btn.add.scripts.title']}>
-                        {messages['client.btn.add']}
-                    </button>
+
+                    {containsRole(user.roles, permittedRoles.create) ?
+
+                        <button className='mui-btn button' onClick={::_this.addScript}
+                                title={messages['client.scripts.btn.add.scripts.title']}>
+                            {messages['client.btn.add']}
+                        </button>
+                        : null
+                    }
+
                 </Col>
                 <Col md='9' xs='6' lg='9'>
                     {_this.state.addScript || _this.state.editScript ? createEditGroup : null}

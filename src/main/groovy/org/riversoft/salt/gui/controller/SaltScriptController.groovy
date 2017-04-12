@@ -24,35 +24,35 @@ class SaltScriptController extends BaseRestController {
     @Autowired
     private SaltScriptService saltScriptCRUDService
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_GROUPED_SCRIPTS', 'ROLE_PAGE_SCRIPTS')")
     @RequestMapping('/grouped-scripts')
     def findGroupedScripts() {
 
         saltScriptCRUDService.findAllGroupedScripts()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_CREATE_SCRIPT_AND_GROUP')")
     @RequestMapping(value = '/salt-script', method = RequestMethod.POST)
     def createSaltScriptGroup(@RequestBody CreateSaltScriptGroup createSaltScriptGroup) {
 
         saltScriptGroupService.createSaltScriptGroupAndScripts(createSaltScriptGroup)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EDIT_SCRIPT')")
     @RequestMapping('/script-by-id')
     def findScriptByName(@RequestParam(value = "id", required = true) String id) {
 
         saltScriptGroupService.findScriptById(id)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EDIT_SCRIPT')")
     @RequestMapping(value = '/salt-script', method = RequestMethod.PUT)
     def updateSaltScriptGroup(@RequestBody EditSaltScript editSaltScript) {
 
         saltScriptGroupService.updateSaltScript(editSaltScript)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_DELETE_SCRIPT')")
     @RequestMapping(value = '/salt-script', method = RequestMethod.DELETE)
     def deleteSaltScriptGroup(@RequestParam(value = "id", required = true) String scriptId) {
 

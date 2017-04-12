@@ -24,6 +24,8 @@ import EditMinionsGroupModal from '../components/minions/EditMinionsGroupModal';
 import EditMinionGroupsModal from '../components/minions/EditMinionGroupsModal';
 import Modal from 'react-modal';
 import TreeViewModalCheckboxes from '../components/treeModalCheckboxes/TreeViewModalCheckboxes';
+import {containsRole} from '../helpers';
+import cookie from 'react-cookie';
 
 class GroupsAndMinions extends Component {
 
@@ -49,12 +51,12 @@ class GroupsAndMinions extends Component {
     }
 
     componentWillMount() {
-        if(!this.props.localization) {
+        if (!this.props.localization) {
             const {getMessages} = this.props.getMessagesAction;
 
             getMessages();
         } else {
-            this.setState({strings : this.props.localization.messages});
+            this.setState({strings: this.props.localization.messages});
         }
     }
 
@@ -218,6 +220,18 @@ class GroupsAndMinions extends Component {
 
     render() {
 
+        let token = cookie.load('accessToken'),
+            user = token ? JSON.parse(atob(token)) : null;
+
+        if (user && typeof user.roles === 'string') {
+            user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
+        }
+
+        let permittedRoles = {
+            edit: ['ROLE_EDIT_MINIONS_GROUP', 'ROLE_ROOT'],
+            delete: ['ROLE_DELETE_MINIONS_GROUP', 'ROLE_ROOT']
+        };
+
         const {createMinionsGroup} = this.props.createMinionsGroupAction,
             {removeMinionsGroup} = this.props.removeMinionsGroupAction,
             {editMinionsGroup} = this.props.editMinionsGroupAction,
@@ -231,17 +245,22 @@ class GroupsAndMinions extends Component {
         if (this.props.groupedMinions.groupedMinions.length === 0) {
             treeView = <div>{messages['client.messages.no.data']}</div>
         } else if (this.state.rerender) {
+
             treeView = <TreeView groups={this.state.filterMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup} messages={messages}
                                  removeGroup={::this.removeGroup}
                                  removeIfNotEmpty={true}
-                                 rerender={true}/>;
+                                 rerender={true}
+                                 permittedRoles={permittedRoles}
+                                 user={user}/>;
         } else {
             treeView = <TreeView groups={this.props.groupedMinions.groupedMinions} showContent={::this.showContent}
                                  editGroup={::this.editGroup} messages={messages}
                                  removeGroup={::this.removeGroup}
                                  removeIfNotEmpty={true}
-                                 rerender={false}/>;
+                                 rerender={false}
+                                 permittedRoles={permittedRoles}
+                                 user={user}/>;
         }
 
         if (this.state.showModal) {
@@ -261,7 +280,7 @@ class GroupsAndMinions extends Component {
                 modal = <EditMinionGroupsModal closeModal={::this.onRequestClose}
                                                groups={this.props.getGroupsByMinion.groups}
                                                minion={this.state.minionDescriptionName}
-                                               edit={editMinionGroups} messages={messages} />
+                                               edit={editMinionGroups} messages={messages}/>
             }
         }
 
@@ -271,29 +290,42 @@ class GroupsAndMinions extends Component {
                 <Container>
                     <Row>
                         <Col md='6' xs='12' lg='3'>
-                            <Input label={messages['client.input.search.minions']} floatingLabel={true} onChange={e => {
-                                this.filterTree(e)
-                            }}/>
-                            <ul className='list mui-list--unstyled'>
-                                {treeView}
-                            </ul>
-                            <button className='mui-btn button' onClick={::this.createGroup}>{messages['client.minions.btn.add.group']}</button>
+
+                            {containsRole(user.roles, ['ROLE_GROUPED_MINIONS', 'ROLE_ROOT']) ?
+                                <Input label={messages['client.input.search.minions']} floatingLabel={true}
+                                       onChange={e => {
+                                           this.filterTree(e)
+                                       }}/> : null}
+
+                            {containsRole(user.roles, ['ROLE_GROUPED_MINIONS', 'ROLE_ROOT']) ?
+                                <ul className='list mui-list--unstyled'>
+                                    {treeView}
+                                </ul> : null}
+
+                            {containsRole(user.roles, ['ROLE_CREATE_MINIONS_GROUP', 'ROLE_ROOT']) ?
+                                <button className='mui-btn button'
+                                        onClick={::this.createGroup}>{messages['client.minions.btn.add.group']}</button> : null}
                         </Col>
                         <Col md='6' xs='12' lg='9'>
                             {this.state.showMinionDescription ?
-                                <MinionDetails minionName={this.state.minionDescriptionName}
-                                               details={this.props.minionDetails.minionDetails[0]}
-                                               getGroups={::this.editMinionGroups}
-                                               runScript={::this.runScript} messages={messages}
-                                               error={minionsDetailsError}/>
-                                : null}
+                                containsRole(user.roles, ['ROLE_SHOW_MINION_DETAILS', 'ROLE_ROOT']) ?
+                                    <MinionDetails minionName={this.state.minionDescriptionName}
+                                                   details={this.props.minionDetails.minionDetails[0]}
+                                                   getGroups={::this.editMinionGroups}
+                                                   runScript={::this.runScript} messages={messages}
+                                                   error={minionsDetailsError}
+                                                   user={user}/>
+                                    : null : null}
                             {this.state.runScript ?
                                 <TreeViewModalCheckboxes groups={this.props.filesTree.files}
-                                                         scriptName={this.state.minionName} messages={messages}
-                                                         executeScripts={executeScripts} executeError={executeError}
+                                                         scriptName={this.state.minionName}
+                                                         messages={messages}
+                                                         executeScripts={executeScripts}
+                                                         executeError={executeError}
                                                          minions={false}/> : null}
                             {this.props.executeScripts.execute ?
-                                <span className='success-mess'>{messages['client.message.scripts.run.success']}</span> : null}
+                                <span
+                                    className='success-mess'>{messages['client.message.scripts.run.success']}</span> : null}
                         </Col>
                     </Row>
                 </Container>

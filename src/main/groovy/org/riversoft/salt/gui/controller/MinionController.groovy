@@ -27,14 +27,15 @@ class MinionController extends BaseRestController {
     @Autowired
     private MinionDetailsService minionDetailsService
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_MAIN_MINIONS_ACCEPTED_TAB')")
     @RequestMapping('/accepted-minions')
     findAllAcceptedMinions() {
 
         minionsService.findAllAcceptedMinions()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    //TODO подумтаь какую сюда роль или перечень ролей для каждого из блоков страницы
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_MAIN_MINIONS_COUNTS_STATUS')")
     @MessageMapping('/minions-all-data')
     findAllMinions() {
 
@@ -44,21 +45,21 @@ class MinionController extends BaseRestController {
         minionsService.getAndSendCountsOfMinionsByGroup()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_GROUPED_MINIONS')")
     @RequestMapping('/grouped-minions')
     def findAllGroupedMinions() {
 
         minionDetailsService.findAllGroupedMinions()
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_MINION_DETAILS')")
     @RequestMapping(value = '/minion-details')
     def findMinionDetails(@RequestParam(value = "name", required = true) String minionName) {
 
         minionDetailsService.findMinionDetails(minionName)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EDIT_GROUPS_OF_MINION')")
     @RequestMapping(value = '/change-minion-groups', method = RequestMethod.PUT)
     changeMinionGroups(@RequestBody EditMinion editMinion) {
 

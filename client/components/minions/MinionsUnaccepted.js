@@ -4,6 +4,7 @@ import Checkbox from 'muicss/lib/react/checkbox';
 import Button from 'muicss/lib/react/button';
 import Divider from 'muicss/lib/react/divider';
 import Modal from 'react-modal';
+import {containsRole} from '../../helpers';
 
 export default class MinionsUnaccepted extends Component {
 
@@ -180,32 +181,46 @@ export default class MinionsUnaccepted extends Component {
                     <tbody>
                     <tr>
                         <td className='table__head'>{messages['client.minions.table.name']}</td>
+                        {containsRole(this.props.user.roles, ['ROLE_REJECT_MINION', 'ROLE_ACCEPT_MINION', 'ROLE_ROOT']) ?
                         <td className='table__head'>{messages['client.minions.table.select']}</td>
+                            : null}
                     </tr>
                     {unacceptedMinions ? unacceptedMinions.map((item, index) => {
                             return <tr key={index}>
                                 <td>{item}</td>
+                                {containsRole(this.props.user.roles, ['ROLE_REJECT_MINION', 'ROLE_ACCEPT_MINION', 'ROLE_ROOT']) ?
                                 <td><Checkbox onClick={e => {
                                     ::this.addToAcceptingList(e, item)
                                 }}/></td>
+                                    : null}
                             </tr>
                         }) : <tr>
                             <td colSpan='2'>{messages['client.messages.no.data']}</td>
                         </tr>}
                     </tbody>
                 </table>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
-                        disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
-                    {messages['client.minions.table.btn.reject']}
-                </Button>
-                <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
-                        disabled={!this.state.checkedList.length} onClick={
-                    () => {
-                        getMinionsGroups();
-                        this.acceptMinions();
-                    }}>
-                    {messages['client.modal.minions.btn.accept']}
-                </Button>
+
+                {unacceptedMinions.length ?
+                    <div>
+                        {containsRole(this.props.user.roles, ['ROLE_REJECT_MINION', 'ROLE_ROOT']) ?
+                            <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                                    disabled={!this.state.checkedList.length} onClick={::this.rejectMinions}>
+                                {messages['client.minions.table.btn.reject']}
+                            </Button> : null}
+
+                        {containsRole(this.props.user.roles, ['ROLE_ACCEPT_MINION', 'ROLE_ROOT']) ?
+                            <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
+                                    disabled={!this.state.checkedList.length} onClick={
+                                () => {
+                                    getMinionsGroups();
+                                    this.acceptMinions();
+                                }}>
+                                {messages['client.modal.minions.btn.accept']}
+                            </Button> : null}
+                    </div>
+                    : null
+                }
+
             </div>
             <Modal contentLabel='label' isOpen={this.state.showModal} className='modal'
                    onRequestClose={::this.onRequestClose} overlayClassName='overlay'

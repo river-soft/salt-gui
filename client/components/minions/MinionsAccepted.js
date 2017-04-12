@@ -4,6 +4,7 @@ import Checkbox from 'muicss/lib/react/checkbox';
 import Button from 'muicss/lib/react/button';
 import Divider from 'muicss/lib/react/divider';
 import Modal from 'react-modal';
+import {containsRole} from '../../helpers';
 
 export default class MinionsAccepted extends Component {
 
@@ -92,7 +93,8 @@ export default class MinionsAccepted extends Component {
                     return item + ' '
                 })}
                 </div>
-                {this.props.deleteMinionsError ? <span className='input_error'>{this.props.deleteMinionsError.message}</span> : null}
+                {this.props.deleteMinionsError ?
+                    <span className='input_error'>{this.props.deleteMinionsError.message}</span> : null}
                 <div className='modal__footer'>
                     <Divider />
                     <Button size='small' color='primary' variant='flat' onClick={::this.sendDeleteMinions}
@@ -111,24 +113,29 @@ export default class MinionsAccepted extends Component {
                     <tr>
                         <td className='table__head'>{messages['client.minions.table.name']}</td>
                         <td className='table__head'>{messages['client.minions.table.group']}</td>
-                        <td className='table__head'>{messages['client.minions.table.select']}</td>
+                        { containsRole(this.props.user.roles, ['ROLE_DELETE_MINION', 'ROLE_ROOT']) ?
+                            <td className='table__head'>{messages['client.minions.table.select']}</td>
+                            : null}
                     </tr>
                     {acceptedMinions ? acceptedMinions.map((item, index) => {
                             return <tr key={index}>
                                 <td>{item.name}</td>
                                 <td>{item.groups}</td>
-                                <td><Checkbox
-                                    onClick={e => {
-                                        ::this.addToCheckedList(e, item)
-                                    }}
-                                /></td>
+                                { containsRole(this.props.user.roles, ['ROLE_DELETE_MINION', 'ROLE_ROOT']) ?
+                                    <td><Checkbox
+                                        onClick={e => {
+                                            ::this.addToCheckedList(e, item)
+                                        }}
+                                    /></td>
+                                    : null}
                             </tr>
                         }) : <tr>
                             <td colSpan='3'>{messages['client.messages.no.data']}</td>
                         </tr>}
                     </tbody>
                 </table>
-                {acceptedMinions.length ?
+
+                {acceptedMinions.length && containsRole(this.props.user.roles, ['ROLE_DELETE_MINION', 'ROLE_ROOT']) ?
                     <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                             disabled={!this.state.checkedList.length} onClick={::this.deleteMinions}>
                         {messages['client.minions.delete']}

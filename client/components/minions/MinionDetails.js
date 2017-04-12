@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import Panel from 'muicss/lib/react/panel';
+import {containsRole} from '../../helpers';
 
 export default class MinionDetails extends Component {
 
@@ -38,12 +39,19 @@ export default class MinionDetails extends Component {
             messages = this.props.messages,
             block = <div>
                 <div className='minion-details__actions'>
-                    <span className='file__actions_remove file__actions_item green' onClick={() => {
-                        ::this.props.runScript(this.props.minionName);
-                    }} title={messages['client.btn.execute']}><i className='mi mi-play-circle-filled'></i></span>
-                    <span className='minion-details__action' onClick={() => {
-                        this.props.getGroups(this.props.minionName);
-                    }} title={messages['client.btn.edit.groups']}><i className='mi mi-create'></i></span>
+
+                    {containsRole(this.props.user.roles, ['ROLE_EXECUTE_SCRIPTS_ON_MINION', 'ROLE_ROOT']) ?
+                        <span className='file__actions_remove file__actions_item green' onClick={() => {
+                            ::this.props.runScript(this.props.minionName);
+                        }} title={messages['client.btn.execute']}><i className='mi mi-play-circle-filled'></i></span>
+                        : null}
+
+                    {containsRole(this.props.user.roles, ['ROLE_EDIT_GROUPS_OF_MINION', 'ROLE_ROOT']) ?
+                        <span className='minion-details__action' onClick={() => {
+                            this.props.getGroups(this.props.minionName);
+                        }} title={messages['client.btn.edit.groups']}><i className='mi mi-create'></i></span>
+                        : null}
+
                 </div>
                 {template}
             </div>;
