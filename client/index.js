@@ -16,14 +16,16 @@ import {checkAuth, checkRole} from './helpers';
 import LocalizedStrings from 'react-localization';
 import $ from 'jquery';
 import {GET_MESSAGES_SUCCESS} from './constants/GetMessages';
+import cookie from 'react-cookie';
 
 export const store = configureStore();
 
 $.get('/bundle-messages', data => {
 
-    let strings = new LocalizedStrings(data);
+    let strings = new LocalizedStrings(data),
+        locale = cookie.load('locale');
 
-    strings.setLanguage('en');
+    strings.setLanguage(locale);
 
     store.dispatch({
         type: GET_MESSAGES_SUCCESS,

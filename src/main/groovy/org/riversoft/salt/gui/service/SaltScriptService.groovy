@@ -222,7 +222,7 @@ class SaltScriptService {
     }
 
     /**
-     * Удаление сприпта
+     * Удаление скрипта
      * @param scriptId - уникальный идентификатор скрипта
      */
     def deleteSaltScript(String scriptId) {

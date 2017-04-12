@@ -7,6 +7,7 @@ import Col from 'muicss/lib/react/col';
 import Row from 'muicss/lib/react/row';
 import NotFoundImg from '../styles/images/not-found.png';
 import * as getMessagesAction from '../actions/GetMessagesAction';
+import {changeLanguage} from '../helpers';
 
 class NotFound extends Component {
 
@@ -28,10 +29,16 @@ class NotFound extends Component {
         }
     }
 
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
+    }
+
     render() {
 
         return <div className='wrapper'>
-            <Header messages={this.state.strings}/>
+            <Header messages={this.state.strings} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>

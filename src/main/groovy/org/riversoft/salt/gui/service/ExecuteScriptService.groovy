@@ -150,7 +150,7 @@ class ExecuteScriptService {
 
             log.error("Error of executing scripts for minions.")
             throw new SaltGuiException("Error of executing scripts for minions.", e,
-                    "Произошла ошибка при выполнении скриптов для миньонов, ${e.message}")
+                    "error.scripts.executing")
         }
     }
 
@@ -192,7 +192,7 @@ class ExecuteScriptService {
 
             log.error("Error of re-executing scripts for minions.")
             throw new SaltGuiException("Error of re-executing scripts for minions.", e,
-                    "Произошла ошибка при перезапуске скриптов для миньонов, ${e.message}")
+                    "error.scripts.reexecuting")
         }
     }
 
@@ -351,7 +351,7 @@ class ExecuteScriptService {
 
             log.error("Error of checking Job by jid [${jid}].")
             throw new SaltGuiException("Error of checking Job by jid [${jid}].", e,
-                    "Произошла ошибка при проверке работы, ${e.message}")
+                    "error.check.job")
         }
     }
 

@@ -24,7 +24,7 @@ import EditMinionsGroupModal from '../components/minions/EditMinionsGroupModal';
 import EditMinionGroupsModal from '../components/minions/EditMinionGroupsModal';
 import Modal from 'react-modal';
 import TreeViewModalCheckboxes from '../components/treeModalCheckboxes/TreeViewModalCheckboxes';
-import {containsRole} from '../helpers';
+import {containsRole, changeLanguage} from '../helpers';
 import cookie from 'react-cookie';
 
 class GroupsAndMinions extends Component {
@@ -100,6 +100,12 @@ class GroupsAndMinions extends Component {
         } else if (!this.state.runScript) {
             this.props.executeScripts.execute = false;
         }
+    }
+
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
     }
 
     showContent(minionId, minionName) {
@@ -285,7 +291,7 @@ class GroupsAndMinions extends Component {
         }
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.minions.groups.title']} messages={messages}/>
+            <Header header={messages['client.header.minions.groups.title']} messages={messages} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>

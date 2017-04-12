@@ -13,6 +13,7 @@ import * as removeGroupAction from '../actions/GroupRemoveAction';
 import * as getGroupedMinionsAction from '../actions/GetGroupedMinionsAction';
 import * as executeScriptsAction from '../actions/ExecuteScriptsAction';
 import * as getMessagesAction from '../actions/GetMessagesAction';
+import {changeLanguage} from '../helpers';
 
 class Scripts extends Component {
 
@@ -78,6 +79,12 @@ class Scripts extends Component {
             this.setState({removeGroupSuccess: false});
             filesRequest();
         }
+    }
+
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
     }
 
     setExecuteFalse() {
@@ -154,7 +161,7 @@ class Scripts extends Component {
                                    createdGroup={_this.props.createGroup.group}/>;
 
         return (<div className='wrapper'>
-            <Header header={messages['client.header.scripts.title']} messages={messages}/>
+            <Header header={messages['client.header.scripts.title']} messages={messages} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 {filesTree}
             </main>

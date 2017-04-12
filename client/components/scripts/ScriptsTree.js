@@ -145,6 +145,7 @@ export class ScriptsTree extends Component {
             removeScript: true,
             editingScript: script,
             showModal: true,
+            editGroup: false,
             editScript: false,
             runScript: false
         });
