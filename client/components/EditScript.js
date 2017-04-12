@@ -192,7 +192,10 @@ export default class EditScript extends Component {
                         onChange={(content) => {
                             this.setContent(content);
                         }}
-                        onLoad={::this.setContentOnLoad}
+                        onLoad={(editor) => {
+                            ::this.setContentOnLoad();
+                            editor.focus();
+                        }}
                         value={this.state.content}
                     />
                 </div>

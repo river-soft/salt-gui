@@ -94,7 +94,7 @@ class MinionDetailsService {
 
             log.error("Error of getting minion [${minionName}] details from salt server.")
             throw new SaltGuiException("Error of getting minion [${minionName}] details from salt server.", e,
-                    "Произошла ошибка при получении деталей миньона ${minionName}, ${e.message}")
+                    "error.minion.get.details", [minionName])
         }
     }
 

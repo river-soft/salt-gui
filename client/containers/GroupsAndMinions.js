@@ -50,12 +50,12 @@ class GroupsAndMinions extends Component {
     }
 
     componentWillMount() {
-        if(!this.props.localization) {
+        if (!this.props.localization) {
             const {getMessages} = this.props.getMessagesAction;
 
             getMessages();
         } else {
-            this.setState({strings : this.props.localization.messages});
+            this.setState({strings: this.props.localization.messages});
         }
     }
 
@@ -111,6 +111,15 @@ class GroupsAndMinions extends Component {
         const {getMinionDetails} = this.props.minionDetailsAction;
 
         getMinionDetails(minionName);
+
+        if(this.props.minionDetails.minionDetails) {
+            this.props.minionDetails.minionDetails = '';
+        }
+
+        if(this.props.minionDetails.error) {
+            this.props.minionDetails.error = '';
+        }
+
         this.setState({
             showMinionDescription: true,
             minionDescriptionName: minionName,
@@ -268,12 +277,13 @@ class GroupsAndMinions extends Component {
                 modal = <EditMinionGroupsModal closeModal={::this.onRequestClose}
                                                groups={this.props.getGroupsByMinion.groups}
                                                minion={this.state.minionDescriptionName}
-                                               edit={editMinionGroups} messages={messages} />
+                                               edit={editMinionGroups} messages={messages}/>
             }
         }
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.minions.groups.title']} messages={messages} setLanguage={::this.setLanguage}/>
+            <Header header={messages['client.header.minions.groups.title']} messages={messages}
+                    setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>
@@ -284,7 +294,8 @@ class GroupsAndMinions extends Component {
                             <ul className='list mui-list--unstyled'>
                                 {treeView}
                             </ul>
-                            <button className='mui-btn button' onClick={::this.createGroup}>{messages['client.minions.btn.add.group']}</button>
+                            <button className='mui-btn button'
+                                    onClick={::this.createGroup}>{messages['client.minions.btn.add.group']}</button>
                         </Col>
                         <Col md='6' xs='12' lg='9'>
                             {this.state.showMinionDescription ?
@@ -300,7 +311,8 @@ class GroupsAndMinions extends Component {
                                                          executeScripts={executeScripts} executeError={executeError}
                                                          minions={false}/> : null}
                             {this.props.executeScripts.execute ?
-                                <span className='success-mess'>{messages['client.message.scripts.run.success']}</span> : null}
+                                <span
+                                    className='success-mess'>{messages['client.message.scripts.run.success']}</span> : null}
                         </Col>
                     </Row>
                 </Container>

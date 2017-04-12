@@ -23,7 +23,8 @@ export const store = configureStore();
 $.get('/bundle-messages', data => {
 
     let strings = new LocalizedStrings(data),
-        locale = cookie.load('locale');
+        locale = cookie.load('locale'),
+        unAuthorized = window.unAuthorized;
 
     strings.setLanguage(locale);
 
@@ -31,6 +32,11 @@ $.get('/bundle-messages', data => {
         type: GET_MESSAGES_SUCCESS,
         payload: strings
     });
+
+    if (unAuthorized) {
+        cookie.remove('accessToken', {path: '/'});
+        window.unAuthorized = false;
+    }
 
     render(
         <Provider store={store}>
@@ -58,5 +64,4 @@ $.get('/bundle-messages', data => {
         </Provider>,
         document.getElementById('root')
     );
-
 });

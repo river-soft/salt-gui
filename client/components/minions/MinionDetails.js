@@ -46,11 +46,12 @@ export default class MinionDetails extends Component {
                     }} title={messages['client.btn.edit.groups']}><i className='mi mi-create'></i></span>
                 </div>
                 {template}
-            </div>;
+            </div>,
+            error = this.props.error ? this.props.error.message.indexOf(this.props.minionName) : -1;
 
         return <Panel className='minion-details'>
             {!this.props.error && !details ? messages['client.message.waiting.answer'] + '...' : null}
-            {this.props.error ? <span className='input_error'>{this.props.error.message}</span> : null}
+            {this.props.error && error != -1 ? <span className='input_error'>{this.props.error.message}</span> : null}
             {details ? block : null}
         </Panel>
     }

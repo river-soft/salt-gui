@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node",
     "build": "NODE_ENV=production webpack",
-    "server": "webpack-dev-server --inline --hot"
+    "server": "NODE_ENV=develop webpack-dev-server --inline --hot"
   },
   "author": "river-soft",
   "license": "ISC",
