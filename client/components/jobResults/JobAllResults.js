@@ -168,7 +168,7 @@ export default class JobAllResults extends Component {
                         <td className='table__head'>{messages['client.jobresults.table.status']}</td> : null}
                     {this.props.showSelect ?
                         <td className='table__head'>
-                            {!showHeadCheckBox && containsRole(this.props.user.roles, ['ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS1', 'ROLE_ROOT']) ?
+                            {!showHeadCheckBox && containsRole(this.props.user.roles, ['ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS', 'ROLE_ROOT']) ?
                                 <div>
                                     <span className='mui--pull-left'>{messages['client.jobresults.table.select']}</span>
                                     <Checkbox className='mui--pull-right header-checkbox'

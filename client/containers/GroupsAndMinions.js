@@ -110,7 +110,7 @@ class GroupsAndMinions extends Component {
 
     showContent(minionId, user, minionName) {
 
-        if (containsRole(user.roles, ['ROLE_SHOW_MINION_DETAILS'])) {
+        if (containsRole(user.roles, ['ROLE_SHOW_MINION_DETAILS', 'ROLE_ROOT'])) {
             const {getMinionDetails} = this.props.minionDetailsAction;
 
             getMinionDetails(minionName);
