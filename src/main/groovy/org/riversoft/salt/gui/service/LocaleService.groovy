@@ -11,8 +11,8 @@ class LocaleService {
     @Autowired
     private MessageSource messageSource
 
-    String getMessage(String id) {
+    String getMessage(String id, Object[] params = null) {
         Locale locale = LocaleContextHolder.getLocale()
-        return messageSource.getMessage(id, null, locale)
+        return messageSource.getMessage(id, params, locale)
     }
 }

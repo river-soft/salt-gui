@@ -114,6 +114,15 @@ class GroupsAndMinions extends Component {
             const {getMinionDetails} = this.props.minionDetailsAction;
 
             getMinionDetails(minionName);
+
+            if(this.props.minionDetails.minionDetails) {
+                this.props.minionDetails.minionDetails = '';
+            }
+
+            if(this.props.minionDetails.error) {
+                this.props.minionDetails.error = '';
+            }
+
             this.setState({
                 showMinionDescription: true,
                 minionDescriptionName: minionName,

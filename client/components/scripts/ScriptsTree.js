@@ -74,7 +74,7 @@ export class ScriptsTree extends Component {
 
     showContent(scriptId, user) {
 
-        if (containsRole(user.roles, ['ROLE_SHOW_SCRIPT_DETAILS'])) {
+        if (containsRole(user.roles, ['ROLE_SHOW_SCRIPT_DETAILS', 'ROLE_ROOT'])) {
             this.props.getScriptContent(scriptId);
             this.props.setEditScriptFalse();
             this.props.setRemoveScriptErrorFalse();

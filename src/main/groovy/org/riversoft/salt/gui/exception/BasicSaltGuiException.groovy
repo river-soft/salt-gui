@@ -18,6 +18,11 @@ class BasicSaltGuiException extends Exception {
     String localizedKey
 
     /**
+     * Аргументы для локализированного сообщения
+     */
+    Object[] params
+
+    /**
      * Constructs a new exception with {@code null} as its detail text.
      * The cause is not initialized, and may subsequently be initialized by a
      * call to {@link #initCause}.

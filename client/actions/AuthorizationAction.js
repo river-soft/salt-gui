@@ -40,9 +40,7 @@ export function authorization(userName, password) {
                     payload: status
                 });
 
-                hashHistory.push({
-                    pathname: '/'
-                })
+                hashHistory.push('/');
             },
             error: error => {
                 dispatch({
