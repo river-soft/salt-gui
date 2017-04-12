@@ -7,14 +7,6 @@ enum Permission {
      */
     ROLE_ROOT,
 
-
-
-    /**
-     * Разрешение просматривать страницу работ
-     */
-     ROLE_PAGE_JOB_RESULTS,
-
-
     //region MAIN PAGE PERMISSIONS
 
     /**
@@ -115,12 +107,13 @@ enum Permission {
 
     //endregion
 
+     //region SCRIPTS PAGE PERMISSIONS
+
     /**
      * Разрешение просматривать блок сгрупированных скриптов
      * по групам на странице скрипты
      */
     ROLE_GROUPED_SCRIPTS,
-
 
     /**
      * Разрешает выполнять скрипты на миньоне
@@ -130,10 +123,7 @@ enum Permission {
     /**
      * Разрешает перезапускать скрипты на миньоне
      */
-    ROLE_RE_EXECUTE_SCRIPTS_ON_MINION,
-
-
-    //region SCRIPTS PAGE PERMISSIONS
+    ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS,
 
     /**
      * Разрешение просматривать страницу скриптов
@@ -175,10 +165,35 @@ enum Permission {
      */
      ROLE_DELETE_SCRIPTS_GROUP,
 
+    //endregion
+
+    //region SCRIPTS PAGE PERMISSIONS
+
+      /**
+      * Разрешение просматривать страницу работ
+      */
+      ROLE_PAGE_JOB_RESULTS,
+
     /**
-     * Разрешает перезапускать скрипты на миньоне
+     * Разрешение фильтровать результаты выполнения скриптов
      */
-     ROLE_RE_EXECUTE_SCRIPT_ON_MINIONS,
+     ROLE_FILTER_JOB_RESULTS,
+
+    /**
+     * Разрешает просматривать результаты выполнения работы
+     * с количеством результатов по статусам
+     */
+     ROLE_SHOW_JOB_RESULTS_COUNTERS,
+
+    /**
+     * Разрешает просматривать детальный список результатов работы
+     */
+     ROLE_SHOW_RESULTS_BY_JOB,
+
+    /**
+     * Разрешает просматривать детали конкретного результата работы
+     */
+    ROLE_SHOW_RESULT_DETAILS
 
 
     //endregion
