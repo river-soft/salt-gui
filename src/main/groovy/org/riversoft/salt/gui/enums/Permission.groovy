@@ -18,37 +18,37 @@ enum Permission {
      * Разрешает просматривать блок с количествами
      * миньонов сгрупированных по статусам на главной странице
      */
-    ROLE_MAIN_MINIONS_COUNTS_STATUS,
+     ROLE_SHOW_MINIONS_COUNTS_STATUS,
 
     /**
      * Разрешает просматривать блок с количествами
      * миньонов сгрупированных по групам на главной странице
      */
-    ROLE_MAIN_MINIONS_COUNTS_GROUP,
+     ROLE_SHOW_MINIONS_COUNTS_GROUP,
 
     /**
      * Разрешает просматривать вкладку
      * с принятми миньонами на главной странице
      */
-     ROLE_MAIN_MINIONS_ACCEPTED_TAB,
+     ROLE_SHOW_ACCEPTED_MINIONS,
 
     /**
      * Разрешает просматривать вкладку
      * с отказанными миньонами на главной странице
      */
-    ROLE_MAIN_MINIONS_DENIED_TAB,
+     ROLE_SHOW_DENIED_MINIONS,
 
     /**
      * Разрешает просматривать вкладку
      * с отклененными миньонами на главной странице
      */
-    ROLE_MAIN_MINIONS_REJECTED_TAB,
+     ROLE_SHOW_REJECTED_MINIONS,
 
     /**
      * Разрешает просматривать вкладку
      * с не принятми миньонами на главной странице
      */
-     ROLE_MAIN_MINIONS_UNACCEPTED_TAB,
+     ROLE_SHOW_UNACCEPTED_MINIONS,
 
     /**
      * Разрешение принять миньон
@@ -78,7 +78,7 @@ enum Permission {
      * Разрешение просматривать блок сгрупированных миньонов
      * по групам на странице миньонов
      */
-    ROLE_GROUPED_MINIONS,
+     ROLE_SHOW_GROUPED_MINIONS,
 
     /**
      * Разрешение создавать группу миньонов
@@ -105,30 +105,30 @@ enum Permission {
      */
      ROLE_EDIT_GROUPS_OF_MINION,
 
+    /**
+     * Разрешает выполнять скрипты на миньоне
+     */
+    ROLE_EXECUTE_SCRIPTS_ON_MINION,
+
     //endregion
 
      //region SCRIPTS PAGE PERMISSIONS
 
     /**
+    * Разрешение просматривать страницу скриптов
+    */
+    ROLE_PAGE_SCRIPTS,
+
+    /**
      * Разрешение просматривать блок сгрупированных скриптов
      * по групам на странице скрипты
      */
-    ROLE_GROUPED_SCRIPTS,
+     ROLE_SHOW_GROUPED_SCRIPTS,
 
     /**
-     * Разрешает выполнять скрипты на миньоне
+     * Разрешает выполнять скрипт на миньонах
      */
-     ROLE_EXECUTE_SCRIPTS_ON_MINION,
-
-    /**
-     * Разрешает перезапускать скрипты на миньоне
-     */
-    ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS,
-
-    /**
-     * Разрешение просматривать страницу скриптов
-     */
-    ROLE_PAGE_SCRIPTS,
+     ROLE_EXECUTE_SCRIPT_ON_MINIONS,
 
     /**
      * Разрешение создавать скрипт и его групу
@@ -151,11 +151,6 @@ enum Permission {
     ROLE_DELETE_SCRIPT,
 
     /**
-     * Разрешает выполнять скрипт на миньонах
-     */
-    ROLE_EXECUTE_SCRIPT_ON_MINIONS,
-
-    /**
      * Разрешение редактировать название групы скриптов
      */
     ROLE_EDIT_SCRIPTS_GROUP,
@@ -167,7 +162,7 @@ enum Permission {
 
     //endregion
 
-    //region SCRIPTS PAGE PERMISSIONS
+    //region JOB RESULTS PAGE PERMISSIONS
 
       /**
       * Разрешение просматривать страницу работ
@@ -193,16 +188,12 @@ enum Permission {
     /**
      * Разрешает просматривать детали конкретного результата работы
      */
-    ROLE_SHOW_RESULT_DETAILS
+    ROLE_SHOW_RESULT_DETAILS,
 
+    /**
+     * Разрешает перезапускать скрипты на миньоне
+     */
+    ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS
 
     //endregion
-
-
-//    List<Permission> findAll(){
-//        this.findAll() - ROLE_ROOT
-//    }
-
-
-
 }

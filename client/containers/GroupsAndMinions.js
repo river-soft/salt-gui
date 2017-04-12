@@ -301,16 +301,16 @@ class GroupsAndMinions extends Component {
                     <Row>
                         <Col md='6' xs='12' lg='3'>
 
-                            {containsRole(user.roles, ['ROLE_GROUPED_MINIONS', 'ROLE_ROOT']) ?
-                                <Input label={messages['client.input.search.minions']} floatingLabel={true}
-                                       onChange={e => {
-                                           this.filterTree(e)
-                                       }}/> : null}
-
-                            {containsRole(user.roles, ['ROLE_GROUPED_MINIONS', 'ROLE_ROOT']) ?
-                                <ul className='list mui-list--unstyled'>
-                                    {treeView}
-                                </ul> : null}
+                            {containsRole(user.roles, ['ROLE_SHOW_GROUPED_MINIONS', 'ROLE_ROOT']) ?
+                                <div>
+                                    <Input label={messages['client.input.search.minions']} floatingLabel={true}
+                                           onChange={e => {
+                                               this.filterTree(e)
+                                           }}/>
+                                    <ul className='list mui-list--unstyled'>
+                                        {treeView}
+                                    </ul>
+                                </div> : null}
 
                             {containsRole(user.roles, ['ROLE_CREATE_MINIONS_GROUP', 'ROLE_ROOT']) ?
                                 <button className='mui-btn button'

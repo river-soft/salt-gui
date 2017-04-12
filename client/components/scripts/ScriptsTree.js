@@ -292,11 +292,15 @@ export class ScriptsTree extends Component {
         return <Container>
             <Row>
                 <Col md='3' xs='6' lg='3'>
-                    <Input label={messages['client.input.search.scripts']} id='filter-tree' floatingLabel={true}
-                           onChange={::_this.filterTree}/>
-                    <ul className='list mui-list--unstyled'>
-                        {template}
-                    </ul>
+
+                    {containsRole(user.roles, ['ROLE_SHOW_GROUPED_SCRIPTS', 'ROLE_ROOT']) ?
+                        <div>
+                            <Input label={messages['client.input.search.scripts']} id='filter-tree' floatingLabel={true}
+                                   onChange={::_this.filterTree}/>
+                            <ul className='list mui-list--unstyled'>
+                                {template}
+                            </ul>
+                        </div> : null}
 
                     {containsRole(user.roles, permittedRoles.create) ?
 
