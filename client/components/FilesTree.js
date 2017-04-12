@@ -143,6 +143,7 @@ export class FilesTree extends Component {
             removeScript: true,
             editingScript: script,
             showModal: true,
+            editGroup: false,
             editScript: false,
             runScript: false
         });

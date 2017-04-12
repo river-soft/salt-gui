@@ -81,7 +81,7 @@ class MinionsSaltService {
 
             log.error("Error of accepting minion on salt server.")
             throw new SaltGuiException("Error of accepting minion on salt server.", e,
-                    "Произошла ошибка при принятии миньона, ${e.message}")
+                    "error.minions.accept")
         }
     }
 
@@ -113,7 +113,7 @@ class MinionsSaltService {
 
             log.error("Error of rejecting minion on salt server.")
             throw new SaltGuiException("Error of rejecting minion on salt server.", e,
-                    "Произошла ошибка при принятии миньона, ${e.message}")
+                    "error.minions.reject")
         }
     }
 
@@ -136,7 +136,7 @@ class MinionsSaltService {
 
             log.error("Error of deleting minion on salt server.")
             throw new SaltGuiException("Error of deleting minion on salt server.", e,
-                    "Произошла ошибка при удалении миньона, ${e.message}")
+                    "error.minions.delete")
         }
     }
 }

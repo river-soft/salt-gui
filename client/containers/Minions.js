@@ -19,6 +19,7 @@ import * as deleteMinionsAction from '../actions/DeleteMinionsAction';
 import * as getMessagesAction from '../actions/GetMessagesAction';
 import Tabs from 'muicss/lib/react/tabs';
 import Tab from 'muicss/lib/react/tab';
+import {changeLanguage} from '../helpers';
 
 class Minions extends Component {
 
@@ -54,6 +55,12 @@ class Minions extends Component {
 
     componentWillUnmount() {
         this.state.client.disconnect();
+    }
+
+    setLanguage(locale) {
+        changeLanguage(locale);
+        this.state.strings.setLanguage(locale);
+        this.setState({changeLocale: true});
     }
 
     setRejectedFalse() {
@@ -107,7 +114,7 @@ class Minions extends Component {
                                                setDeletedFalse={::this.setDeletedFalse}/>;
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.minions.title']} messages={messages}/>
+            <Header header={messages['client.header.minions.title']} messages={messages} setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>

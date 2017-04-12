@@ -5,6 +5,7 @@ import {
 } from '../constants/GetMessages';
 import $ from 'jquery';
 import LocalizedStrings from 'react-localization';
+import cookie from 'react-cookie';
 
 export function getMessages() {
 
@@ -18,9 +19,15 @@ export function getMessages() {
             url: '/bundle-messages',
             type: 'get',
             success: data => {
+
+                let strings = new LocalizedStrings(data),
+                    locale = cookie.load('locale') || 'ru';
+
+                strings.setLanguage(locale);
+
                 dispatch({
                     type: GET_MESSAGES_SUCCESS,
-                    payload: new LocalizedStrings(data)
+                    payload: strings
                 })
             },
             error: error => {

@@ -8,14 +8,14 @@ export default class DateForSelect extends Component {
         super(props);
 
         this.state = {
-            label: this.props.messages['client.filter.default']
+            label: 'client.filter.default'
         }
     }
 
-    updateDataByTime(minutes, e) {
+    updateDataByTime(minutes, keyMessage) {
 
         this.props.loadData(minutes);
-        this.setState({label: e.target.text});
+        this.setState({label: keyMessage});
         this.props.hideJobScriptsResult();
 
         let rows = document.querySelectorAll('.job-table__body_row');
@@ -31,30 +31,30 @@ export default class DateForSelect extends Component {
 
         let messages = this.props.messages;
 
-        return <Dropdown className='date-dropdown' color='primary' label={this.state.label}>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(30, e);
+        return <Dropdown className='date-dropdown' color='primary' label={messages[this.state.label]}>
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(30, 'client.filter.last.thirty.minutes');
             }}>{messages['client.filter.last.thirty.minutes']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(60, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(60, 'client.filter.last.hour');
             }}>{messages['client.filter.last.hour']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(180, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(180, 'client.filter.last.three.hours');
             }}>{messages['client.filter.last.three.hours']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(360, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(360, 'client.filter.last.six.hours');
             }}>{messages['client.filter.last.six.hours']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(360, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(360, 'client.filter.last.twelve.hours');
             }}>{messages['client.filter.last.twelve.hours']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(1440, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(1440, 'client.filter.last.twenty.four.hours');
             }}>{messages['client.filter.last.twenty.four.hours']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(2880, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(2880, 'client.filter.last.two.days');
             }}>{messages['client.filter.last.two.days']}</DropdownItem>
-            <DropdownItem className='date-dropdown__item' onClick={(e) => {
-                ::this.updateDataByTime(10080, e);
+            <DropdownItem className='date-dropdown__item' onClick={() => {
+                ::this.updateDataByTime(10080, 'client.filter.last.seven.days');
             }}>{messages['client.filter.last.seven.days']}</DropdownItem>
         </Dropdown>
     }

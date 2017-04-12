@@ -101,27 +101,22 @@ class MinionsService {
     def getAndSendCountsOfMinionsByStatus() {
 
         log.trace("Start getting minions counts by statuses from salt server.")
-//
-//        def counts = ["Accepted"  : "-",
-//                      "Unaccepted": "-",
-//                      "Rejected"  : "-",
-//                      "Denied"    : "-"]
 
-        def counts = ["Принятые"   : "-",
-                      "Не принятые": "-",
-                      "Отклоненные": "-",
-                      "Отказаные"  : "-"]
+        def counts = ["client.minions.state.accepted"  : "-",
+                      "client.minions.state.unaccepted": "-",
+                      "client.minions.state.rejected"  : "-",
+                      "client.minions.state.denied"    : "-"]
 
         try {
 
             WheelResult<Key.Names> keyResults = Key.listAll().callSync(
-                    saltClient, USER, PASSWORD, AuthModule.PAM);
-            Key.Names keys = keyResults.getData().getResult();
+                    saltClient, USER, PASSWORD, AuthModule.PAM)
+            Key.Names keys = keyResults.getData().getResult()
 
-            counts = ["Принятые"   : keys.getMinions().size(),
-                      "Отказаные"  : keys.getDeniedMinions().size(),
-                      "Не принятые": keys.getUnacceptedMinions().size(),
-                      "Отклоненные": keys.getRejectedMinions().size()]
+            counts = ["client.minions.state.accepted"  : keys.getMinions().size(),
+                      "client.minions.state.unaccepted": keys.getDeniedMinions().size(),
+                      "client.minions.state.rejected"  : keys.getUnacceptedMinions().size(),
+                      "client.minions.state.denied"    : keys.getRejectedMinions().size()]
 
             log.trace("Finish getting minions counts by statuses from salt server.")
 

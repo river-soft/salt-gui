@@ -10,7 +10,7 @@ module.exports = {
     //TODO: перед заливом закоментить
     devtool: 'cheap-module-eval-source-map',
     entry: [
-        //TODO: перед заливом закоментить
+        //TODO: перед заливом закоментить 3 строки
         'webpack-dev-server/client',
         'webpack/hot/only-dev-server',
         'webpack-hot-middleware/client?reload=true',
@@ -36,7 +36,7 @@ module.exports = {
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('/css/main.css', {allChunks: true}),
-        //TODO: перед заливом расскоментить
+        //TODO: перед заливом расскоментить все
         // new webpack.optimize.UglifyJsPlugin({
         //     warnings: false,
         //     drop_console: true,
@@ -73,7 +73,7 @@ module.exports = {
                 test: /\.(jpe?g|png|gif|svg)$/i,
                 loaders: [
                     'file-loader?hash=sha512&digest=hex&name=/img/[name].[ext]',
-                    'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+                    'image-webpack-loader'
                 ]
             },
             {
@@ -84,7 +84,26 @@ module.exports = {
                 test: /\.json$/,
                 loader: 'json-loader'
             }
-        ]
+        ],
+        imageWebpackLoader: {
+            mozjpeg: {
+                quality: 65
+            },
+            pngquant:{
+                quality: "65-90",
+                speed: 4
+            },
+            svgo:{
+                plugins: [
+                    {
+                        removeViewBox: false
+                    },
+                    {
+                        removeEmptyAttrs: false
+                    }
+                ]
+            }
+        }
     },
 
     devServer: {
