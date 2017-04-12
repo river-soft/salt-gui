@@ -24,14 +24,14 @@ class ExecuteScriptController extends BaseRestController {
         executeScriptService.executeScripts(minions, scripts)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
-    @RequestMapping(value = '/check-job-by-jid', method = RequestMethod.GET)
-    checkJobByJid(@RequestParam(value = "jid", required = true) String jid) {
+//    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
+//    @RequestMapping(value = '/check-job-by-jid', method = RequestMethod.GET)
+//    checkJobByJid(@RequestParam(value = "jid", required = true) String jid) {
+//
+//        executeScriptService.checkJobByJid(jid)
+//    }
 
-        executeScriptService.checkJobByJid(jid)
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_ROOT','ROLE_RE_EXECUTE_SCRIPTS_ON_MINION', 'ROLE_RE_EXECUTE_SCRIPT_ON_MINIONS')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT','ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS')")
     @RequestMapping(value = '/reexecute-scripts', method = RequestMethod.POST)
     reExecuteScripts(@RequestParam(value = "jobResultIds", required = true) String[] ids) {
         executeScriptService.reExecuteScripts(ids)

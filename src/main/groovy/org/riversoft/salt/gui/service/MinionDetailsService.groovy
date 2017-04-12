@@ -40,6 +40,9 @@ class MinionDetailsService {
     private MinionRepository minionRepository
 
     @Autowired
+    private MinionsSaltService minionsSaltService
+
+    @Autowired
     private MinionGroupRepository minionGroupRepository
 
     //endregion
@@ -77,6 +80,14 @@ class MinionDetailsService {
         }
 
         try {
+
+            def acceptedMinions = minionsSaltService.getAllAcceptedMinions()
+
+            if (!acceptedMinions.contains(minionName)) {
+                //TODO свое исключение
+                log.error("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
+                throw new Exception("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
+            }
 
             // Set targets
             Target<List<String>> minionList = new MinionList(minionName);
