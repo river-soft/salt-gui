@@ -119,7 +119,7 @@ export default class EditScript extends Component {
     }
 
     setContentOnLoad() {
-        this.setState({content: this.props.script.content})
+        this.setState({content: this.props.script.content || ''});
     }
 
     validateScript(scriptName) {
@@ -196,7 +196,7 @@ export default class EditScript extends Component {
                             ::this.setContentOnLoad();
                             editor.focus();
                         }}
-                        value={this.state.content}
+                        value={this.state.content || ''}
                     />
                 </div>
             </Form>
