@@ -3,7 +3,7 @@ import 'babel-polyfill';
 import {Provider} from 'react-redux';
 import {Router, Route, hashHistory} from 'react-router';
 import {render} from 'react-dom';
-import App from './containers/App';
+import Scripts from './containers/Scripts';
 import Minions from './containers/Minions';
 import GroupsAndMinions from './containers/GroupsAndMinions';
 import JobResults from './containers/JobResults';
@@ -49,7 +49,7 @@ $.get('/bundle-messages', data => {
                 <Route path='/scripts' onEnter={(nextState, replace) => {
                     checkAuth(nextState, replace);
                     checkRole(['ROLE_PAGE_SCRIPTS', 'ROLE_ROOT'], replace);
-                }} component={App}/>
+                }} component={Scripts}/>
                 <Route path='/groups-and-minions' onEnter={(nextState, replace) => {
                     checkAuth(nextState, replace);
                     checkRole(['ROLE_PAGE_GROUPS_AND_MINIONS', 'ROLE_ROOT'], replace);

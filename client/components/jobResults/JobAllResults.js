@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import Input from 'muicss/lib/react/input';
 import Checkbox from 'muicss/lib/react/checkbox';
 import Button from 'muicss/lib/react/button';
+import {containsRole} from '../../helpers';
 
 export default class JobAllResults extends Component {
 
@@ -163,15 +164,19 @@ export default class JobAllResults extends Component {
                     <td className='table__head'>{messages['client.jobresults.table.minion']}</td>
                     <td className='table__head'>{messages['client.jobresults.table.group']}</td>
                     <td className='table__head'>{messages['client.jobresults.table.date.update']}</td>
-                    {this.props.showStatus ? <td className='table__head'>{messages['client.jobresults.table.status']}</td> : null}
-                    {this.props.showSelect ? <td className='table__head'>
-                            <span className='mui--pull-left'>{messages['client.jobresults.table.select']}</span>
-                            {!showHeadCheckBox ?
-                                <Checkbox className='mui--pull-right header-checkbox' title={messages['client.jobresults.table.select.all']}
-                                          ref='header-checkbox'
-                                          onClick={e => {
-                                              ::this.addAll(e);
-                                          }}/> : null}
+                    {this.props.showStatus ?
+                        <td className='table__head'>{messages['client.jobresults.table.status']}</td> : null}
+                    {this.props.showSelect ?
+                        <td className='table__head'>
+                            {!showHeadCheckBox && containsRole(this.props.user.roles, ['ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS', 'ROLE_ROOT']) ?
+                                <div>
+                                    <span className='mui--pull-left'>{messages['client.jobresults.table.select']}</span>
+                                    <Checkbox className='mui--pull-right header-checkbox'
+                                               title={messages['client.jobresults.table.select.all']}
+                                               ref='header-checkbox'
+                                               onClick={e => {
+                                                   ::this.addAll(e);
+                                               }}/></div> : null}
 
                         </td> : null}
                 </tr>
@@ -179,25 +184,34 @@ export default class JobAllResults extends Component {
                         if (item.reExecuted) reExecutedMinionsLength++;
                         return <tr key={index} ref={index}>
                             <td>{item.minionName}
-                            <a className='table__link mui--text-right' onClick={() => {
-                                ::this.showJobDetails(item);
-                            }}> (log)</a></td>
+
+                                {containsRole(this.props.user.roles, ['ROLE_SHOW_RESULT_DETAILS', 'ROLE_ROOT']) ?
+                                    <a className='table__link mui--text-right' onClick={() => {
+                                        ::this.showJobDetails(item);
+                                    }}> (log)</a> : null
+                                }
+                            </td>
                             <td>{item.minionGroups}</td>
                             <td>{item.lastModifiedDate}</td>
                             {this.props.showStatus ? <td>{item.status}</td> : null}
                             {this.props.showSelect ?
-                                <td>{item.reExecuted ? messages['client.jobresults.table.reexecuted'] : <Checkbox ref={item.id} onClick={e => {
-                                        ::this.addToRestartList(e, item.id);
-                                    }}/>}
+                                <td>{item.reExecuted ? messages['client.jobresults.table.reexecuted'] :
+                                    containsRole(this.props.user.roles, ['ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS', 'ROLE_ROOT']) ?
+                                        <Checkbox ref={item.id} onClick={e => {
+                                            ::this.addToRestartList(e, item.id);
+                                        }}/> : null}
                                 </td>
                                 : null}
                         </tr>;
                     }) : null}
                 </tbody>
             </table>
-            {this.props.executeError ? <span className='input_error'>{messages['client.error.jobresults.reexecute']}</span> : null}
-            {this.props.executeSuccess ? <span className='success-mess'>{messages['client.jobresults.reexecute.success']}</span> : null}
-            {this.props.showSelect && reExecutedMinionsLength != jobResults.length ?
+            {this.props.executeError ?
+                <span className='input_error'>{messages['client.error.jobresults.reexecute']}</span> : null}
+            {this.props.executeSuccess ?
+                <span className='success-mess'>{messages['client.jobresults.reexecute.success']}</span> : null}
+            {this.props.showSelect && reExecutedMinionsLength != jobResults.length &&
+            containsRole(this.props.user.roles, ['ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS', 'ROLE_ROOT']) ?
                 <Button size='small' color='primary' variant='flat' className='modal__btn mui--pull-right'
                         ref='re-execute'
                         disabled={!this.state.checkedList.length}

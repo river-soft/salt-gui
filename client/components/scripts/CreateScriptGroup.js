@@ -8,7 +8,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/yaml';
 import 'brace/theme/eclipse';
 
-export default class CreateGroup extends Component {
+export default class CreateScriptGroup extends Component {
 
     constructor(props) {
         super(props);
