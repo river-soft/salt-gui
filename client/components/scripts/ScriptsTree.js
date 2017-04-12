@@ -72,16 +72,19 @@ export class ScriptsTree extends Component {
         });
     }
 
-    showContent(scriptId) {
-        this.props.getScriptContent(scriptId);
-        this.props.setEditScriptFalse();
-        this.props.setRemoveScriptErrorFalse();
-        this.setState({
-            showFileDescription: true,
-            addScript: false,
-            editScript: false,
-            runScript: false
-        })
+    showContent(scriptId, user) {
+
+        if (containsRole(user.roles, ['ROLE_SHOW_SCRIPT_DETAILS'])) {
+            this.props.getScriptContent(scriptId);
+            this.props.setEditScriptFalse();
+            this.props.setRemoveScriptErrorFalse();
+            this.setState({
+                showFileDescription: true,
+                addScript: false,
+                editScript: false,
+                runScript: false
+            })
+        }
     }
 
     addScript() {
@@ -225,9 +228,9 @@ export class ScriptsTree extends Component {
         if (_this.state.showFileDescription) {
 
             fileDescription = <ScriptDetails scriptContent={_this.props.scriptContent} editScript={::_this.editScript}
-                                               removeScript={::_this.removeScriptState} script={_this.props.script}
-                                               runScript={::_this.runScript} messages={messages}
-                                               user={user}/>;
+                                             removeScript={::_this.removeScriptState} script={_this.props.script}
+                                             runScript={::_this.runScript} messages={messages}
+                                             user={user}/>;
         }
 
         if (_this.props.files.length === 0) {
@@ -262,9 +265,9 @@ export class ScriptsTree extends Component {
                                   hideContent={::_this.hideContent} messages={messages}/>
         } else if (this.state.addScript) {
             createEditGroup = <CreateScriptGroup createGroup={_this.props.createGroup} groups={_this.props.files}
-                                           error={_this.props.error} messages={messages}
-                                           createSuccess={_this.props.createSuccess}
-                                           cancel={::_this.cancelAddGroupAndScript}/>
+                                                 error={_this.props.error} messages={messages}
+                                                 createSuccess={_this.props.createSuccess}
+                                                 cancel={::_this.cancelAddGroupAndScript}/>
         } else if (_this.state.runScript) {
             selectMinions =
                 <TreeViewModalCheckboxes groups={_this.props.groupedMinions}

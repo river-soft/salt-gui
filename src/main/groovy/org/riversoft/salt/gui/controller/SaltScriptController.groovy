@@ -38,7 +38,7 @@ class SaltScriptController extends BaseRestController {
         saltScriptGroupService.createSaltScriptGroupAndScripts(createSaltScriptGroup)
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EDIT_SCRIPT')")
+    @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_SHOW_SCRIPT_DETAILS')")
     @RequestMapping('/script-by-id')
     def findScriptByName(@RequestParam(value = "id", required = true) String id) {
 
