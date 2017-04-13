@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 @Slf4j
 @Component
 @CompileStatic
-class BootCreateAdministrator implements CommandLineRunner {
+class CheckAndCreateMinions implements CommandLineRunner {
 
     //region injection
 

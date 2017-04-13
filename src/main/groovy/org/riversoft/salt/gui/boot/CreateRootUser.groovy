@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 @Component
 @CompileStatic
 @SuppressWarnings("GroovyUnusedDeclaration")
-class RootAdministratorTask implements CommandLineRunner {
+class CreateRootUser implements CommandLineRunner {
 
     @Autowired
     UserRepository userRepository
