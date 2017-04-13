@@ -27,10 +27,6 @@ module.exports = {
         dns: 'empty',
         tls: 'empty'
     },
-    // watch: NODE_ENV == 'develop',
-    // watchOptions: {
-    //     aggregateTimeout: 100
-    // },
     plugins: [
         new webpack.EnvironmentPlugin('NODE_ENV'),
         new webpack.optimize.OccurrenceOrderPlugin(),

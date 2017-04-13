@@ -35,9 +35,7 @@ abstract class BaseRestController {
 
             try {
 
-//                localizedMessage = e.localizedKey
-                localizedMessage = localeService.getMessage(e.localizedKey)
-                //TODO переделать потом на локализацию localeService.getMessage(e.localizedKey)
+                localizedMessage = localeService.getMessage(e.localizedKey, e.params)
 
             } catch (Exception ex) {
 

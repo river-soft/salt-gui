@@ -198,6 +198,9 @@ export default class CreateScriptGroup extends Component {
                 mode='yaml'
                 theme='eclipse'
                 width='100%'
+                onLoad={(editor) => {
+                    editor.focus();
+                }}
                 onChange={(content) => {
                     this.setScriptContent(content);
                 }}

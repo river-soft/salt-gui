@@ -52,13 +52,7 @@ export function containsRole(roles, checkRoles) {
 export function checkAuth(nextState, replace) {
 
     let token = cookie.load('accessToken'),
-        user = token ? JSON.parse(atob(token)) : null,
-        unAuthorized = window.unAuthorized;
-
-    if (unAuthorized) {
-        cookie.remove('accessToken', {path: '/'});
-        window.unAuthorized = false;
-    }
+        user = token ? JSON.parse(atob(token)) : null;
 
     if (!user) {
         replace({

@@ -71,7 +71,7 @@ class Authorization extends Component {
                 <Container>
                     <Row>
                         <Col md='4' md-offset='4' xs='12' lg='4' lg-offset='4'>
-                            <Form className='authorization'>
+                            <Form className='authorization' onSubmit={::this.login}>
                                 <legend className='authorization__header'>
                                     <p>
                                         {messages['client.authorization.title']}
@@ -83,7 +83,7 @@ class Authorization extends Component {
                                            onChange={::this.setPassword}/>
                                     {this.props.auth.error ?
                                         <span className='input_error'>{messages['client.error.authorization']}</span> : null}
-                                    <button className='mui-btn button authorization__btn' onClick={::this.login}
+                                    <button className='mui-btn button authorization__btn'
                                             disabled={!this.state.userName.length || !this.state.password}>
                                         {messages['client.button.authorization']}
                                     </button>

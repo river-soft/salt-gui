@@ -13,6 +13,12 @@ class SaltGuiException extends BasicSaltGuiException {
         this.localizedKey = localizedMessage
     }
 
+    SaltGuiException(String message, Throwable cause, String localizedMessage, Object[] params) {
+        super(message, cause)
+        this.localizedKey = localizedMessage
+        this.params = params
+    }
+
     SaltGuiException(String message) {
         super(message)
     }
