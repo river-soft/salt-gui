@@ -13,6 +13,7 @@ import org.riversoft.salt.gui.domain.JobResult
 import org.riversoft.salt.gui.domain.JobResultDetail
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.SaltScript
+import org.riversoft.salt.gui.exception.JobIdNotReturnedException
 import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultDetailRepository
@@ -95,9 +96,18 @@ class ExecuteScriptService {
             LocalAsyncResult<Map<String, State.ApplyResult>> result = State.apply(scripts).callAsync(
                     saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
-            log.debug("Successfully returned response from salt server with job id [${result.jid}].")
+            String jid = result.jid
+
+            log.debug("Successfully returned response from salt server with job id [${jid}].")
 
             //endregion
+
+            if (!jid) {
+
+                log.error("Job id not returned from salt server.")
+                throw new JobIdNotReturnedException("Job id not returned from salt server.",
+                        "error.scripts.executing.jid_not_returned")
+            }
 
             //region работа
 
@@ -105,7 +115,7 @@ class ExecuteScriptService {
 
             Job job = jobRepository.save(
                     new Job(
-                            jid: result.jid,
+                            jid: jid,
                             done: false,
                             createDate: new Date(),
                             lastModifiedDate: new Date(),
@@ -119,7 +129,7 @@ class ExecuteScriptService {
 
             //endregion
 
-            //region результаты скриптов
+            //region запись результатов работы по миньонам которые зарегестрированы на salt сервере
 
             for (String minionResult : result.minions) {
 
@@ -146,7 +156,54 @@ class ExecuteScriptService {
 
             //endregion
 
-        } catch (Exception e) {
+            //region запись результатов работы по миньонам которые не зарегестрированы на salt сервере
+
+            List<String> notAnsweredMinions = minions - result.minions
+
+            for (String minionResult : notAnsweredMinions) {
+
+                Minion minion = minionCRUDService.getMinionByName(minionResult)
+
+                log.debug("Start creating JobResult for minion [${minion.name}] that don't answer and job with jid [${job.jid}].")
+
+                JobResult jobResult = new JobResult(
+                        minion: minion,
+                        job: job,
+                        saltScripts: saltScripts,
+                        reExecuted: false,
+                        createDate: new Date(),
+                        lastModifiedDate: new Date(),
+                        isResult: false
+                )
+
+                jobResultRepository.save(jobResult)
+
+                job.results.add(jobResult)
+                jobRepository.save(job)
+
+                //запись детализации результата
+                JobResultDetail jobResultDetail = new JobResultDetail()
+                jobResultDetail.comment = "Minion not registered on salt server."
+                jobResultDetail.createDate = new Date()
+                jobResultDetail.lastModifiedDate = new Date()
+                jobResultDetail.jobResult = jobResult
+                jobResultDetail.result = false
+
+                jobResult.jobResultDetails.add(jobResultDetail)
+
+                jobResultDetailRepository.save(jobResultDetail)
+
+                jobResultRepository.save(jobResult)
+
+                log.debug("Successfully created JobResult for minion [${minion.name}] that don't answer and job with jid [${result.jid}].")
+            }
+
+            //endregion
+
+        } catch (JobIdNotReturnedException e) {
+            throw e
+        }
+        catch (Exception e) {
 
             log.error("Error of executing scripts for minions.")
             throw new SaltGuiException("Error of executing scripts for minions.", e,
