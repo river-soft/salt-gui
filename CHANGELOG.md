@@ -49,3 +49,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ###Deleted
 ###Fixed
+- Исправлены ошибки при выполнении скриптов на миньонах которые не зарегестрированы на сервере Salt.
