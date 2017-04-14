@@ -92,6 +92,7 @@ export default class MinionsAccepted extends Component {
                     {messages['client.modal.minions.confirm.delete']}: {this.state.checkedList.map((item) => {
                     return item + ' '
                 })}
+                    <div className='input_error'>{messages['client.modal.minions.confirm.delete.additional_info']}</div>
                 </div>
                 {this.props.deleteMinionsError ?
                     <span className='input_error'>{this.props.deleteMinionsError.message}</span> : null}

@@ -10,4 +10,6 @@ interface JobResultRepository extends MongoRepository<JobResult, String> {
     List<JobResult> findAllByJobJid(String jobId)
 
     List<JobResult> findAllByIdIn(String[] ids)
+
+    List<JobResult> findAllByMinionId(String minionId)
 }
