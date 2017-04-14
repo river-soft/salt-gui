@@ -207,6 +207,7 @@ export class ScriptsTree extends Component {
 
         this.props.getGroupedMinions();
         this.props.setExecuteFalse();
+        this.props.setExecuteErrorFalse();
     }
 
     render() {
@@ -275,7 +276,7 @@ export class ScriptsTree extends Component {
                                          scriptName={_this.state.scriptName}
                                          executeScripts={_this.props.executeScripts}
                                          minions={true} messages={messages}
-                                         execute={_this.props.execute}
+                                         execute={_this.props.execute} setExecuteErrorFalse={_this.props.setExecuteErrorFalse}
                                          executeError={_this.props.executeError}/>
         }
 

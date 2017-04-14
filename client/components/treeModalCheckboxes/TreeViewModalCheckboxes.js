@@ -247,6 +247,11 @@ export default class TreeModalCheckboxes extends Component {
             }
         });
 
+        if(this.props.setExecuteErrorFalse && typeof this.props.setExecuteErrorFalse === 'function') {
+            this.props.setExecuteErrorFalse();
+            this.refs['execute-btn'].classList.remove('clicked');
+        }
+
         this.setState({
             cancelList: [],
             returnFromTransfer: true
@@ -342,7 +347,7 @@ export default class TreeModalCheckboxes extends Component {
                         <span className='input_error'>{this.props.executeError.message}</span> : null}
                 </div>
                 {this.state.transferedList.length ? <div>
-                        <button className='button mui-btn mui--pull-right' onClick={(e) => {
+                        <button className='button mui-btn mui--pull-right' ref='execute-btn' onClick={(e) => {
                             ::this.executeScripts(e.target);
                         }}>{messages['client.btn.execute']}
                         </button>

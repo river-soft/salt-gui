@@ -54,12 +54,21 @@ export default class MinionDetails extends Component {
 
                 </div>
                 {template}
-            </div>,
-            error = this.props.error ? this.props.error.message.indexOf(this.props.minionName) : -1;
+            </div>;
+
+        if (this.props.error) {
+            if (!this.refs['error'].innerHTML) {
+                this.refs['error'].innerHTML = this.props.error.message;
+            }
+        } else {
+            if(this.refs['error']) {
+                this.refs['error'].innerHTML = '';
+            }
+        }
 
         return <Panel className='minion-details'>
             {!this.props.error && !details ? messages['client.message.waiting.answer'] + '...' : null}
-            {this.props.error && error != -1 ? <span className='input_error'>{this.props.error.message}</span> : null}
+            <span className='input_error' ref='error'></span>
             {details ? block : null}
         </Panel>
     }

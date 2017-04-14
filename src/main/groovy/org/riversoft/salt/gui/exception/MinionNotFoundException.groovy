@@ -8,6 +8,12 @@ class MinionNotFoundException extends BasicSaltGuiException {
         this.localizedKey = localizedMessage
     }
 
+    MinionNotFoundException(String message, String localizedMessage, Object[] params) {
+        super(message)
+        this.localizedKey = localizedMessage
+        this.params = params
+    }
+
     MinionNotFoundException(String message) {
         super(message)
     }
