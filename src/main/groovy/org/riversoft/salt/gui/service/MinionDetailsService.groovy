@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionNotFoundException
+import org.riversoft.salt.gui.exception.MinionNotRegisteredOnSaltException
 import org.riversoft.salt.gui.exception.SaltException
 import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.model.view.MinionGroupViewModel
@@ -17,9 +18,7 @@ import org.riversoft.salt.gui.repository.MinionRepository
 import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.access.method.P
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
 
 @Slf4j
 @Service
@@ -87,8 +86,10 @@ class MinionDetailsService {
             def acceptedMinions = minionsSaltService.getAllAcceptedMinions()
 
             if (!acceptedMinions.contains(minionName)) {
-                log.error("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
-                throw new MinionNotFoundException("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
+
+                log.error("Minions with names: [${minionName}] not registered on salt server.")
+                throw new MinionNotRegisteredOnSaltException("Minions with names: [${minionName}] not registered on salt server.",
+                        'error.minion.not_registered_on_salt', [minionName])
             }
 
             // Set targets
@@ -103,11 +104,10 @@ class MinionDetailsService {
 
             return result
 
-        } catch (MinionNotFoundException e) {
+        } catch (MinionNotRegisteredOnSaltException e) {
 
-            log.error("Minion with name [${minionName}] not found in list of accepted minions on salt server.", e)
-            throw new MinionNotFoundException("Minion with name [${minionName}] not found in list of accepted minions on salt server.",
-                    'error.minions.server.not_found', [minionName])
+            throw e
+
         } catch (SaltException e) {
 
             if (e.cause instanceof SocketTimeoutException) {
@@ -120,6 +120,7 @@ class MinionDetailsService {
                 throw new SaltGuiException("Error of getting minion [${minionName}] details from salt server.", e,
                         "error.minion.get.details", [minionName])
             }
+
         } catch (Exception e) {
 
             log.error("Error of getting minion [${minionName}] details from salt server.")

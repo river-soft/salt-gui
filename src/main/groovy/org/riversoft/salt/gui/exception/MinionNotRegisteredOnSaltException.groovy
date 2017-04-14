@@ -8,9 +8,10 @@ class MinionNotRegisteredOnSaltException extends BasicSaltGuiException {
         this.localizedKey = localizedMessage
     }
 
-    MinionNotRegisteredOnSaltException(String message, String localizedMessage) {
+    MinionNotRegisteredOnSaltException(String message, String localizedMessage, Object[] params) {
         super(message)
         this.localizedKey = localizedMessage
+        this.params = params
     }
 
     MinionNotRegisteredOnSaltException(String message) {
