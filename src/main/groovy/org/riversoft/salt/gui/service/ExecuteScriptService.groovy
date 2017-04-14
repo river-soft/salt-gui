@@ -5,6 +5,7 @@ import org.riversoft.salt.gui.AuthModule
 import org.riversoft.salt.gui.calls.LocalAsyncResult
 import org.riversoft.salt.gui.calls.modules.State
 import org.riversoft.salt.gui.calls.runner.Jobs
+import org.riversoft.salt.gui.calls.runner.Manage
 import org.riversoft.salt.gui.client.SaltClient
 import org.riversoft.salt.gui.datatypes.target.MinionList
 import org.riversoft.salt.gui.datatypes.target.Target
@@ -35,6 +36,8 @@ class ExecuteScriptService {
 
     @Value('${salt.password}')
     private String PASSWORD
+
+    private String pingJid = ""
 
     @Autowired
     private SaltClient saltClient
@@ -276,8 +279,6 @@ class ExecuteScriptService {
                 log.warn("Result by job with jid [${job.jid}] not found yet.")
             }
 
-            List<JobResult> jobResultsNoConnection = jobResultRepository.findAllByJobJid(job.jid)
-
             for (def jobResultSalt : jobResultsSalt) {
 
                 Minion minion = minionCRUDService.getMinionByName(jobResultSalt.key)
@@ -286,84 +287,76 @@ class ExecuteScriptService {
 
                 for (JobResult jobResult : jobResults) {
 
-                    log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
+                    if (jobResult.isResult == null) {
 
-                    for (def jobResultSaltItem : jobResultSalt) {
+                        log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
 
-                        for (def val : jobResultSaltItem.value) {
+                        for (def jobResultSaltItem : jobResultSalt) {
 
-                            log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
-                                    "id [${jobResult.job.jid}].")
+                            for (def val : jobResultSaltItem.value) {
 
-                            if (val instanceof String) {
+                                log.debug("Start creating JobResultDetail fom minion [${jobResult.minion.name}] and job " +
+                                        "id [${jobResult.job.jid}].")
 
-                                log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
-                                        "Reason - [${val}].")
+                                if (val instanceof String) {
 
-                                JobResultDetail jobResultDetail = new JobResultDetail()
-                                jobResultDetail.comment = val
-                                jobResultDetail.createDate = new Date()
-                                jobResultDetail.lastModifiedDate = new Date()
-                                jobResultDetail.jobResult = jobResult
-                                jobResultDetail.result = false
+                                    log.warn("No result details fom minion [${jobResult.minion.name}] and job id [${jobResult.job.jid}]." +
+                                            "Reason - [${val}].")
 
-                                jobResult.jobResultDetails.add(jobResultDetail)
+                                    JobResultDetail jobResultDetail = new JobResultDetail()
+                                    jobResultDetail.comment = val
+                                    jobResultDetail.createDate = new Date()
+                                    jobResultDetail.lastModifiedDate = new Date()
+                                    jobResultDetail.jobResult = jobResult
+                                    jobResultDetail.result = false
 
-                                jobResultDetailRepository.save(jobResultDetail)
+                                    jobResult.jobResultDetails.add(jobResultDetail)
 
-                            } else {
+                                    jobResultDetailRepository.save(jobResultDetail)
 
-                                JobResultDetail jobResultDetail = new JobResultDetail()
+                                } else {
 
-                                jobResultDetail.cmd = val["key"]
-                                jobResultDetail.name = val["value"]["name"]
-                                jobResultDetail.comment = val["value"]["comment"]
-                                jobResultDetail.result = val["value"]["result"]
-                                jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
-                                jobResultDetail.description = val["value"]["__id__"]
-                                jobResultDetail.changes = val["value"]["changes"]
-                                jobResultDetail.startTime = val["value"]["start_time"]
-                                jobResultDetail.jobResult = jobResult
-                                jobResultDetail.createDate = new Date()
-                                jobResultDetail.lastModifiedDate = new Date()
+                                    JobResultDetail jobResultDetail = new JobResultDetail()
 
-                                jobResult.jobResultDetails.add(jobResultDetail)
+                                    jobResultDetail.cmd = val["key"]
+                                    jobResultDetail.name = val["value"]["name"]
+                                    jobResultDetail.comment = val["value"]["comment"]
+                                    jobResultDetail.result = val["value"]["result"]
+                                    jobResultDetail.duration = val["value"]["duration"] ? val["value"]["duration"] as double : null
+                                    jobResultDetail.description = val["value"]["__id__"]
+                                    jobResultDetail.changes = val["value"]["changes"]
+                                    jobResultDetail.startTime = val["value"]["start_time"]
+                                    jobResultDetail.jobResult = jobResult
+                                    jobResultDetail.createDate = new Date()
+                                    jobResultDetail.lastModifiedDate = new Date()
 
-                                jobResultDetailRepository.save(jobResultDetail)
-                                log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
-                                        "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
+                                    jobResult.jobResultDetails.add(jobResultDetail)
+
+                                    jobResultDetailRepository.save(jobResultDetail)
+                                    log.debug("Successfully created JobResultDetail for minion [${jobResult.minion.name}] and job " +
+                                            "id [${jobResult.job.jid}], result name [${jobResultDetail.name}].")
+                                }
                             }
                         }
+
+                        jobResult.isResult = true
+                        jobResult.lastModifiedDate = new Date()
+
+                        jobResultRepository.save(jobResult)
+                        log.debug("Finish updating JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
                     }
-
-                    jobResult.isResult = true
-                    jobResult.lastModifiedDate = new Date()
-
-                    jobResultRepository.save(jobResult)
-                    log.debug("Finish updating JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
-
-                    //TODO подумать когда отмечать задачу как выполненную
-                    isDone = true
-
-                    jobResultsNoConnection.removeAll { it.id == jobResult.id }
-                }
-
-                //отмечаем результаты которые не получили ответ т.е. no connected
-                for (JobResult jobResultNoConnection : jobResultsNoConnection) {
-
-                    log.debug("JobResult for minion [${jobResultNoConnection.minion.name}] and job [${jobResultNoConnection.job.jid}] don't received the response.")
-
-                    jobResultNoConnection.isResult = false
-                    jobResultNoConnection.lastModifiedDate = new Date()
-
-                    jobResultRepository.save(jobResultNoConnection)
-                    log.debug("Updated JobResult for minion [${jobResultNoConnection.minion.name}] and job [${jobResultNoConnection.job.jid}].")
                 }
             }
+
+            checkNotConnectedMinionAndUpdateResultStatus(job.results)
 
             // endregion
 
             //region update job
+
+            if (!job.results.findAll { it.isResult == null }) {
+                isDone = true
+            }
 
             job.startTime = jobInfoSalt.startTime.date
             job.user = jobInfoSalt.user
@@ -408,10 +401,54 @@ class ExecuteScriptService {
     }
 
     /**
+     * Проверка не подключенных миньонов и обновление результата работ для них
+     * @param jobResults - список результатов работы в виде объектов JobResult
+     */
+    void checkNotConnectedMinionAndUpdateResultStatus(List<JobResult> jobResults) {
+
+        def result = Manage.up().callAsync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        if (!pingJid) {
+            pingJid = result.jid
+        }
+
+        //вовзращает список результатов по миньонам
+        def connectedMinionsJobResult = Jobs.lookupJid(pingJid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        if (connectedMinionsJobResult.size()) {
+
+            def connectedMinions = connectedMinionsJobResult.find() ? connectedMinionsJobResult.find()["value"]["return"] : []
+
+            def minionsFromResult = jobResults.collect { it.minion.name }
+
+            def notConnectedMinions = minionsFromResult - connectedMinions
+
+            def notConnectedResults = jobResults.findAll {
+                notConnectedMinions.contains(it.minion.name) && it.isResult == null
+            }
+
+            for (JobResult jobResult : notConnectedResults) {
+
+                log.debug("JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}] don't received the response.")
+
+                jobResult.isResult = false
+                jobResult.lastModifiedDate = new Date()
+
+                jobResultRepository.save(jobResult)
+
+                log.debug("Updated JobResult for minion [${jobResult.minion.name}] and job [${jobResult.job.jid}].")
+
+            }
+
+            pingJid = ""
+        }
+    }
+
+    /**
      * Автоматическая проверка и получение результатов выполнения работы скриптов
      */
     @Scheduled(fixedDelayString = '${salt.minions.update_list_by_status:60000}')
-    def checkNotDoneJobs() {
+    void checkNotDoneJobs() {
 
         log.debug("Start check not done jobs.")
 
