@@ -16,6 +16,7 @@ class MinionGroupViewModel {
         this.group = minionGroup.name
 
         for (Minion minion : minionGroup.minions) {
+
             this.minions.add(new MinionSimpleViewModel(minion))
         }
     }
