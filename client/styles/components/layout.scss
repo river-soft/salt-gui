@@ -272,6 +272,7 @@ body {
   }
 
   &__body {
+    text-align: center;
     padding-top: 10px;
   }
 
@@ -511,6 +512,7 @@ body {
   @include borderRadius(6px);
   position: relative;
   margin-bottom: 15px;
+  text-align: left;
 
   &__header {
     font-size: 1.2rem;

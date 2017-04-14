@@ -4,6 +4,20 @@ import {containsRole} from '../../helpers';
 
 export default class MinionDetails extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            interval: 0
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.error || this.props.details) {
+            clearInterval(this.state.interval);
+        }
+    }
+
     parseJson(details) {
 
         let template = [];
@@ -32,6 +46,23 @@ export default class MinionDetails extends Component {
         return template
     }
 
+    loading(el) {
+
+        if (!el) {
+            clearInterval(this.state.interval)
+        } else {
+            this.state.interval = setInterval(() => {
+
+                if (el.innerHTML.length === 5) {
+                    el.innerHTML = '';
+                } else {
+                    el.innerHTML = el.innerHTML + '.';
+                }
+            }, 500);
+        }
+    }
+
+
     render() {
 
         let details = this.props.details,
@@ -54,20 +85,25 @@ export default class MinionDetails extends Component {
 
                 </div>
                 {template}
-            </div>;
+            </div>,
+            errorSpan = this.refs['error'];
 
         if (this.props.error) {
-            if (!this.refs['error'].innerHTML) {
-                this.refs['error'].innerHTML = this.props.error.message;
+            if (!errorSpan.innerHTML && this.props.error.message.indexOf(this.props.minionName) + 1) {
+                errorSpan.innerHTML = this.props.error.message;
             }
         } else {
-            if(this.refs['error']) {
-                this.refs['error'].innerHTML = '';
+            if (errorSpan) {
+                errorSpan.innerHTML = '';
             }
         }
 
         return <Panel className='minion-details'>
-            {!this.props.error && !details ? messages['client.message.waiting.answer'] + '...' : null}
+            {(errorSpan && !errorSpan.innerHTML.length || !errorSpan) && !details ? messages['client.message.waiting.answer'] : null}
+            {(errorSpan && !errorSpan.innerHTML.length || !errorSpan) && !details ?
+                <span ref={(el) => {
+                    ::this.loading(el);
+                }}>...</span> : null}
             <span className='input_error' ref='error'></span>
             {details ? block : null}
         </Panel>
