@@ -31,12 +31,12 @@ class Scripts extends Component {
     }
 
     componentWillMount() {
-        if(!this.props.localization) {
+        if (!this.props.localization) {
             const {getMessages} = this.props.getMessagesAction;
 
             getMessages();
         } else {
-            this.setState({strings : this.props.localization.messages});
+            this.setState({strings: this.props.localization.messages});
         }
     }
 
@@ -104,6 +104,13 @@ class Scripts extends Component {
         this.props.scriptRemove.error = '';
     }
 
+    setExecuteErrorFalse() {
+        if (this.props.executeScripts.error) {
+            this.props.executeScripts.error = '';
+            this.setState({go: true});
+        }
+    }
+
     render() {
 
         const _this = this,
@@ -140,30 +147,31 @@ class Scripts extends Component {
             }
         }
 
-        let filesTree = <ScriptsTree createGroup={createGroup} filesRequest={filesRequest} executeError={executeError}
-                                   removeSuccess={_this.state.removeSuccess} removeScriptError={removeScriptError}
-                                   setRemoveScriptErrorFalse={::_this.setRemoveScriptErrorFalse}
-                                   scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
-                                   getScriptContent={getScriptContent} files={_this.props.filesTree.files}
-                                   error={_this.props.createGroup.error} createSuccess={_this.state.createSuccess}
-                                   editScript={editScript} editSuccess={_this.state.editSuccess}
-                                   editScriptError={editScriptError} setEditScriptFalse={::_this.setEditScriptFalse}
-                                   editGroup={editGroup} messages={messages}
-                                   editGroupSuccess={_this.state.editGroupSuccess}
-                                   removeGroup={removeGroup}
-                                   removeGroupSuccess={_this.state.removeGroupSuccess}
-                                   getGroupedMinions={getGroupedMinions}
-                                   groupedMinions={_this.props.groupedMinions.groupedMinions}
-                                   executeScripts={executeScripts}
-                                   execute={_this.props.executeScripts.execute}
-                                   setExecuteFalse={::_this.setExecuteFalse}
-                                   setAddGroupAndScriptErrorFalse={::this.setAddGroupAndScriptErrorFalse}
-                                   createdGroup={_this.props.createGroup.group}/>;
+        let scriptsTree = <ScriptsTree createGroup={createGroup} filesRequest={filesRequest} executeError={executeError}
+                                       removeSuccess={_this.state.removeSuccess} removeScriptError={removeScriptError}
+                                       setRemoveScriptErrorFalse={::_this.setRemoveScriptErrorFalse}
+                                       scriptContent={_this.props.scriptContent} scriptRemove={scriptRemove}
+                                       getScriptContent={getScriptContent} files={_this.props.filesTree.files}
+                                       error={_this.props.createGroup.error} createSuccess={_this.state.createSuccess}
+                                       editScript={editScript} editSuccess={_this.state.editSuccess}
+                                       editScriptError={editScriptError} setEditScriptFalse={::_this.setEditScriptFalse}
+                                       editGroup={editGroup} messages={messages}
+                                       editGroupSuccess={_this.state.editGroupSuccess}
+                                       removeGroup={removeGroup} setExecuteErrorFalse={::_this.setExecuteErrorFalse}
+                                       removeGroupSuccess={_this.state.removeGroupSuccess}
+                                       getGroupedMinions={getGroupedMinions}
+                                       groupedMinions={_this.props.groupedMinions.groupedMinions}
+                                       executeScripts={executeScripts}
+                                       execute={_this.props.executeScripts.execute}
+                                       setExecuteFalse={::_this.setExecuteFalse}
+                                       setAddGroupAndScriptErrorFalse={::this.setAddGroupAndScriptErrorFalse}
+                                       createdGroup={_this.props.createGroup.group}/>;
 
         return (<div className='wrapper'>
-            <Header header={messages['client.header.scripts.title']} messages={messages} setLanguage={::this.setLanguage}/>
+            <Header header={messages['client.header.scripts.title']} messages={messages}
+                    setLanguage={::this.setLanguage}/>
             <main className='main'>
-                {filesTree}
+                {scriptsTree}
             </main>
         </div>)
     }

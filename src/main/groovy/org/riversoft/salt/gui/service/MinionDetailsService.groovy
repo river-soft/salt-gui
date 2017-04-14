@@ -9,6 +9,7 @@ import org.riversoft.salt.gui.datatypes.target.Target
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionNotFoundException
+import org.riversoft.salt.gui.exception.SaltException
 import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.model.view.MinionGroupViewModel
 import org.riversoft.salt.gui.repository.MinionGroupRepository
@@ -16,7 +17,9 @@ import org.riversoft.salt.gui.repository.MinionRepository
 import org.riversoft.salt.gui.results.Result
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.access.method.P
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpClientErrorException
 
 @Slf4j
 @Service
@@ -84,9 +87,8 @@ class MinionDetailsService {
             def acceptedMinions = minionsSaltService.getAllAcceptedMinions()
 
             if (!acceptedMinions.contains(minionName)) {
-                //TODO свое исключение
                 log.error("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
-                throw new Exception("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
+                throw new MinionNotFoundException("Minion with name [${minionName}] not found in list of accepted minions on salt server.")
             }
 
             // Set targets
@@ -94,13 +96,30 @@ class MinionDetailsService {
 
             // call Grains.item
             Map<String, Result<Map<String, Object>>> grainResults = Grains.item(false, properties)
-                    .callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM);
+                    .callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
             // get result of Grains.item
             def result = grainResults.collect { ["${it.key}": it.value?.xor?.right()?.value] }
 
             return result
 
+        } catch (MinionNotFoundException e) {
+
+            log.error("Minion with name [${minionName}] not found in list of accepted minions on salt server.", e)
+            throw new MinionNotFoundException("Minion with name [${minionName}] not found in list of accepted minions on salt server.",
+                    'error.minions.server.not_found', [minionName])
+        } catch (SaltException e) {
+
+            if (e.cause instanceof SocketTimeoutException) {
+
+                log.error("Minion with name [${minionName}] don't answer", e)
+                throw new SaltGuiException("Minion with name [${minionName}] don't answer", e, 'error.minion.read.time.out', [minionName])
+            } else {
+
+                log.error("Error of getting minion [${minionName}] details from salt server.")
+                throw new SaltGuiException("Error of getting minion [${minionName}] details from salt server.", e,
+                        "error.minion.get.details", [minionName])
+            }
         } catch (Exception e) {
 
             log.error("Error of getting minion [${minionName}] details from salt server.")
@@ -108,5 +127,4 @@ class MinionDetailsService {
                     "error.minion.get.details", [minionName])
         }
     }
-
 }
