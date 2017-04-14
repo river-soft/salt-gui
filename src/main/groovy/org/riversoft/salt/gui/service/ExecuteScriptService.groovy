@@ -14,6 +14,7 @@ import org.riversoft.salt.gui.domain.JobResultDetail
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.SaltScript
 import org.riversoft.salt.gui.exception.JobIdNotReturnedException
+import org.riversoft.salt.gui.exception.MinionNotRegisteredOnSaltException
 import org.riversoft.salt.gui.exception.SaltGuiException
 import org.riversoft.salt.gui.repository.JobRepository
 import org.riversoft.salt.gui.repository.JobResultDetailRepository
@@ -48,6 +49,9 @@ class ExecuteScriptService {
     private MinionCRUDService minionCRUDService
 
     @Autowired
+    private MinionsSaltService minionsSaltService
+
+    @Autowired
     private JobResultRepository jobResultRepository
 
     @Autowired
@@ -66,6 +70,22 @@ class ExecuteScriptService {
     def executeScripts(String[] minions, String[] scripts) {
 
         try {
+
+            //TODO проверка все ли миньоны зарегистрированы на сервере солт
+
+            def acceptedMinions = minionsSaltService.getAllAcceptedMinions()
+
+            def notRegisteredMinions = acceptedMinions - minions
+
+            if (notRegisteredMinions.size()) {
+
+                String notRegisteredMinionsNames = notRegisteredMinions.collect { it }.join(",")
+
+                //TODO свое исключение
+                log.error("Minions with names: [${notRegisteredMinionsNames}] not registered on salt server.")
+                throw new MinionNotRegisteredOnSaltException("Minions with names: [${notRegisteredMinionsNames}] not registered on salt server.", "dsv"/*TODO локализированый ключ для ошибки*/)
+
+            }
 
             //region список скриптов и создание файлов скриптов на salt server
 
