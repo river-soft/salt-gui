@@ -81,25 +81,23 @@ class SaltScriptFileService {
         Map<String, Result<Boolean>> isFileExistResult = File.fileExists(canonicalFilePath).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
         def isFileExist = isFileExistResult.find().value?.xor?.right()?.value
-        if (!isFileExist) {
-            log.error("File [${"${scriptsDirectory}/${fileName}.sls"}] not found on Salt server.")
-            throw new FileNotFoundException("File [${"${scriptsDirectory}/${fileName}.sls"}] not found on Salt server.")
-        }
 
         //endregion
 
-        Map<String, Result<Boolean>> fileRemoveResult = File.remove(canonicalFilePath).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
+        if (isFileExist) {
 
-        def fileSuccessfullyDeleted = fileRemoveResult.find().value?.xor?.right()?.value
+            Map<String, Result<Boolean>> fileRemoveResult = File.remove(canonicalFilePath).callSync(saltClient, minionList, USER, PASSWORD, AuthModule.PAM)
 
-        if (fileSuccessfullyDeleted) {
+            def fileSuccessfullyDeleted = fileRemoveResult.find().value?.xor?.right()?.value
 
-            log.debug("Successfully deleted file [${canonicalFilePath}] from Salt server.")
+            if (fileSuccessfullyDeleted) {
 
-        } else {
+                log.debug("Successfully deleted file [${canonicalFilePath}] from Salt server.")
 
-            log.error("File [${canonicalFilePath}] not deleted from Salt server.")
-            throw new Exception("File [${canonicalFilePath}] not deleted from Salt server.")
+            } else {
+
+                log.error("File [${canonicalFilePath}] not deleted from Salt server.")
+            }
         }
     }
 
