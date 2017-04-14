@@ -111,8 +111,6 @@ class MinionsActionService {
 
         Minion minion = minionCRUDService.findMinionByName(minionName)
         if (minion) {
-            //todo может не удалять а просто скрывать ?
-            //todo т.к. если у миньона есть привязаные записи потом ломаются все остальные страницв где есть всязи с ним
             minionCRUDService.deleteMinion(minion)
         }
 

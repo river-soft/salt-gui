@@ -1,6 +1,8 @@
 package org.riversoft.salt.gui.service
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.domain.Job
+import org.riversoft.salt.gui.domain.JobResult
 import org.riversoft.salt.gui.domain.Minion
 import org.riversoft.salt.gui.domain.MinionGroup
 import org.riversoft.salt.gui.exception.MinionNotFoundException
@@ -8,6 +10,9 @@ import org.riversoft.salt.gui.exception.SaltScriptAlreadyExistException
 import org.riversoft.salt.gui.model.CreateMinion
 import org.riversoft.salt.gui.model.EditMinion
 import org.riversoft.salt.gui.model.view.MinionViewModel
+import org.riversoft.salt.gui.repository.JobRepository
+import org.riversoft.salt.gui.repository.JobResultDetailRepository
+import org.riversoft.salt.gui.repository.JobResultRepository
 import org.riversoft.salt.gui.repository.MinionGroupRepository
 import org.riversoft.salt.gui.repository.MinionRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +32,15 @@ class MinionCRUDService {
 
     @Autowired
     MinionGroupService minionGroupService
+
+    @Autowired
+    JobResultRepository jobResultRepository
+
+    @Autowired
+    JobRepository jobRepository
+
+    @Autowired
+    JobResultDetailRepository jobResultDetailRepository
 
     //endregion
 
@@ -173,6 +187,7 @@ class MinionCRUDService {
 
         String deletedMinionMessage = "Finish deleting minion with name [${minion.name}] and id [${minion.id}]."
 
+        //удаление миньона из групп где он есть
         for (MinionGroup group : minion.groups) {
 
             group.minions.removeAll { it.id == minion.id }
@@ -180,6 +195,30 @@ class MinionCRUDService {
             minionGroupRepository.save(group)
         }
 
+        //удаление миньона из результатов где он есть и деталей результатов?
+        List<JobResult> jobResults = jobResultRepository.findAllByMinionId(minion.id)
+
+        for (JobResult jobResult : jobResults) {
+
+            log.debug("Start deleting Job Results by minion with name [${minion.name}].")
+
+            //удаление результата из работы где он есть
+            Job job = jobResult.job
+            job.results.removeAll{it.id == jobResult.id}
+
+            jobRepository.save(job)
+
+            //удаление деталей
+            jobResult.jobResultDetails.each {
+                jobResultDetailRepository.delete(it.id)
+            }
+
+            jobResultRepository.delete(jobResult.id)
+
+            log.debug("Finish deleting Job Results by minion with name [${minion.name}].")
+        }
+
+        //удаление самого миньога
         minionRepository.delete(minion.id)
 
         log.debug(deletedMinionMessage)
