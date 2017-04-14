@@ -41,7 +41,7 @@ class MinionsSaltService {
                     saltClient, USER, PASSWORD, AuthModule.PAM);
             Key.Names keys = keyResults.getData().getResult();
 
-            def minions = keys.getMinions()
+            List<String> minions = keys.getMinions()
 
             log.debug("Finish getting accepted minions from salt server. Found [${minions.size()}]")
 
