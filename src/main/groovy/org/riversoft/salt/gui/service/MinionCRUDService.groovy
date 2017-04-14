@@ -204,9 +204,14 @@ class MinionCRUDService {
 
             //удаление результата из работы где он есть
             Job job = jobResult.job
-            job.results.removeAll{it.id == jobResult.id}
+            job.results.removeAll { it.id == jobResult.id }
 
             jobRepository.save(job)
+
+            //удаление работы если у нее не остается результатов
+            if (job.results.size() == 0) {
+                jobRepository.delete(job.jid)
+            }
 
             //удаление деталей
             jobResult.jobResultDetails.each {
