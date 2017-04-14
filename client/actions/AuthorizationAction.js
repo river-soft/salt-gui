@@ -6,6 +6,7 @@ import {
 import $ from 'jquery';
 import {hashHistory} from 'react-router';
 import cookie from 'react-cookie';
+import {containsRole} from '../helpers';
 
 export function authorization(userName, password) {
 
@@ -28,10 +29,29 @@ export function authorization(userName, password) {
             success: (res, status, response) => {
 
                 let user = {
-                    userName: response.getResponseHeader('userName'),
-                    roles: response.getResponseHeader('roles'),
-                    expiryDate: new Date().getTime()
-                };
+                        userName: response.getResponseHeader('userName'),
+                        roles: response.getResponseHeader('roles'),
+                        expiryDate: new Date().getTime()
+                    },
+                    pages = [
+                        {
+                            url: '/',
+                            permissions: ['ROLE_ROOT', 'ROLE_PAGE_MAIN']
+                        },
+                        {
+                            url: '/scripts',
+                            permissions: ['ROLE_ROOT', 'ROLE_PAGE_SCRIPTS']
+                        },
+                        {
+                            url: '/groups-and-minions',
+                            permissions: ['ROLE_ROOT', 'ROLE_PAGE_GROUPS_AND_MINIONS']
+                        },
+                        {
+                            url: '/job-results',
+                            permissions: ['ROLE_ROOT', 'ROLE_PAGE_JOB_RESULTS']
+                        },
+                    ],
+                    goToPage = false;
 
                 cookie.save('accessToken', btoa(JSON.stringify(user)));
 
@@ -40,7 +60,25 @@ export function authorization(userName, password) {
                     payload: status
                 });
 
-                hashHistory.push('/');
+                const redirect = (user, containsRoles, redirectUrl) => {
+
+                    if (typeof user.roles === 'string') {
+                        user.roles = user.roles.replace(/[\[\]]/g, '').split(',');
+                    }
+
+                    if (containsRole(user.roles, containsRoles)) {
+                        hashHistory.push(redirectUrl);
+                        goToPage = true;
+                    }
+
+                    return false;
+                };
+
+                for (let i = 0; i < pages.length; i++) {
+                    if (!goToPage) {
+                        redirect(user, pages[i].permissions, pages[i].url)
+                    }
+                }
             },
             error: error => {
                 dispatch({

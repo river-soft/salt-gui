@@ -150,7 +150,8 @@ export class ScriptsTree extends Component {
             showModal: true,
             editGroup: false,
             editScript: false,
-            runScript: false
+            runScript: false,
+            removeGroup: false
         });
     }
 
