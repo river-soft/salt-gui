@@ -114,9 +114,9 @@ class MinionsService {
             Key.Names keys = keyResults.getData().getResult()
 
             counts = ["client.minions.state.accepted"  : keys.getMinions().size(),
-                      "client.minions.state.unaccepted": keys.getDeniedMinions().size(),
-                      "client.minions.state.rejected"  : keys.getUnacceptedMinions().size(),
-                      "client.minions.state.denied"    : keys.getRejectedMinions().size()]
+                      "client.minions.state.unaccepted": keys.getUnacceptedMinions().size(),
+                      "client.minions.state.rejected"  : keys.getRejectedMinions().size(),
+                      "client.minions.state.denied"    : keys.getDeniedMinions().size()]
 
             log.trace("Finish getting minions counts by statuses from salt server.")
 
