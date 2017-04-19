@@ -136,7 +136,8 @@ class Minions extends Component {
                                  user={user}/> : null;
 
         return <div className='wrapper'>
-            <Header header={messages['client.header.minions.title']} messages={messages} setLanguage={::this.setLanguage}/>
+            <Header header={messages['client.header.minions.title']} messages={messages}
+                    setLanguage={::this.setLanguage}/>
             <main className='main'>
                 <Container>
                     <Row>
@@ -159,10 +160,6 @@ class Minions extends Component {
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.accepted']}>{acceptedMinions}</Tab> : null}
 
-                                {containsRole(user.roles, ['ROLE_SHOW_DENIED_MINIONS', 'ROLE_ROOT']) ?
-                                    <Tab className='minions-tabs'
-                                         label={messages['client.minions.state.denied']}>{deniedMinions}</Tab> : null}
-
                                 {containsRole(user.roles, ['ROLE_SHOW_UNACCEPTED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.unaccepted']}>{unacceptedMinions}</Tab> : null}
@@ -170,6 +167,10 @@ class Minions extends Component {
                                 {containsRole(user.roles, ['ROLE_SHOW_REJECTED_MINIONS', 'ROLE_ROOT']) ?
                                     <Tab className='minions-tabs'
                                          label={messages['client.minions.state.rejected']}>{rejectedMinions}</Tab> : null}
+
+                                {containsRole(user.roles, ['ROLE_SHOW_DENIED_MINIONS', 'ROLE_ROOT']) ?
+                                    <Tab className='minions-tabs'
+                                         label={messages['client.minions.state.denied']}>{deniedMinions}</Tab> : null}
                             </Tabs>
                         </Col>
                     </Row>
