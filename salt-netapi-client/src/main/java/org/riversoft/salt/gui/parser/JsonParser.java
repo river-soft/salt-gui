@@ -2,6 +2,7 @@ package org.riversoft.salt.gui.parser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.internal.bind.CollectionTypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import org.riversoft.salt.gui.calls.ScheduledJob;
@@ -12,6 +13,7 @@ import org.riversoft.salt.gui.results.Result;
 import org.riversoft.salt.gui.results.ResultInfoSet;
 import org.riversoft.salt.gui.results.Return;
 import org.riversoft.salt.gui.results.SSHRawResult;
+import org.riversoft.salt.gui.utils.ClientUtils;
 ;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -107,11 +109,20 @@ public class JsonParser<T> {
      * @return The parsed value.
      */
     public T parse(InputStream inputStream) {
+        String response = ClientUtils.streamToString(inputStream);
+        inputStream = ClientUtils.stringToStream(response);
         Reader inputStreamReader = new InputStreamReader(inputStream);
         Reader streamReader = new BufferedReader(inputStreamReader);
 
-        // Parse result type from the returned JSON
-        return gson.fromJson(streamReader, type.getType());
+        try {
+            // Parse result type from the returned JSON
+            return gson.fromJson(streamReader, type.getType());
+        } catch (JsonParseException ex) {
+            Map<String, Object> originalException = gson.fromJson(response, MAP.type.getType());
+            System.out.println("\n Original Salt Response-->\n" + originalException.values() + "\n");
+
+            throw ex;
+        }
     }
 
     /**
