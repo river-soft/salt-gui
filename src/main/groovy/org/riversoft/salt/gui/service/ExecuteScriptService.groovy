@@ -74,6 +74,8 @@ class ExecuteScriptService {
 
         try {
 
+            log.debug("Start executing scripts on minions.")
+
             //region проверка все ли миньоны зарегистрированы на сервере солт
 
             String[] acceptedMinions = minionsSaltService.getAllAcceptedMinions()
@@ -194,6 +196,8 @@ class ExecuteScriptService {
             }
 
             //endregion
+
+            log.debug("Finish executing scripts on minions.")
 
         } catch (JobIdNotReturnedException e) {
             throw e
@@ -435,19 +439,19 @@ class ExecuteScriptService {
     void checkNotConnectedMinionAndUpdateResultStatus(List<JobResult> jobResults) {
 
         log.debug("Try check not connected minions")
-
-        def result = Manage.up().callAsync(saltClient, USER, PASSWORD, AuthModule.PAM);
-
-        log.debug("Got result with pingJid [${result.jid}].")
-
         log.debug("Current ping Jid: [${pingJid}].")
 
         if (!pingJid) {
+
+            def result = Manage.up().callAsync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+            log.debug("Got result with pingJid [${result.jid}].")
+
             pingJid = result.jid
-            log.debug("Set pingJid: [${pingJid}]")
+            log.debug("Set Current pingJid: [${pingJid}]")
         }
 
-        log.debug("Try get results for connected minions from SALT")
+        log.debug("Try get results for connected minions from SALT by pingJid [${pingJid}]")
 
         //вовзращает список результатов по миньонам
         def connectedMinionsJobResult = Jobs.lookupJid(pingJid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
@@ -460,11 +464,11 @@ class ExecuteScriptService {
 
             log.debug("Got [${connectedMinions.size()}] connectedMinions.")
 
-            def minionsFromResult = jobResults.collect { it.minion.name }
+            String[] minionsFromResult = jobResults.collect { it.minion.name }
 
             log.debug("Got [${minionsFromResult.size()}] minionsFromResult with names [${minionsFromResult.toString()}].")
 
-            def notConnectedMinions = minionsFromResult - connectedMinions
+            String[] notConnectedMinions = minionsFromResult - connectedMinions
 
             log.debug("Got [${notConnectedMinions.size()}] notConnectedMinions with names [${notConnectedMinions.toString()}].")
 
@@ -487,6 +491,7 @@ class ExecuteScriptService {
             }
 
             pingJid = ""
+
         } else {
             log.debug("Results for connected minions from SALT not found")
         }
@@ -506,7 +511,13 @@ class ExecuteScriptService {
 
         for (Job job : notDoneJobs) {
 
-            checkJobByJid(job.jid)
+            try {
+
+                checkJobByJid(job.jid)
+
+            } catch (Exception ex) {
+                log.error("Occurred error when check job by jid [${job.jid}].Scip it.", ex)
+            }
         }
     }
 }
