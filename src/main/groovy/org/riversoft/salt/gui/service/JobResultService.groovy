@@ -120,9 +120,14 @@ class JobResultService {
 
             Job job = jobRepository.findOne(currentJid)
 
-            def results = job.results.collect { new JobResultViewModel(it) }
+            if (job) {
+                def results = job.results.collect { new JobResultViewModel(it) }
 
-            sendJobResultsBySignal('/queue/job-results/update-all-results-by-job', "all results by job with jid [${currentJid}]", results)
+                sendJobResultsBySignal('/queue/job-results/update-all-results-by-job', "all results by job with jid [${currentJid}]", results)
+            } else {
+                log.debug("Job with [${currentJid}] not fount in db. Clear currentJid value.")
+                currentJid= ""
+            }
         }
     }
 
