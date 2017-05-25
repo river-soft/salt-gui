@@ -14,8 +14,12 @@ export function reExecuteScripts(jobResultIds) {
         });
 
         $.ajax({
-            url: '/reexecute-scripts?jobResultIds=' + jobResultIds,
+            url: '/reexecute-scripts',
             type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(
+                jobResultIds
+            ),
             success: data => {
                 dispatch({
                     type: REEXECUTE_SCRIPTS_SUCCESS,

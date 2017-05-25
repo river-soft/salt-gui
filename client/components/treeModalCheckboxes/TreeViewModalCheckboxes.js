@@ -146,7 +146,7 @@ export default class TreeModalCheckboxes extends Component {
                 let counter = 0;
 
                 for (let i = 0; i < this.state.selectedList.length; i++) {
-                    if (this.state.selectedList[i].name != item.name) {
+                    if (this.state.selectedList[i].name !== item.name) {
                         counter++;
                     }
                 }
@@ -223,6 +223,7 @@ export default class TreeModalCheckboxes extends Component {
                             groups[index].minions.push(group.minions[i]);
 
                             for (let z = 0; z < this.state.transferedList.length; z++) {
+
                                 if (group.minions[i].id === this.state.transferedList[z].id) {
                                     this.state.transferedList.splice(z, 1);
                                 }

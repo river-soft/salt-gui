@@ -7,14 +7,21 @@ import $ from 'jquery';
 
 export function executeScripts(minions, scripts) {
 
+    let req = {
+        minions: minions,
+        scripts: scripts
+    };
+
     return dispatch => {
         dispatch({
             type: EXECUTE_SCRIPTS_REQUEST
         });
 
         $.ajax({
-            url: '/execute-scripts?minions=' + minions + '&scripts=' + scripts,
+            url: '/execute-scripts',
             type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(req),
             success: data => {
                 dispatch({
                     payload: data,
@@ -22,6 +29,7 @@ export function executeScripts(minions, scripts) {
                 });
             },
             error: error => {
+                debugger;
                 dispatch({
                     payload: error.responseJSON,
                     error: true,
