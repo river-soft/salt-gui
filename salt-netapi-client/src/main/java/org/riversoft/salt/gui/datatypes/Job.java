@@ -1,6 +1,8 @@
 package org.riversoft.salt.gui.datatypes;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+import org.riversoft.salt.gui.parser.JsonParser;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -17,6 +19,7 @@ public class Job {
     private String target;
 
     @SerializedName("Target-type")
+    @JsonAdapter(JsonParser.TargetTypeAdapter.class)
     private String targetType;
 
     @SerializedName("User")
@@ -59,7 +62,7 @@ public class Job {
     }
 
     /**
-     *  Returns start time assuming default {@link TimeZone} is Salt master's timezone.
+     * Returns start time assuming default {@link TimeZone} is Salt master's timezone.
      *
      * @return Date representation of the start time.
      */

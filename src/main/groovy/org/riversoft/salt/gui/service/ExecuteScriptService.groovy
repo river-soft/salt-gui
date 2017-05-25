@@ -265,9 +265,15 @@ class ExecuteScriptService {
             // возвращает результат по самой job и результаты по миньонам такие как в job
             def jobInfoSalt = Jobs.listJob(jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
 
+            log.debug("Found jobInfoSalt: [${jobInfoSalt.toString()}]")
+
+            log.debug("Start getting result for jid [${jobInfoSalt?.jid}]")
+
             //вовзращает список результатов по миньонам
             //TODO подумать может результат все таки получать из jobInfoSalt что бы не делать два запроса на salt сервер
             def jobResultsSalt = Jobs.lookupJid(jobInfoSalt.jid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+            log.debug("Found jobResultSalt: [${jobResultsSalt.toString()}]")
 
             Job job = jobRepository.findOne(jobInfoSalt.jid)
 
@@ -281,17 +287,29 @@ class ExecuteScriptService {
 
             for (def jobResultSalt : jobResultsSalt) {
 
+                log.debug("Search minion from jobResultsSalt: [${jobResultsSalt.toString()}]")
+
                 Minion minion = minionCRUDService.getMinionByName(jobResultSalt.key)
+
+                log.debug("Found minion: [${minion.toString()}]")
+
+                log.debug("Search jobResults by minionId: [${minion.id}] and jid: [${job.jid}]")
 
                 List<JobResult> jobResults = jobResultRepository.findAllByMinionIdAndJobJid(minion.id, job.jid)
 
+                log.debug("Found jobResults size [${jobResults.size()}]")
+
                 for (JobResult jobResult : jobResults) {
+
+                    log.debug("Check isResult for jobResult: [${jobResult.toString()}]")
 
                     if (jobResult.isResult == null) {
 
                         log.debug("Start updating JobResult for minion [${jobResults.minion.name}] and Job jid [${jobResult.job.jid}].")
 
                         for (def jobResultSaltItem : jobResultSalt) {
+
+                            log.debug("Each jobResultSalt. Item [${jobResultSaltItem.toString()}]")
 
                             for (def val : jobResultSaltItem.value) {
 
@@ -315,6 +333,8 @@ class ExecuteScriptService {
                                     jobResultDetailRepository.save(jobResultDetail)
 
                                 } else {
+
+                                    log.debug("Create jobResultDetails from val: [${val.toString()}]")
 
                                     JobResultDetail jobResultDetail = new JobResultDetail()
 
@@ -406,26 +426,45 @@ class ExecuteScriptService {
      */
     void checkNotConnectedMinionAndUpdateResultStatus(List<JobResult> jobResults) {
 
+        log.debug("Try check not connected minions")
+
         def result = Manage.up().callAsync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        log.debug("Get result [${result.toString()}]")
+
+        log.debug("Ping Jid: [${pingJid}]")
 
         if (!pingJid) {
             pingJid = result.jid
+            log.debug("Set pingJid: [${pingJid}]")
         }
+
+        log.debug("Try get results for connected minions from SALT")
 
         //вовзращает список результатов по миньонам
         def connectedMinionsJobResult = Jobs.lookupJid(pingJid).callSync(saltClient, USER, PASSWORD, AuthModule.PAM);
+
+        log.debug("Got results for connected minions from SALT [${connectedMinionsJobResult.size()}]")
 
         if (connectedMinionsJobResult.size()) {
 
             def connectedMinions = connectedMinionsJobResult.find() ? connectedMinionsJobResult.find()["value"]["return"] : []
 
+            log.debug("Got connectedMinions [${connectedMinions.toString()}]")
+
             def minionsFromResult = jobResults.collect { it.minion.name }
 
+            log.debug("Got minionsFromResult [${minionsFromResult.toString()}]")
+
             def notConnectedMinions = minionsFromResult - connectedMinions
+
+            log.debug("Got notConnectedMinions [${notConnectedMinions.toString()}]")
 
             def notConnectedResults = jobResults.findAll {
                 notConnectedMinions.contains(it.minion.name) && it.isResult == null
             }
+
+            log.debug("Got notConnectedResults [${notConnectedResults.toString()}]")
 
             for (JobResult jobResult : notConnectedResults) {
 
@@ -442,6 +481,8 @@ class ExecuteScriptService {
 
             pingJid = ""
         }
+
+        log.debug("Results for connected minions from SALT not found")
     }
 
     /**

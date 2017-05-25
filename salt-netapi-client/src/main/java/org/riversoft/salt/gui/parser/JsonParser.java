@@ -3,8 +3,12 @@ package org.riversoft.salt.gui.parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.CollectionTypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import org.riversoft.salt.gui.calls.ScheduledJob;
 import org.riversoft.salt.gui.calls.wheel.Key;
 import org.riversoft.salt.gui.datatypes.*;
@@ -15,10 +19,7 @@ import org.riversoft.salt.gui.results.Return;
 import org.riversoft.salt.gui.results.SSHRawResult;
 import org.riversoft.salt.gui.utils.ClientUtils;
 ;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -122,6 +123,30 @@ public class JsonParser<T> {
             System.out.println("\n Original Salt Response-->\n" + originalException.values() + "\n");
 
             throw ex;
+        }
+    }
+
+    public class TargetTypeAdapter extends TypeAdapter<String> {
+        @Override
+        public void write(JsonWriter out, String value) throws IOException {
+            throw new UnsupportedOperationException("Writing JSON not supported.");
+        }
+
+        @Override
+        public String read(JsonReader in) throws IOException {
+            if (in.peek() == JsonToken.NULL) {
+                return null;
+            } else if (in.peek() == JsonToken.STRING) {
+                return in.nextString();
+            } else if (in.peek() == JsonToken.BEGIN_ARRAY) {
+                System.out.println("Encountered empty array as a target-type, " +
+                        "returning null.");
+                in.skipValue();
+                return null;
+            } else {
+                throw new IllegalStateException("Target-type must be either null," +
+                        " string or an array.");
+            }
         }
     }
 
