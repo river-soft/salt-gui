@@ -1,9 +1,11 @@
 package org.riversoft.salt.gui.controller
 
 import groovy.util.logging.Slf4j
+import org.riversoft.salt.gui.model.request.ExecuteMinionsAndScripts
 import org.riversoft.salt.gui.service.ExecuteScriptService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
@@ -18,10 +20,9 @@ class ExecuteScriptController extends BaseRestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ROOT', 'ROLE_EXECUTE_SCRIPTS_ON_MINION', 'ROLE_EXECUTE_SCRIPT_ON_MINIONS')")
     @RequestMapping(value = '/execute-scripts', method = RequestMethod.POST)
-    acceptMinions(@RequestParam(value = "minions", required = true) String[] minions,
-                  @RequestParam(value = "scripts", required = true) String[] scripts) {
+    acceptMinions(@RequestBody ExecuteMinionsAndScripts executeMinionsAndScripts) {
 
-        executeScriptService.executeScripts(minions, scripts)
+        executeScriptService.executeScripts(executeMinionsAndScripts.minions, executeMinionsAndScripts.scripts)
     }
 
 //    @PreAuthorize("hasAnyRole('ROLE_ROOT')")
@@ -33,7 +34,7 @@ class ExecuteScriptController extends BaseRestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ROOT','ROLE_RE_EXECUTE_SCRIPTS_ON_MINIONS')")
     @RequestMapping(value = '/reexecute-scripts', method = RequestMethod.POST)
-    reExecuteScripts(@RequestParam(value = "jobResultIds", required = true) String[] ids) {
-        executeScriptService.reExecuteScripts(ids)
+    reExecuteScripts(@RequestBody String[] jobResultIds) {
+        executeScriptService.reExecuteScripts(jobResultIds)
     }
 }
