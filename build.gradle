@@ -1,45 +1,128 @@
-group = 'org.riversoft'
-version = '0.0.1'
 
 buildscript {
-	ext {
-		springBootVersion = '1.4.4.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.4.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+    }
 }
 
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
+task build() {}
+task zipArtifact(type: Zip) {
+    copy {
+        from("${project.rootDir}/infrastructure/deploy")
+        into "${project.buildDir}/artifact"
+        filesMatching('**/.env') {
+            filter { line ->
+                line.contains('VERSION') ?
+                        line.replaceAll(/^(.*)/, "VERSION=${buildNumber ?: 'latest'}") :
+                        line
+            }
+        }
+    }
 
-allprojects {
-
-	repositories {
-		mavenCentral()
-	}
+    from "${rootProject.buildDir}/artifact"
+    baseName = 'salt-gui'
+    destinationDir new File('build')
 }
 
-sourceCompatibility = 1.8
+build.finalizedBy(zipArtifact)
 
-dependencies {
-	compile 'org.springframework.boot:spring-boot-starter-actuator'
-	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
-	compile 'org.springframework.boot:spring-boot-starter-data-redis'
-	compile 'org.springframework.boot:spring-boot-starter-freemarker'
-	compile 'org.springframework.boot:spring-boot-starter-mail'
-	compile 'org.springframework.boot:spring-boot-starter-security'
-	compile 'org.springframework.boot:spring-boot-starter-web'
-	compile 'org.springframework.boot:spring-boot-starter-websocket'
-	compile 'org.codehaus.groovy:groovy'
-	compile 'joda-time:joda-time:2.9.2'
-	compile "org.springframework.security:spring-security-messaging:4.0.3.RELEASE"
+subprojects {
+    
+    apply plugin: 'groovy'
 
-	testCompile 'org.springframework.boot:spring-boot-starter-test'
+    group = 'org.riversoft'
+    version = buildNumber ?: 'DEV'
+    
+    repositories {
+        mavenCentral()
+    }
+}
 
-	compile project ('salt-netapi-client')
+project('salt-netapi-client') {
+    apply plugin: 'java'
+
+    jar {
+        enabled = true
+    }
+
+    dependencies {
+
+        compile 'com.google.code.gson:gson:2.3.1'
+        compile 'org.apache.httpcomponents:httpclient:4.5'
+        compile 'javax.websocket:javax.websocket-api:1.1'
+
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
+}
+
+project('salt-monitor') {
+
+    apply plugin: 'groovy'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    
+    buildDockerDeclaration(project.name)
+    
+    dependencies {
+
+        compile project(':salt-netapi-client')
+        
+        compile 'org.springframework.boot:spring-boot-starter-actuator'
+        compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+        compile 'org.springframework.boot:spring-boot-starter-data-redis'
+        compile 'org.springframework.boot:spring-boot-starter-freemarker'
+        compile 'org.springframework.boot:spring-boot-starter-mail'
+        compile 'org.springframework.boot:spring-boot-starter-security'
+        compile 'org.springframework.boot:spring-boot-starter-web'
+        compile 'org.springframework.boot:spring-boot-starter-websocket'
+        compile 'org.codehaus.groovy:groovy'
+        compile 'joda-time:joda-time:2.9.2'
+        compile "org.springframework.security:spring-security-messaging:4.0.3.RELEASE"
+
+        testCompile 'org.springframework.boot:spring-boot-starter-test'
+    }
+}
+
+// build and publish docker image declaration
+def buildDockerDeclaration(String projectName) {
+
+    project(projectName) {
+
+        apply plugin: 'docker'
+
+        task buildDocker(dependsOn: build, type: Docker) {
+            // Docker file
+
+            baseImage = 'frolvlad/alpine-oraclejdk8'
+            push = project.hasProperty('push')
+            tag = 'afgmeister/salt-gui'
+            tagVersion = 'latest'
+            addFile jar.archivePath, "/${project.name}-${version}.jar"
+            addFile "${project.rootDir}/infrastructure/bin/entrypoint.sh", '/entrypoint.sh'
+            defaultCommand(['/bin/sh', '/entrypoint.sh'])
+//            addFile {
+//                from jar
+//                rename {'app.jar'}
+//            }
+//            entryPoint(['echo "## Start JAVA APP"', 'echo $JVM_OPTS', 'exec java $JVM_OPTS -jar *.jar'])
+            doLast { // Clear unused docker images
+                def stdout = new ByteArrayOutputStream()
+                println 'Docker prune...'
+                exec {
+                    commandLine 'sh', '-c', 'docker system prune -f'
+                    standardOutput = stdout
+                }
+                println "Result: ${stdout.toString()}"
+            }
+        }
+
+        build.finalizedBy(buildDocker)
+    }
 }

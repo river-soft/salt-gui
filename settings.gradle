@@ -1,2 +1,2 @@
-include 'salt-netapi-client'
+include 'salt-netapi-client', 'salt-monitor'
 

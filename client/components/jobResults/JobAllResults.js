@@ -35,16 +35,16 @@ export default class JobAllResults extends Component {
         }
 
         if (this.props.executeSuccess) {
-            if (this.refs['re-execute'] && this.refs['re-execute'].refs['buttonEl'].classList.contains('clicked')) {
-                this.refs['re-execute'].refs['buttonEl'].classList.remove('clicked');
+            if (this.refs['re-execute'] && this.refs['re-execute'].buttonElRef.classList.contains('clicked')) {
+                this.refs['re-execute'].buttonElRef.classList.remove('clicked');
                 this.state.checkedList = [];
             }
         }
 
         if (this.props.executeError) {
-            if (this.refs['re-execute'] && this.refs['re-execute'].refs['buttonEl'].classList.contains('clicked')) {
-                this.refs['re-execute'].refs['buttonEl'].classList.remove('clicked');
-                this.refs['re-execute'].refs['buttonEl'].disabled = false;
+            if (this.refs['re-execute'] && this.refs['re-execute'].buttonElRef.classList.contains('clicked')) {
+                this.refs['re-execute'].buttonElRef.classList.remove('clicked');
+                this.refs['re-execute'].buttonElRef.disabled = false;
             }
         }
 
@@ -127,7 +127,7 @@ export default class JobAllResults extends Component {
 
     reExecuteScripts() {
 
-        let button = this.refs['re-execute'].refs['buttonEl'];
+        let button = this.refs['re-execute'].buttonElRef;
 
         if (!button.classList.contains('clicked')) {
             button.classList.add('clicked');

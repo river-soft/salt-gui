@@ -71,11 +71,11 @@ export default class MinionDetails extends Component {
             block = <div>
                 <div className='minion-details__actions'>
 
-                    {containsRole(this.props.user.roles, ['ROLE_EXECUTE_SCRIPTS_ON_MINION', 'ROLE_ROOT']) ?
-                        <span className='file__actions_remove file__actions_item green' onClick={() => {
-                            ::this.props.runScript(this.props.minionName);
-                        }} title={messages['client.btn.execute']}><i className='mi mi-play-circle-filled'></i></span>
-                        : null}
+                    {/*{containsRole(this.props.user.roles, ['ROLE_EXECUTE_SCRIPTS_ON_MINION', 'ROLE_ROOT']) ?*/}
+                        {/*<span className='file__actions_remove file__actions_item green' onClick={() => {*/}
+                            {/*::this.props.runScript(this.props.minionName);*/}
+                        {/*}} title={messages['client.btn.execute']}><i className='mi mi-play-circle-filled'></i></span>*/}
+                        {/*: null}*/}
 
                     {containsRole(this.props.user.roles, ['ROLE_EDIT_GROUPS_OF_MINION', 'ROLE_ROOT']) ?
                         <span className='minion-details__action' onClick={() => {

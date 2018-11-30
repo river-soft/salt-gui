@@ -8,17 +8,17 @@ const NODE_ENV = process.env.NODE_ENV || 'develop';
 
 module.exports = {
     //TODO: перед заливом закоментить
-    devtool: 'cheap-module-eval-source-map',
+    // devtool: 'cheap-module-eval-source-map',
     entry: [
         //TODO: перед заливом закоментить 3 строки
-        'webpack-dev-server/client',
-        'webpack/hot/only-dev-server',
-        'webpack-hot-middleware/client?reload=true',
+        // 'webpack-dev-server/client',
+        // 'webpack/hot/only-dev-server',
+        // 'webpack-hot-middleware/client?reload=true',
         'babel-polyfill',
         './client/index'
     ],
     output: {
-        path: path.join(__dirname, '/src/main/resources/static/'),
+        path: path.join(__dirname, '/salt-monitor/src/main/resources/static/'),
         filename: '/js/bundle.js'
     },
     node: {
@@ -33,12 +33,12 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('/css/main.css', {allChunks: true}),
         //TODO: перед заливом расскоментить все
-        // new webpack.optimize.UglifyJsPlugin({
-        //     warnings: false,
-        //     drop_console: true,
-        //     unsafe: true
-        // }),
-        // new webpack.NoErrorsPlugin()
+        new webpack.optimize.UglifyJsPlugin({
+            warnings: false,
+            drop_console: true,
+            unsafe: true
+        }),
+        new webpack.NoErrorsPlugin()
     ],
     module: {
         preLoaders: [
@@ -46,7 +46,7 @@ module.exports = {
                 test: /\.js$/,
                 loaders: ['eslint'],
                 include: [
-                    path.resolve(__dirname, "client")
+                    path.resolve(__dirname, 'client')
                 ],
                 exclude: /node_modules/,
             },
@@ -103,13 +103,13 @@ module.exports = {
     },
 
     devServer: {
-        host: '192.168.1.110',
-        port: '8000',
+        host: '192.168.2.171',
+        port: '8090',
         hot: true,
         proxy: {
             '/': {
                 path: /.*/,
-                target: 'http://localhost:8082'
+                target: 'http://localhost:8501'
             }
         }
     }
