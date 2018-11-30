@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  salt-gui:
+      image: afgmeister/salt-gui
+      restart: always
+      network_mode: "host"
+      environment:
+        SERVER_PORT: 8501
+      logging:
+        driver: "syslog"
+        options:
+          tag: "docker/{{.Name}}"
